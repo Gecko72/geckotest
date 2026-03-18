@@ -71,6 +71,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   .star-panel.active { padding:0px 0px; }
   .btn-text { display:none; }
   .quiz-chapter-icon { display:none; }
+  .timer-wrap { padding:3px 3px 3px 3px; gap:0px; }
 }
 
 /* ── APP ── */
@@ -206,17 +207,18 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .chapter-item .ch-count { font-size:0.62rem; color:var(--text3); margin-top:2px; }
 .chapter-item.active .ch-name { color:var(--accent2); }
 
+@media (min-width: 899px) {
+  .timer-wrap { gap: 8px; padding: 5px 12px 5px 8px;}
+}
+  .timer-wrap {
+display: flex;
+align-items: center;
+background: var(--surface2);
+border: 1px solid var(--border2);
+border-radius: 10px;
+flex-shrink: 0;
+transition: border-color 0.3s;
 
-.timer-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 12px 5px 8px;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  flex-shrink: 0;
-  transition: border-color 0.3s;
 }
 .timer-wrap.urgent {
   border-color: #e05050;
