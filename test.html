@@ -46,6 +46,32 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .dice { display:inline-block; transition:transform 0.4s; font-size:1.1rem; }
 .btn-random:hover .dice { transform:rotate(180deg); }
 
+@media (max-width: 899px) {
+  .histoire-layout { flex-direction: column; }
+
+  #view-histoire .sidebar {width: 100%;height: 120px; min-height: 120px; flex-shrink: 0; border-right: none; border-top: 1px solid var(--border); order: 2; flex-direction: row;}
+  #view-histoire .sidebar-header { display: none; }
+  #view-histoire .sidebar-list { display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 6px; gap: 4px; flex-wrap: nowrap; width: 100%;}
+  #view-histoire .sidebar-list::-webkit-scrollbar { height: 3px; width: 0; }
+  #view-histoire .sidebar-item { flex-shrink: 0; width: 120px; margin-bottom: 0; }
+  .histoire-main { order: 1; flex: 1; min-height: 0; }
+
+  #view-editeur .sidebar { display:none; }
+
+  .btn-random { padding:10px 10px; font-size:0.85rem; }
+  .logo { display:none; }
+  .theme-icon { display:none; }
+  .scroll-area { padding:0px 0px 0; }
+  .editor-zone { padding:5px 7px; }
+  .btn-text { display:none; }
+  .btn-edt { display:none;}
+  .btn-histoire { display:none;}
+  .theme-toggle { justify-content: left;}
+  .topbar { justify-content : left;}
+  .star-panel.active { padding:0px 0px; }
+  .btn-text { display:none; }
+}
+
 /* ── APP ── */
 .app { display:flex; flex:1; overflow:hidden; }
 
@@ -257,10 +283,10 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   <!-- MAIN NAV TABS -->
   <div class="nav-tabs">
     <button class="nav-tab active" id="nav-editeur" onclick="switchView('editeur')">
-      📝 Éditeur
+      <span>📝</span><span class="btn-text">Éditeur</span>
     </button>
     <button class="nav-tab" id="nav-histoire" onclick="switchView('histoire')">
-      🏛️ Histoire
+      <span>🏛️</span><span class="btn-text">Histoire</span>
     </button>
   </div>
 
@@ -286,7 +312,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   </div>
 
   <button class="btn-random" id="btnRandom" onclick="loadRandom()">
-    <span class="dice">🎲</span> Texte aléatoire
+    <span class="dice">🎲</span> <span class="btn-text">Texte aléatoire</span>
   </button>
 </div>
 
