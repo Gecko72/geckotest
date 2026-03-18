@@ -71,7 +71,6 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   .star-panel.active { padding:0px 0px; }
   .btn-text { display:none; }
   .quiz-chapter-icon { display:none; }
-  .timer-wrap { padding:3px 3px 3px 3px; gap:0px; }
 }
 
 /* ── APP ── */
@@ -207,19 +206,19 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .chapter-item .ch-count { font-size:0.62rem; color:var(--text3); margin-top:2px; }
 .chapter-item.active .ch-name { color:var(--accent2); }
 
-@media (min-width: 899px) {
-  .timer-wrap { gap: 8px; padding: 5px 12px 5px 8px;}
-}
-  .timer-wrap {
+.timer-wrap {
 display: flex;
+gap: 8px;
+max-width: 127px;
+padding: 5px 12px 5px 8px;
 align-items: center;
 background: var(--surface2);
 border: 1px solid var(--border2);
 border-radius: 10px;
 flex-shrink: 0;
 transition: border-color 0.3s;
-
 }
+
 .timer-wrap.urgent {
   border-color: #e05050;
   background: rgba(224,80,80,0.07);
@@ -298,22 +297,6 @@ transition: border-color 0.3s;
   <div class="theme-toggle" onclick="toggleTheme()"></div>
   <span class="theme-icon">☀️</span>
 
-  <!-- TIMER (visible en mode éditeur uniquement) -->
-  <div class="timer-wrap" id="timerWrap" style="display:none">
-    <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
-      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
-      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
-        stroke-dasharray="94.25" stroke-dashoffset="0"
-        stroke-linecap="round" transform="rotate(-90 18 18)"
-        id="timerArc"/>
-    </svg>
-    <div class="timer-info">
-      <span class="timer-label">Temps</span>
-      <span class="timer-display" id="timerDisplay">28:00</span>
-    </div>
-    <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
-  </div>
-
   <button class="btn-random" id="btnRandom" onclick="loadRandom()">
     <span class="dice">🎲</span> <span class="btn-text">Texte aléatoire</span>
   </button>
@@ -340,7 +323,21 @@ transition: border-color 0.3s;
         <!-- PANEL TEXTE -->
         <div class="star-panel active" id="panel-texte">
           <div class="scroll-area" style="padding-bottom:0;">
-
+          <!-- TIMER (visible en mode éditeur uniquement) -->
+            <div class="timer-wrap" id="timerWrap" style="display:none">
+              <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
+                <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
+                  stroke-dasharray="94.25" stroke-dashoffset="0"
+                  stroke-linecap="round" transform="rotate(-90 18 18)"
+                  id="timerArc"/>
+              </svg>
+              <div class="timer-info">
+                <span class="timer-label">Temps</span>
+                <span class="timer-display" id="timerDisplay">28:00</span>
+              </div>
+              <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
+            </div>
             <div class="section-label">Éditeur de texte</div>
             <div class="text-intro-block" id="textIntroBlock" style="display:none">
               <div class="text-intro-title" id="textIntroTitle"></div>
