@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextEditor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+[data-theme="dark"] {
+  --bg: #0f0f13; --surface: #17171d; --surface2: #1e1e27;
+  --border: #2a2a38; --border2: #333344;
+  --accent: #7c6dfa; --accent2: #a594ff; --accent-glow: rgba(124,109,250,0.15);
+  --text: #e8e8f0; --text2: #9090aa; --text3: #5a5a72;
+  --editor-bg: #13131a; --scrollbar: #333344; --shadow: rgba(0,0,0,0.4);
+  --star-off: #3a3a52; --star-on: #f5c542;
+}
+[data-theme="light"] {
+  --bg: #f0f0f5; --surface: #ffffff; --surface2: #f5f5fa;
+  --border: #e0e0ea; --border2: #d0d0de;
+  --accent: #6055e8; --accent2: #7c6dfa; --accent-glow: rgba(96,85,232,0.1);
+  --text: #1a1a2e; --text2: #5a5a7a; --text3: #9090b0;
+  --editor-bg: #fafafa; --scrollbar: #d0d0de; --shadow: rgba(0,0,0,0.08);
+  --star-off: #d0d0de; --star-on: #f0a500;
+}
+
+body, .topbar, .sidebar, .toolbar, .editor-wrap, .sidebar-item, .tb-btn, .tb-select, .star-panel {
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ── TOP BAR ── */
+.topbar { height:56px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 20px; gap:12px; flex-shrink:0; z-index:10; }
+.logo { font-size:0.85rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:8px; }
+.logo-dot { width:8px; height:8px; background:var(--accent); border-radius:50%; box-shadow:0 0 8px var(--accent); animation:pulse 2.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 8px var(--accent)} 50%{opacity:0.4;box-shadow:0 0 3px var(--accent)} }
+.topbar-sep { flex:1; }
+.theme-toggle { width:44px; height:24px; background:var(--surface2); border:1px solid var(--border2); border-radius:12px; cursor:pointer; position:relative; flex-shrink:0; }
+.theme-toggle::after { content:''; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:var(--accent); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); box-shadow:0 0 6px var(--accent); }
+[data-theme="light"] .theme-toggle::after { transform:translateX(20px); }
+.theme-icon { font-size:0.78rem; user-select:none; flex-shrink:0; }
+.btn-random { display:flex; align-items:center; gap:10px; padding:10px 22px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 0 18px rgba(124,109,250,0.3); flex-shrink:0; letter-spacing:0.01em; }
+.btn-random:hover { background:var(--accent2); box-shadow:0 0 28px rgba(124,109,250,0.5); transform:translateY(-1px); }
+.dice { display:inline-block; transition:transform 0.4s; font-size:1.1rem; }
+.btn-random:hover .dice { transform:rotate(180deg); }
+
+/* ── APP ── */
+.app { display:flex; flex:1; overflow:hidden; }
+
+/* ── LEFT SIDEBAR ── */
+.sidebar { width:210px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; }
+.sidebar-header { padding:12px 14px 10px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.sidebar-title { font-size:0.62rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--text3); }
+.sidebar-count { font-size:0.6rem; background:var(--accent-glow); color:var(--accent2); border:1px solid rgba(124,109,250,0.25); border-radius:20px; padding:1px 7px; }
+.sidebar-list { overflow-y:auto; flex:1; padding:6px; }
+.sidebar-list::-webkit-scrollbar { width:3px; }
+.sidebar-list::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:2px; }
+.sidebar-item { padding:8px 10px; border-radius:7px; cursor:pointer; transition:background 0.14s,border-color 0.14s; margin-bottom:2px; border:1px solid transparent; }
+.sidebar-item:hover { background:var(--surface2); }
+.sidebar-item.active { background:var(--accent-glow); border-color:rgba(124,109,250,0.3); }
+.sidebar-item.active .item-num { color:var(--accent2); }
+.sidebar-item.active .item-preview { color:var(--text); }
+.item-num { font-size:0.56rem; font-weight:600; letter-spacing:0.12em; color:var(--text3); margin-bottom:3px; text-transform:uppercase; }
+.item-preview { font-size:0.7rem; color:var(--text2); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+/* ── MAIN ── */
+.main { flex:1; display:flex; flex-direction:row; overflow:hidden; min-width:0; }
+.panels-area { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+
+/* ── RIGHT STAR SIDEBAR ── */
+.star-sidebar { width:72px; background:var(--surface); border-left:1px solid var(--border); display:flex; flex-direction:column; align-items:center; padding:14px 0; gap:6px; flex-shrink:0; }
+.star-sidebar-label { font-size:0.52rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text3); margin-bottom:4px; }
+.star-sidebar-sep { width:40px; height:1px; background:var(--border); margin:6px 0; }
+.star-tab { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; width:52px; padding:10px 6px; border-radius:10px; border:1px solid transparent; cursor:pointer; transition:background 0.15s,border-color 0.15s; user-select:none; }
+.star-tab:hover { background:var(--surface2); }
+.star-tab.active { background:rgba(245,197,66,0.12); border-color:rgba(245,197,66,0.35); }
+.stars { display:flex; flex-wrap:wrap; justify-content:center; gap:1px; max-width:40px; }
+.star { font-size:1rem; color:var(--star-off); transition:color 0.15s; line-height:1; }
+.star-tab.active .star { color:var(--star-on); }
+.star-tab:hover .star { color:var(--star-on); opacity:0.75; }
+.star-tab-label { font-size:0.56rem; font-weight:600; color:var(--text3); letter-spacing:0.04em; text-align:center; }
+.star-tab.active .star-tab-label { color:var(--star-on); }
+
+/* ── SCROLL AREA ── */
+.scroll-area { flex:1; overflow-y:auto; padding:16px 20px 0; display:flex; flex-direction:column; gap:14px; min-height:0; }
+.scroll-area::-webkit-scrollbar { width:4px; }
+.scroll-area::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:2px; }
+
+/* ── SECTION LABEL ── */
+.section-label { font-size:0.6rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text3); display:flex; align-items:center; gap:10px; }
+.section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── TOOLBAR ── */
+.toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:3px; padding:7px 10px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; flex-shrink:0; }
+.tb-btn { background:transparent; border:1px solid transparent; border-radius:6px; width:30px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:600; color:var(--text2); transition:background 0.12s,color 0.12s; flex-shrink:0; }
+.tb-btn:hover { background:var(--border); color:var(--text); }
+.tb-btn.active-hl { background:#ffeb3b33; color:#b8860b; border-color:#f0c040; }
+.tb-sep { width:1px; height:18px; background:var(--border2); margin:0 4px; flex-shrink:0; }
+.tb-select { background:var(--surface); border:1px solid var(--border2); border-radius:6px; color:var(--text2); font-family:'Inter',sans-serif; font-size:0.72rem; padding:3px 6px; height:28px; cursor:pointer; }
+.tb-select:hover { border-color:var(--accent); color:var(--text); }
+.tb-color { width:22px; height:28px; border:1px solid var(--border2); border-radius:0 6px 6px 0; padding:2px 2px; background:var(--surface); cursor:pointer; flex-shrink:0; margin-left:-4px; }
+.tb-label { font-size:0.62rem; color:var(--text3); white-space:nowrap; margin:0 2px; }
+
+/* Highlight button group */
+.hl-group { display:flex; align-items:center; flex-shrink:0; }
+.hl-btn { border-radius:6px 0 0 6px !important; border-right:none !important; width:auto !important; padding:0 9px !important; font-size:0.76rem; display:flex; align-items:center; gap:5px; }
+.hl-swatch { display:inline-block; width:14px; height:5px; border-radius:2px; background:#ffeb3b; flex-shrink:0; }
+.tb-color.hl-color-btn { border-radius:0 6px 6px 0 !important; margin-left:0 !important; border-left:1px solid var(--border2); }
+
+/* ── TEXT INTRO ── */
+.text-intro-block { background:var(--surface2); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:10px; padding:12px 16px; display:flex; flex-direction:column; gap:5px; flex-shrink:0; }
+.text-intro-title { font-size:0.72rem; font-weight:700; color:var(--accent2); letter-spacing:0.04em; }
+.text-intro-body { font-family:'Lora',serif; font-size:0.84rem; color:var(--text2); line-height:1.6; font-style:italic; }
+
+/* ── EDITOR ── */
+.editor-block { display:flex; flex-direction:column; gap:10px; }
+.editor-wrap { display:flex; flex-direction:column; background:var(--editor-bg); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.2s,box-shadow 0.2s; }
+.editor-wrap:focus-within { border-color:rgba(124,109,250,0.5); box-shadow:0 0 0 3px rgba(124,109,250,0.07); }
+.editor-zone { padding:20px 24px; font-family:'Lora',serif; font-size:1rem; line-height:1.85; color:var(--text); outline:none; min-height:120px; }
+.editor-zone:empty::before { content:attr(data-placeholder); color:var(--text3); pointer-events:none; font-style:italic; }
+.free-section { flex:1; min-height:0; display:flex; flex-direction:column; gap:10px; padding-bottom:16px; }
+.editor-footer { padding:7px 16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+.char-count { font-size:0.63rem; color:var(--text3); }
+.active-tag { font-size:0.6rem; color:var(--accent2); background:var(--accent-glow); border:1px solid rgba(124,109,250,0.25); border-radius:20px; padding:2px 10px; }
+
+/* ── STAR PANELS ── */
+.star-panel { display:none; flex:1; flex-direction:column; overflow:hidden; padding:16px 20px; gap:12px; min-height:0; }
+.star-panel.active { display:flex; }
+.star-panel-inner { flex:1; background:var(--editor-bg); border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+.star-panel-header { padding:14px 20px 12px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.star-panel-header-text { display:flex; flex-direction:column; gap:3px; }
+.star-panel-title { font-size:0.78rem; font-weight:600; color:var(--text2); }
+.star-panel-intro { font-size:0.72rem; color:var(--text3); font-style:italic; line-height:1.4; max-width:480px; }
+.stars-big .star { font-size:1.2rem; color:var(--star-on); }
+.star-panel-body { flex:1; overflow-y:auto; padding:24px 28px; }
+.star-panel-body::-webkit-scrollbar { width:4px; }
+.star-panel-body::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:2px; }
+.star-lock-badge { font-size:0.65rem; font-weight:500; color:var(--text3); background:var(--surface2); border:1px solid var(--border2); border-radius:20px; padding:3px 12px; }
+
+/* Star content styling */
+.star-content h3 { font-family:'Lora',serif; font-size:1rem; font-weight:600; color:var(--text); margin-bottom:12px; }
+.star-content p { font-family:'Lora',serif; font-size:0.9rem; color:var(--text2); line-height:1.75; margin-bottom:10px; }
+.star-content ul { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.star-content li { display:flex; align-items:flex-start; gap:10px; font-family:'Lora',serif; font-size:0.88rem; color:var(--text2); line-height:1.6; }
+.star-content li::before { content:'→'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
+.star-content .tag { display:inline-block; font-size:0.65rem; font-weight:600; padding:2px 8px; border-radius:20px; background:var(--accent-glow); color:var(--accent2); border:1px solid rgba(124,109,250,0.2); margin-bottom:10px; }
+
+/* ── NAV TABS ── */
+.nav-tabs { display:flex; gap:4px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:3px; flex-shrink:0; }
+.nav-tab { display:flex; align-items:center; gap:7px; padding:6px 16px; border:none; border-radius:7px; background:transparent; font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:500; color:var(--text2); cursor:pointer; transition:all 0.18s; white-space:nowrap; }
+.nav-tab:hover { color:var(--text); background:var(--surface); }
+.nav-tab.active { background:var(--surface); color:var(--text); font-weight:600; box-shadow:0 1px 4px var(--shadow); }
+
+/* ── VIEWS ── */
+.view { display:none; flex:1; overflow:hidden; }
+.view.active { display:flex; }
+
+/* ── HISTOIRE LAYOUT ── */
+.histoire-layout { display:flex; flex:1; overflow:hidden; }
+.histoire-main { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+.quiz-header-bar { padding:14px 24px 12px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; flex-shrink:0; }
+.quiz-title-area { display:flex; align-items:center; gap:12px; flex:1; }
+.quiz-chapter-icon { font-size:1.4rem; flex-shrink:0; }
+.quiz-chapter-name { font-size:0.88rem; font-weight:600; color:var(--text); }
+.quiz-chapter-desc { font-size:0.76rem; color:var(--text2); font-style:italic; line-height:1.45; margin-top:2px; max-width:520px; }
+.quiz-chapter-sub { font-size:0.68rem; color:var(--text3); margin-top:3px; }
+.quiz-body { flex:1; overflow-y:auto; padding:28px 32px; }
+.quiz-body::-webkit-scrollbar { width:4px; }
+.quiz-body::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:2px; }
+
+/* Chapter sidebar items */
+.chapter-item { padding:9px 12px; border-radius:8px; cursor:pointer; margin-bottom:3px; border:1px solid transparent; transition:all 0.14s; }
+.chapter-item:hover { background:var(--surface2); }
+.chapter-item.active { background:var(--accent-glow); border-color:rgba(124,109,250,0.3); }
+.chapter-item .ch-icon { font-size:1rem; margin-right:7px; }
+.chapter-item .ch-name { font-size:0.75rem; font-weight:600; color:var(--text); }
+.chapter-item .ch-count { font-size:0.62rem; color:var(--text3); margin-top:2px; }
+.chapter-item.active .ch-name { color:var(--accent2); }
+
+
+.timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: border-color 0.3s;
+}
+.timer-wrap.urgent {
+  border-color: #e05050;
+  background: rgba(224,80,80,0.07);
+  animation: urgentPulse 1s infinite;
+}
+@keyframes urgentPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(224,80,80,0); }
+  50% { box-shadow: 0 0 0 3px rgba(224,80,80,0.2); }
+}
+.timer-ring { flex-shrink: 0; }
+#timerArc { transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+.timer-info { display: flex; flex-direction: column; align-items: flex-start; }
+.timer-label { font-size: 0.5rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); }
+.timer-display { font-size: 0.82rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.timer-wrap.urgent .timer-display { color: #e05050; }
+.timer-reset { background: transparent; border: none; color: var(--text3); font-size: 1rem; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: color 0.15s, background 0.15s; }
+.timer-reset:hover { color: var(--accent); background: var(--accent-glow); }
+.timer-done { border-color: #50c878 !important; background: rgba(80,200,120,0.07) !important; }
+.timer-done .timer-display { color: #3aaa60 !important; }
+
+/* ── QUIZ ── */
+.quiz-question-block { margin-bottom: 28px; }
+.quiz-q-num { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); margin-bottom: 6px; }
+.quiz-q-text { font-family: 'Lora', serif; font-size: 0.95rem; color: var(--text); line-height: 1.6; margin-bottom: 14px; font-weight: 500; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border2); border-radius: 8px; cursor: pointer; background: var(--surface); transition: all 0.15s; font-size: 0.84rem; color: var(--text2); }
+.quiz-option:hover:not(.disabled) { border-color: var(--accent); color: var(--text); background: var(--accent-glow); }
+.quiz-option.correct { border-color: #50c878; background: rgba(80,200,120,0.1); color: #2e8f50; font-weight: 600; }
+.quiz-option.wrong { border-color: #e05050; background: rgba(224,80,80,0.08); color: #b03030; }
+.quiz-option.reveal { border-color: #50c878; background: rgba(80,200,120,0.06); color: #2e8f50; opacity: 0.7; }
+.quiz-option.disabled { cursor: default; }
+.quiz-option-letter { width: 22px; height: 22px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; flex-shrink: 0; }
+.quiz-option.correct .quiz-option-letter { background: #50c878; color: #fff; border-color: #50c878; }
+.quiz-option.wrong .quiz-option-letter { background: #e05050; color: #fff; border-color: #e05050; }
+.quiz-option.reveal .quiz-option-letter { background: #50c878; color: #fff; border-color: #50c878; }
+.quiz-feedback { font-size: 0.75rem; margin-top: 8px; padding: 6px 12px; border-radius: 6px; }
+.quiz-feedback.ok { background: rgba(80,200,120,0.1); color: #2e8f50; }
+.quiz-feedback.ko { background: rgba(224,80,80,0.08); color: #b03030; }
+.quiz-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); }
+.quiz-btn { padding: 9px 20px; border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.quiz-btn-primary { background: var(--accent); color: #fff; box-shadow: 0 2px 10px rgba(124,109,250,0.25); }
+.quiz-btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+.quiz-btn-ghost { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); }
+.quiz-btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+.quiz-progress { font-size: 0.68rem; color: var(--text3); }
+.quiz-result-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 30px 20px; text-align: center; }
+.quiz-result-score { font-size: 2.8rem; font-weight: 700; color: var(--accent); }
+.quiz-result-label { font-size: 0.9rem; color: var(--text2); }
+.quiz-result-emoji { font-size: 2.5rem; }
+.quiz-error { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 20px; text-align: center; color: var(--text3); font-size: 0.82rem; }
+
+/* ── TOAST ── */
+.toast { position:fixed; bottom:22px; right:22px; background:var(--surface); border:1px solid var(--border2); color:var(--text); padding:10px 16px; border-radius:10px; font-size:0.74rem; display:flex; align-items:center; gap:8px; transform:translateY(14px); opacity:0; transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1); z-index:999; box-shadow:0 8px 32px var(--shadow); }
+.toast::before { content:''; width:6px; height:6px; background:var(--accent); border-radius:50%; box-shadow:0 0 6px var(--accent); flex-shrink:0; }
+.toast.show { transform:translateY(0); opacity:1; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo"><div class="logo-dot"></div>TextEditor</div>
+
+  <!-- MAIN NAV TABS -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="nav-editeur" onclick="switchView('editeur')">
+      📝 Éditeur
+    </button>
+    <button class="nav-tab" id="nav-histoire" onclick="switchView('histoire')">
+      🏛️ Histoire
+    </button>
+  </div>
+
+  <div class="topbar-sep"></div>
+  <span class="theme-icon">🌙</span>
+  <div class="theme-toggle" onclick="toggleTheme()"></div>
+  <span class="theme-icon">☀️</span>
+
+  <!-- TIMER (visible en mode éditeur uniquement) -->
+  <div class="timer-wrap" id="timerWrap" style="display:none">
+    <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
+      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
+        stroke-dasharray="94.25" stroke-dashoffset="0"
+        stroke-linecap="round" transform="rotate(-90 18 18)"
+        id="timerArc"/>
+    </svg>
+    <div class="timer-info">
+      <span class="timer-label">Temps</span>
+      <span class="timer-display" id="timerDisplay">28:00</span>
+    </div>
+    <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
+  </div>
+
+  <button class="btn-random" id="btnRandom" onclick="loadRandom()">
+    <span class="dice">🎲</span> Texte aléatoire
+  </button>
+</div>
+
+<div class="app">
+
+  <!-- ══ VUE ÉDITEUR ══ -->
+  <div class="view active" id="view-editeur">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Textes</span>
+        <span class="sidebar-count" id="sidebar-count-textes">…</span>
+      </div>
+      <div class="sidebar-list" id="sidebarList"></div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="panels-area">
+
+        <!-- PANEL TEXTE -->
+        <div class="star-panel active" id="panel-texte">
+          <div class="scroll-area" style="padding-bottom:0;">
+
+            <div class="section-label">Éditeur de texte</div>
+            <div class="text-intro-block" id="textIntroBlock" style="display:none">
+              <div class="text-intro-title" id="textIntroTitle"></div>
+              <div class="text-intro-body" id="textIntroBody"></div>
+            </div>
+            <div class="editor-block">
+              <div class="toolbar" id="toolbar-editor">
+                <button class="tb-btn" onclick="fmt('bold')" title="Gras"><b>B</b></button>
+                <button class="tb-btn" onclick="fmt('italic')" title="Italique"><i style="font-family:Georgia">I</i></button>
+                <button class="tb-btn" onclick="fmt('underline')" title="Souligné"><u>U</u></button>
+                <button class="tb-btn" onclick="fmt('strikeThrough')" title="Barré"><s>S</s></button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="fmt('justifyLeft')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect y="3.1" width="9" height="1.8" rx="0.9"/><rect y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+                <button class="tb-btn" onclick="fmt('justifyCenter')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="2" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="1" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+                <button class="tb-btn" onclick="fmt('justifyRight')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="4" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="2" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+                <div class="tb-sep"></div>
+                <span class="tb-label">Taille</span>
+                <select class="tb-select" onchange="setFontSize(this.value)">
+                  <option value="1">XS</option><option value="2">S</option><option value="3" selected>M</option><option value="4">L</option><option value="5">XL</option><option value="6">XXL</option>
+                </select>
+                <div class="tb-sep"></div>
+                <span class="tb-label">Texte</span>
+                <input type="color" class="tb-color" id="colorPicker" value="#1a1a2e" style="border-radius:6px;margin-left:0;" onmousedown="saveSelection('editor')" onchange="setColor(this.value)">
+                <div class="tb-sep"></div>
+                <div class="hl-group" id="hlGroup">
+                  <button class="tb-btn hl-btn" id="hlBtn" onclick="applyHighlight('editor')" title="Surligner la sélection">🖊 Surligner <span class="hl-swatch" id="hlSwatch"></span></button>
+                  <input type="color" class="tb-color hl-color-btn" id="hlColorPicker" value="#ffeb3b" title="Couleur de surlignage" onchange="changeHlColor(this.value, 'editor')">
+                </div>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="fmt('removeFormat')" style="width:auto;padding:0 8px;font-size:0.63rem;font-weight:500;">Effacer</button>
+              </div>
+              <div class="editor-wrap">
+                <div class="editor-zone" id="editor" contenteditable="true" spellcheck="true" data-placeholder="Choisissez un texte dans la liste…"></div>
+                <div class="editor-footer">
+                  <span class="char-count" id="counter">0 caractères</span>
+                  <span class="active-tag" id="activeTag" style="display:none"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-label" style="margin-top:4px;">Zone libre</div>
+            <div class="free-section">
+              <div class="toolbar" id="toolbar-free">
+                <button class="tb-btn" onclick="fmtFree('bold')"><b>B</b></button>
+                <button class="tb-btn" onclick="fmtFree('italic')"><i style="font-family:Georgia">I</i></button>
+                <button class="tb-btn" onclick="fmtFree('underline')"><u>U</u></button>
+                <button class="tb-btn" onclick="fmtFree('strikeThrough')"><s>S</s></button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="fmtFree('justifyLeft')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect y="3.1" width="9" height="1.8" rx="0.9"/><rect y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+                <button class="tb-btn" onclick="fmtFree('justifyCenter')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="2" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="1" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+                <button class="tb-btn" onclick="fmtFree('justifyRight')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="4" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="2" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+                <div class="tb-sep"></div>
+                <span class="tb-label">Taille</span>
+                <select class="tb-select" onchange="setFontSizeFree(this.value)">
+                  <option value="1">XS</option><option value="2">S</option><option value="3" selected>M</option><option value="4">L</option><option value="5">XL</option><option value="6">XXL</option>
+                </select>
+                <div class="tb-sep"></div>
+                <span class="tb-label">Texte</span>
+                <input type="color" class="tb-color" id="freeColorPicker" value="#1a1a2e" style="border-radius:6px;margin-left:0;" onmousedown="saveSelection('freeEditor')" onchange="setColorFree(this.value)">
+                <div class="tb-sep"></div>
+                <div class="hl-group" id="hlGroupFree">
+                  <button class="tb-btn hl-btn" id="hlBtnFree" onclick="applyHighlight('freeEditor')" title="Surligner la sélection">🖊 Surligner <span class="hl-swatch" id="hlSwatchFree"></span></button>
+                  <input type="color" class="tb-color hl-color-btn" id="hlColorPickerFree" value="#ffeb3b" title="Couleur de surlignage" onchange="changeHlColor(this.value, 'freeEditor')">
+                </div>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="fmtFree('removeFormat')" style="width:auto;padding:0 8px;font-size:0.63rem;font-weight:500;">Effacer</button>
+              </div>
+              <div class="editor-wrap" style="flex:1;min-height:0;display:flex;flex-direction:column;">
+                <div class="editor-zone" id="freeEditor" contenteditable="true" spellcheck="true" style="flex:1;min-height:0;overflow-y:auto;" data-placeholder="Écrivez librement ici…"></div>
+                <div class="editor-footer">
+                  <span class="char-count" id="freeCounter">0 caractères</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PANEL ★ -->
+        <div class="star-panel" id="panel-1">
+          <div class="section-label">Niveau <span style="color:var(--star-on)">★</span></div>
+          <div class="star-panel-inner">
+            <div class="star-panel-header">
+              <div class="stars-big stars"><span class="star">★</span></div>
+              <div class="star-panel-header-text">
+                <span class="star-panel-title" id="title-1">Niveau débutant</span>
+                <span class="star-panel-intro" id="intro-1"></span>
+              </div>
+              <div style="flex:1"></div>
+              <span class="star-lock-badge">🔒 Lecture seule</span>
+            </div>
+            <div class="star-panel-body"><div class="star-content" id="content-1"></div></div>
+          </div>
+        </div>
+
+        <!-- PANEL ★★ -->
+        <div class="star-panel" id="panel-2">
+          <div class="section-label">Niveau <span style="color:var(--star-on)">★★</span></div>
+          <div class="star-panel-inner">
+            <div class="star-panel-header">
+              <div class="stars-big stars"><span class="star">★</span><span class="star">★</span></div>
+              <div class="star-panel-header-text">
+                <span class="star-panel-title" id="title-2">Niveau intermédiaire</span>
+                <span class="star-panel-intro" id="intro-2"></span>
+              </div>
+              <div style="flex:1"></div>
+              <span class="star-lock-badge">🔒 Lecture seule</span>
+            </div>
+            <div class="star-panel-body"><div class="star-content" id="content-2"></div></div>
+          </div>
+        </div>
+
+        <!-- PANEL ★★★ -->
+        <div class="star-panel" id="panel-3">
+          <div class="section-label">Niveau <span style="color:var(--star-on)">★★★</span></div>
+          <div class="star-panel-inner">
+            <div class="star-panel-header">
+              <div class="stars-big stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+              <div class="star-panel-header-text">
+                <span class="star-panel-title" id="title-3">Niveau avancé</span>
+                <span class="star-panel-intro" id="intro-3"></span>
+              </div>
+              <div style="flex:1"></div>
+              <span class="star-lock-badge">🔒 Lecture seule</span>
+            </div>
+            <div class="star-panel-body"><div class="star-content" id="content-3"></div></div>
+          </div>
+        </div>
+
+      </div><!-- /panels-area -->
+
+      <!-- RIGHT STAR SIDEBAR -->
+      <div class="star-sidebar">
+        <div class="star-sidebar-label">Texte</div>
+        <div class="star-tab active" onclick="switchTab('panel-texte', this)">
+          <div style="font-size:1.1rem;">📝</div>
+          <span class="star-tab-label">Texte</span>
+        </div>
+        <div class="star-sidebar-sep"></div>
+        <div class="star-sidebar-label">Niveaux</div>
+        <div class="star-tab" onclick="switchTab('panel-1', this)">
+          <div class="stars"><span class="star">★</span></div>
+          <span class="star-tab-label">Niv. 1</span>
+        </div>
+        <div class="star-tab" onclick="switchTab('panel-2', this)">
+          <div class="stars"><span class="star">★</span><span class="star">★</span></div>
+          <span class="star-tab-label">Niv. 2</span>
+        </div>
+        <div class="star-tab" onclick="switchTab('panel-3', this)">
+          <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+          <span class="star-tab-label">Niv. 3</span>
+        </div>
+      </div>
+    </div><!-- /main -->
+
+  </div><!-- /view-editeur -->
+
+  <!-- ══ VUE HISTOIRE ══ -->
+  <div class="view" id="view-histoire">
+    <div class="histoire-layout">
+
+      <!-- SIDEBAR QUIZ: catégories / chapitres -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Chapitres</span>
+          <span class="sidebar-count" id="quiz-chapter-count">—</span>
+        </div>
+        <div class="sidebar-list" id="quiz-chapter-list">
+          <div style="padding:16px 10px; color:var(--text3); font-size:0.75rem; text-align:center;">
+            Chargement…
+          </div>
+        </div>
+      </div>
+
+      <!-- ZONE QUIZ principale -->
+      <div class="histoire-main">
+        <div class="quiz-header-bar">
+          <div class="quiz-title-area">
+            <span class="quiz-chapter-icon" id="quiz-chapter-icon">🏛️</span>
+            <div>
+              <div class="quiz-chapter-name" id="quiz-chapter-name">Chargement du quiz…</div>
+              <div class="quiz-chapter-desc" id="quiz-chapter-desc"></div>
+              <div class="quiz-chapter-sub" id="quiz-chapter-sub"></div>
+            </div>
+          </div>
+          <span id="quiz-score-badge" class="star-lock-badge" style="display:none"></span>
+        </div>
+
+        <div class="quiz-body" id="quiz-body">
+          <div id="quiz-loading" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:var(--text3);">
+            <div style="font-size:2.5rem;">📂</div>
+            <strong style="color:var(--text);font-size:0.9rem;">Fichier dates.json</strong>
+            <p style="font-size:0.8rem;text-align:center;line-height:1.6;">Placez <code>dates.json</code> dans le même dossier<br>que ce fichier HTML, puis rechargez.</p>
+            <button class="quiz-btn quiz-btn-ghost" onclick="quizLoaded=false; loadQuiz()">↺ Réessayer</button>
+          </div>
+          <div id="quiz-content" style="display:none"></div>
+          <div id="quiz-result" style="display:none"></div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /view-histoire -->
+
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let texts = [];
+let starData = [];
+let textIntros = [];
+let currentIndex = -1;
+let savedRange = null;
+let savedRangeFor = null;
+let hlColors = { editor: '#ffeb3b', freeEditor: '#ffeb3b' };
+
+// ── CHARGEMENT textes.json ─────────────────────────────────────────────────────
+async function loadTextes() {
+  try {
+    const res = await fetch('textes.json');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    texts = data.textes.map(t => t.texte);
+    textIntros = data.textes.map(t => ({ titre: t.titre || '', intro: t.intro || '' }));
+    starData = data.textes.map(t => ({
+      title1: t.niveaux['1'].titre, content1: t.niveaux['1'].contenu, intro1: t.niveaux['1'].intro || '',
+      title2: t.niveaux['2'].titre, content2: t.niveaux['2'].contenu, intro2: t.niveaux['2'].intro || '',
+      title3: t.niveaux['3'].titre, content3: t.niveaux['3'].contenu, intro3: t.niveaux['3'].intro || ''
+    }));
+    // Mettre à jour le compteur dans la sidebar
+    document.getElementById('sidebar-count-textes').textContent = texts.length;
+    renderSidebar();
+    loadRandom();
+  } catch(e) {
+    document.getElementById('editor').innerHTML =
+      '<em style="color:var(--text3)">⚠️ Impossible de charger textes.json — placez le fichier dans le même dossier.</em>';
+    showToast('⚠️ textes.json introuvable');
+  }
+}
+
+// ── SIDEBAR ───────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const list = document.getElementById('sidebarList');
+  list.innerHTML = texts.map((t, i) => `
+    <div class="sidebar-item ${i === currentIndex ? 'active' : ''}" onclick="loadText(${i})">
+      <div class="item-num">Texte ${String(i+1).padStart(2,'0')}</div>
+      <div class="item-preview">${t}</div>
+    </div>
+  `).join('');
+}
+
+function loadText(i) {
+  currentIndex = i;
+  document.getElementById('editor').innerHTML = texts[i].replace(/\n/g, '<br>');
+  renderSidebar();
+  updateCounter();
+  document.querySelectorAll('.sidebar-item')[i]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  const tag = document.getElementById('activeTag');
+  tag.textContent = `Texte #${String(i+1).padStart(2,'0')}`;
+  tag.style.display = 'inline';
+  // Intro block
+  const intro = textIntros[i];
+  const introBlock = document.getElementById('textIntroBlock');
+  if (intro && intro.intro) {
+    document.getElementById('textIntroTitle').textContent = intro.titre;
+    document.getElementById('textIntroBody').textContent = intro.intro;
+    introBlock.style.display = 'flex';
+  } else {
+    introBlock.style.display = 'none';
+  }
+  // Mise à jour des panneaux étoiles
+  updateStarPanels(i);
+  // Revenir au panel texte
+  const pTexte = document.getElementById('panel-texte');
+  if (!pTexte.classList.contains('active')) {
+    switchTab('panel-texte', document.querySelector('.star-sidebar .star-tab'));
+  }
+  // Taille S par défaut
+  const editor = document.getElementById('editor');
+  editor.focus();
+  document.execCommand('selectAll', false, null);
+  document.execCommand('fontSize', false, '2');
+  window.getSelection()?.removeAllRanges();
+  // Lancer le timer
+  startTimer();
+  showToast(`Texte #${i+1} chargé — 28 min ⏱`);
+}
+
+function updateStarPanels(i) {
+  const d = starData[i];
+  document.getElementById('title-1').textContent = d.title1;
+  document.getElementById('intro-1').textContent = d.intro1;
+  document.getElementById('content-1').innerHTML = d.content1;
+  document.getElementById('title-2').textContent = d.title2;
+  document.getElementById('intro-2').textContent = d.intro2;
+  document.getElementById('content-2').innerHTML = d.content2;
+  document.getElementById('title-3').textContent = d.title3;
+  document.getElementById('intro-3').textContent = d.intro3;
+  document.getElementById('content-3').innerHTML = d.content3;
+}
+
+function loadRandom() {
+  let i;
+  do { i = Math.floor(Math.random() * texts.length); } while (i === currentIndex && texts.length > 1);
+  loadText(i);
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(panelId, el) {
+  document.querySelectorAll('.star-sidebar .star-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.star-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('colorPicker').value = isDark ? '#1a1a2e' : '#e8e8f0';
+  document.getElementById('freeColorPicker').value = isDark ? '#1a1a2e' : '#e8e8f0';
+  showToast(isDark ? 'Mode jour ☀️' : 'Mode nuit 🌙');
+}
+
+// ── FORMATTING ────────────────────────────────────────────────────────────────
+function fmt(cmd) { document.getElementById('editor').focus(); document.execCommand(cmd, false, null); }
+function fmtFree(cmd) { document.getElementById('freeEditor').focus(); document.execCommand(cmd, false, null); }
+function setFontSize(v) { document.getElementById('editor').focus(); document.execCommand('fontSize', false, v); }
+function setFontSizeFree(v) { document.getElementById('freeEditor').focus(); document.execCommand('fontSize', false, v); }
+
+function saveSelection(editorId) {
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount > 0) {
+    savedRange = sel.getRangeAt(0).cloneRange();
+    savedRangeFor = editorId;
+  }
+}
+
+function restoreSelection(editorId) {
+  document.getElementById(editorId).focus();
+  if (savedRange && savedRangeFor === editorId) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedRange);
+  }
+}
+
+function setColor(v) { restoreSelection('editor'); document.execCommand('foreColor', false, v); }
+function setColorFree(v) { restoreSelection('freeEditor'); document.execCommand('foreColor', false, v); }
+
+// Surlignage : bouton qui applique la couleur courante
+function applyHighlight(editorId) {
+  const editor = document.getElementById(editorId);
+  editor.focus();
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) { showToast('Sélectionnez du texte d\'abord'); return; }
+  document.execCommand('styleWithCSS', false, true);
+  document.execCommand('backColor', false, hlColors[editorId]);
+}
+
+// Changer la couleur de surlignage — met à jour la pastille et la variable
+function changeHlColor(v, editorId) {
+  hlColors[editorId] = v;
+  const swatchId = editorId === 'editor' ? 'hlSwatch' : 'hlSwatchFree';
+  document.getElementById(swatchId).style.background = v;
+}
+
+// Init des swatches
+function initSwatches() {
+  document.getElementById('hlSwatch').style.background = hlColors['editor'];
+  document.getElementById('hlSwatchFree').style.background = hlColors['freeEditor'];
+}
+
+// ── TIMER ─────────────────────────────────────────────────────────────────────
+const TIMER_DURATION = 28 * 60; // 28 minutes en secondes
+let timerSeconds = TIMER_DURATION;
+let timerInterval = null;
+const CIRCUMFERENCE = 2 * Math.PI * 15; // r=15 → 94.25
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = TIMER_DURATION;
+  document.getElementById('timerWrap').style.display = 'flex';
+  document.getElementById('timerWrap').classList.remove('urgent', 'timer-done');
+  updateTimerDisplay();
+  timerInterval = setInterval(tickTimer, 1000);
+}
+
+function tickTimer() {
+  timerSeconds--;
+  updateTimerDisplay();
+  if (timerSeconds <= 0) {
+    clearInterval(timerInterval);
+    document.getElementById('timerWrap').classList.add('timer-done');
+    document.getElementById('timerDisplay').textContent = 'Terminé !';
+    document.getElementById('timerArc').style.strokeDashoffset = CIRCUMFERENCE;
+    showToast('⏱ Temps écoulé !');
+  }
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  document.getElementById('timerDisplay').textContent =
+    `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  // Arc SVG
+  const progress = timerSeconds / TIMER_DURATION;
+  const offset = CIRCUMFERENCE * (1 - progress);
+  const arc = document.getElementById('timerArc');
+  arc.style.strokeDashoffset = offset;
+  // Couleur + urgence (< 5 min)
+  const wrap = document.getElementById('timerWrap');
+  if (timerSeconds <= 300) {
+    arc.style.stroke = '#e05050';
+    wrap.classList.add('urgent');
+  } else if (timerSeconds <= 600) {
+    arc.style.stroke = '#f0a500';
+    wrap.classList.remove('urgent');
+  } else {
+    arc.style.stroke = 'var(--accent)';
+    wrap.classList.remove('urgent');
+  }
+}
+
+function resetTimer() {
+  startTimer();
+  showToast('⏱ Timer relancé');
+}
+
+// ── COUNTERS ──────────────────────────────────────────────────────────────────
+function updateCounter() {
+  const n = document.getElementById('editor').innerText.replace(/\n/g,'').length;
+  document.getElementById('counter').textContent = `${n} caractère${n>1?'s':''}`;
+}
+function updateFreeCounter() {
+  const n = document.getElementById('freeEditor').innerText.replace(/\n/g,'').length;
+  document.getElementById('freeCounter').textContent = `${n} caractère${n>1?'s':''}`;
+}
+document.getElementById('editor').addEventListener('input', updateCounter);
+document.getElementById('freeEditor').addEventListener('input', updateFreeCounter);
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span></span>${msg}`;
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── VIEW SWITCHER ─────────────────────────────────────────────────────────────
+function switchView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.getElementById('nav-' + view).classList.add('active');
+  // Show/hide editor-only controls
+  const isEditor = view === 'editeur';
+  document.getElementById('btnRandom').style.display = isEditor ? 'flex' : 'none';
+  const tw = document.getElementById('timerWrap');
+  if (!isEditor) tw.style.display = 'none';
+  // Load quiz when switching to histoire
+  if (view === 'histoire') loadQuiz();
+}
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
+let quizData = null;
+let quizLoaded = false;
+let quizAnswers = {};
+let quizCurrentPage = 0;
+let quizCurrentChapter = 0;
+
+async function loadQuiz() {
+  if (quizLoaded) return;
+  try {
+    const res = await fetch('dates.json');
+    if (!res.ok) throw new Error('Fichier introuvable');
+    quizData = await res.json();
+    quizLoaded = true;
+    document.getElementById('quiz-loading').style.display = 'none';
+    renderChapterSidebar();
+    loadChapter(0);
+  } catch(e) {
+    document.getElementById('quiz-loading').innerHTML = `
+      <div class="quiz-error">
+        <div style="font-size:2.5rem;">⚠️</div>
+        <strong style="color:var(--text);font-size:0.9rem;">Fichier dates.json introuvable</strong>
+        <p style="line-height:1.6;">Placez <code>dates.json</code> dans le même dossier<br>que ce fichier HTML, puis rechargez.</p>
+        <button class="quiz-btn quiz-btn-ghost" onclick="quizLoaded=false; loadQuiz()">↺ Réessayer</button>
+      </div>`;
+  }
+}
+
+function renderChapterSidebar() {
+  const chapters = quizData.chapitres || [{ titre: quizData.titre, icone: '🏛️', questions: quizData.questions }];
+  quizData._chapters = chapters;
+  document.getElementById('quiz-chapter-count').textContent = chapters.length;
+  document.getElementById('quiz-chapter-list').innerHTML = chapters.map((ch, i) => `
+    <div class="chapter-item ${i===0?'active':''}" id="ch-item-${i}" onclick="loadChapter(${i})">
+      <span class="ch-icon">${ch.icone || '📖'}</span>
+      <span class="ch-name">${ch.titre}</span>
+      <div class="ch-count">${ch.questions.length} question${ch.questions.length>1?'s':''}</div>
+    </div>
+  `).join('');
+}
+
+function loadChapter(idx) {
+  const chapters = quizData._chapters;
+  quizCurrentChapter = idx;
+  quizAnswers = {};
+  quizCurrentPage = 0;
+  document.querySelectorAll('.chapter-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('ch-item-' + idx)?.classList.add('active');
+  const ch = chapters[idx];
+  // Mélange aléatoire des questions (Fisher-Yates)
+  ch._shuffled = [...ch.questions].sort(() => Math.random() - 0.5);
+  document.getElementById('quiz-chapter-icon').textContent = ch.icone || '📖';
+  document.getElementById('quiz-chapter-name').textContent = ch.titre;
+  document.getElementById('quiz-chapter-desc').textContent = ch.description || '';
+  document.getElementById('quiz-chapter-sub').textContent = `${ch.questions.length} questions QCM — ordre aléatoire`;
+  document.getElementById('quiz-score-badge').style.display = 'none';
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('quiz-content').style.display = 'block';
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const ch = quizData._chapters[quizCurrentChapter];
+  const questions = ch._shuffled || ch.questions;
+  const content = document.getElementById('quiz-content');
+  const result = document.getElementById('quiz-result');
+  result.style.display = 'none';
+  content.style.display = 'block';
+  const q = questions[quizCurrentPage];
+  const total = questions.length;
+  const answered = quizAnswers[quizCurrentPage];
+  const letters = ['A', 'B', 'C', 'D', 'E'];
+
+  const optionsHTML = q.options.map((opt, oi) => {
+    let cls = 'quiz-option';
+    if (answered !== undefined) {
+      cls += ' disabled';
+      if (oi === q.answer) cls += ' correct';
+      else if (oi === answered) cls += ' wrong';
+    }
+    return `<div class="${cls}" onclick="answerQuiz(${oi})">
+      <span class="quiz-option-letter">${letters[oi]}</span>${opt}
+    </div>`;
+  }).join('');
+
+  let feedbackHTML = '';
+  if (answered !== undefined) {
+    if (answered === q.answer) {
+      feedbackHTML = `<div class="quiz-feedback ok">✓ Bonne réponse !${q.explication ? ' ' + q.explication : ''}</div>`;
+    } else {
+      feedbackHTML = `<div class="quiz-feedback ko">✗ Bonne réponse : <strong>${q.options[q.answer]}</strong>${q.explication ? ' — ' + q.explication : ''}</div>`;
+    }
+  }
+
+  const isLast = quizCurrentPage === total - 1;
+  const allAnswered = Object.keys(quizAnswers).length === total;
+
+  content.innerHTML = `
+    <div class="quiz-question-block">
+      <div class="quiz-q-num">Question ${quizCurrentPage + 1} / ${total}</div>
+      <div class="quiz-q-text">${q.question}</div>
+      <div class="quiz-options">${optionsHTML}</div>
+      ${feedbackHTML}
+    </div>
+    <div class="quiz-actions">
+      <button class="quiz-btn quiz-btn-ghost" onclick="quizPrev()" ${quizCurrentPage===0?'disabled style="opacity:0.35;cursor:default"':''}>← Préc.</button>
+      <span class="quiz-progress">${Object.keys(quizAnswers).length} / ${total} répondues</span>
+      ${isLast && allAnswered
+        ? `<button class="quiz-btn quiz-btn-primary" onclick="showQuizResult()">Résultats 🏁</button>`
+        : `<button class="quiz-btn quiz-btn-primary" onclick="quizNext()">Suiv. →</button>`}
+    </div>`;
+
+  // Badge score live
+  const badge = document.getElementById('quiz-score-badge');
+  const answered_count = Object.keys(quizAnswers).length;
+  if (answered_count > 0) {
+    const correct = Object.entries(quizAnswers).filter(([i,a]) => a === questions[i].answer).length;
+    badge.textContent = `${correct} / ${answered_count}`;
+    badge.style.display = 'inline';
+  }
+}
+
+function answerQuiz(optionIndex) {
+  if (quizAnswers[quizCurrentPage] !== undefined) return;
+  quizAnswers[quizCurrentPage] = optionIndex;
+  renderQuizQuestion();
+}
+
+function quizNext() {
+  const ch = quizData._chapters[quizCurrentChapter];
+  const total = (ch._shuffled || ch.questions).length;
+  if (quizCurrentPage < total - 1) { quizCurrentPage++; renderQuizQuestion(); }
+}
+
+function quizPrev() {
+  if (quizCurrentPage > 0) { quizCurrentPage--; renderQuizQuestion(); }
+}
+
+function showQuizResult() {
+  const ch = quizData._chapters[quizCurrentChapter];
+  const questions = ch._shuffled || ch.questions;
+  const total = questions.length;
+  const correct = Object.entries(quizAnswers).filter(([i,a]) => a === questions[i].answer).length;
+  const pct = Math.round(correct / total * 100);
+  const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : pct >= 40 ? '📚' : '💪';
+  const msg = pct >= 80 ? 'Excellent !' : pct >= 60 ? 'Bien joué !' : pct >= 40 ? 'Continue à réviser !' : 'Il faut réviser !';
+  document.getElementById('quiz-content').style.display = 'none';
+  const result = document.getElementById('quiz-result');
+  result.style.display = 'block';
+  result.innerHTML = `
+    <div class="quiz-result-wrap">
+      <div class="quiz-result-emoji">${emoji}</div>
+      <div class="quiz-result-score">${correct} / ${total}</div>
+      <div class="quiz-result-label">${msg} (${pct}%)</div>
+      <button class="quiz-btn quiz-btn-primary" onclick="loadChapter(${quizCurrentChapter})">🔄 Recommencer ce chapitre</button>
+    </div>`;
+}
+
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+initSwatches();
+loadTextes();
+</script>
+</body>
+</html>

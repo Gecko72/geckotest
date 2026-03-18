@@ -1,0 +1,121 @@
+{
+  "chapitres": [
+    {
+      "titre": "Risorgimento(Unification de l'Italie)",
+      "icone": "🍕​​",
+      "description": "En 1848 la péninsule italienne est divisée en de nombreux États des états indépendants comme les duchés de Parme, Modène et de Toscane au centre le Royaume des Deux-Siciles au sud le Royaume de Piémont Sardaigne à l'ouest, les États pontificaux ,autour de Rome, mais aussi des territoires occupés par l'Autriche, la Lombardie, et la généricité au nord-est.",
+      "questions": [
+        {
+          "question": "En quelle année eu lieu le printemps des peuples ?",
+          "options": [
+            "1870", 
+            "1858",
+            "1848",
+            "1867"
+          ],
+          "answer": 2,
+          "explication": "Alors que la population européenne découvre au milieu du XIXe siècle à la modernité urbaine sociale et économique le continent est donné par des régimes réactionnaires à la suite de la répression du printemps des peuples.(1848)"
+        },
+        {
+          "question": "Qui devient devient roi de Piémont-Sardaigne en 1849?",
+          "options": [
+            "Victor Emmanuel II",
+            "Louis-philippe",
+            "Napoléon III",
+            "Giuseppe Garibaldi"
+          ],
+          "answer": 0,
+          "explication": "Le Risorgimento (expression désignant le mouvement national pour l'unité et l'indépendance de l'Italie) est à mettre crédit de Victor Emmanuel II Roi de piémont-Sardaigne, et son Premier ministre le comte de Cavour inutile de tentative d'assassinat par Orsini, un patriote italien en 1858."
+        },
+        {
+          "question": "En quelle année a lieu l'entrevue de Plombières ?",
+          "options": [
+            "1854",
+            "1861",
+            "1849",
+            "1858"
+          ],
+          "answer": 3,
+          "explication": "Napoléon III accélère les négociations avec Cavour : c'est l'entrevue de plombières qui prévoit une alliance militaire et politique entre la France et le piémont-Sardaigne pour une explication italienne contre l'Autriche."
+        },
+        {
+          "question": "suite a l'entrevue de plombières quelles térritoires le piémont-Sardaigne doit-il céder à la France ?",
+          "options": [
+            "Lyon et Marseille",
+            "La corse et les alpes maritimes",
+            "Comté de Nice et la Savoie",
+            "Aucun"
+          ],
+          "answer": 2,
+          "explication": "L'Italie centrale il se soulève et progressivement attaché au piémont (mars 1860) .En contrepartie de son engagement, la France reçoit le Comté de Nice et la Savoie qui sont rattachées après un plébiscite."
+        },
+        {
+          "question": "En quelle année a lieu la bataille de Solférino ?",
+          "options": [
+            "1862",
+            "1859",
+            "1865",
+            "1870"
+          ],
+          "answer": 1,
+          "explication": "En 1859 Les troupes piémontoise aider des troupes françaises battent les troupes autrichiennes à Magenta et Solferino (juin1859) et la colombard di passe sous l'autorité du piémont."
+        },
+        {
+          "question": "En quelle année En quelle année a lieu la conquête de la Sicile par Garibaldi ?",
+          "options": [
+            "1860",
+            "1861",
+            "1862",
+            "1863"
+          ],
+          "answer": 0,
+          "explication": "Le républicain Garibaldi se lance à la conquête du Royaume des deux-siciles en mai 1860 avec une armée de volontaires. Ce sont les « chemises rouges ». C'est une victoire, la Sicile est rattachée au pied mon point la Vénétie et les États pontificaux restent à l'écart de l'unification italienne."
+        },
+        {
+          "question": "Suite a quelle guerre la Vénétie est-elle rattachée au Royaume d'Italie en 1866 ?",
+          "options": [
+            "La guerre franco-prussienne",
+            "La guerre italo-allemande",
+            "La guerre entre l'Autriche et la Prusse",
+            "La guerre de 100 ans"
+          ],
+          "answer": 2,
+          "explication": "La Vénétie est rattachée au Royaume d'Italie suite à la guerre entre l'Autriche et la Prusse : la Prusse obtient la neutralité de la France en échange d'une conquête de la Vénétie par les Italiens qui en prennent le contrôle en 1866. Cependant les États de l'église restent sous la protection de la France qui refusent leur attachement à l'Italie."
+        },
+        {
+          "question": "En quelle année Victor Emmanuel II est-il devenu roi de l'Italie ?",
+          "options": [
+            "1870",
+            "1869",
+            "1861",
+            "1872"
+          ],
+          "answer": 2,
+          "explication": "En janvier 1861, Victor Emmanuel II est proclamé roi d'Italie."
+        },
+        {
+          "question": "Où est-ce que l'empereur Napoléon III pert-il en 1870 ?",
+          "options": [
+            "à la bataille de Solférino",
+            "à la bataille de Magenta",
+            "à la bataille de Waterloo",
+            "à la bataille de Sedan"
+          ],
+          "answer": 3,
+          "explication": "En 1870 l'armée française de quitter rom pour combattre les prussiens après la défaite de Napoléon III à Sedan et la fin du 2nd empire, les troupes italiennes de Victor-Emmanuel III entre à Rom, faisant de la ville la capitale du Royaume d'Italie."
+        },
+          {
+            "question": "En quelle année Rome devient-elle la capitale du Royaume d'Italie ?",
+            "options": [
+              "1870",
+              "1861",
+              "1867",
+              "1872"
+            ],
+            "answer": 0,
+            "explication": "En 1870 l'armée française de quitter Rome pour combattre les prussiens après la défaite de Napoléon III à Sedan et la fin du 2nd empire, les troupes italiennes de Victor-Emmanuel III entre à Rom, faisant de la ville la capitale du Royaume d'Italie."
+          }
+      ]
+    }
+  ]
+}
