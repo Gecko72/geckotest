@@ -61,7 +61,7 @@
           "explication": "En 1859 Les troupes piémontoise aider des troupes françaises battent les troupes autrichiennes à Magenta et Solferino (juin1859) et la colombard di passe sous l'autorité du piémont."
         },
         {
-          "question": "En quelle année En quelle année a lieu la conquête de la Sicile par Garibaldi ?",
+          "question": "En quelle année a lieu la conquête de la Sicile par Garibaldi ?",
           "options": [
             "1860",
             "1861",
@@ -116,6 +116,25 @@
             "explication": "En 1870 l'armée française de quitter Rome pour combattre les prussiens après la défaite de Napoléon III à Sedan et la fin du 2nd empire, les troupes italiennes de Victor-Emmanuel III entre à Rom, faisant de la ville la capitale du Royaume d'Italie."
           }
       ]
+    },
+    {
+      "titre": "Unification Allemande",
+      "icone": "🍺",
+      "description": "J'ai pas encore fait",
+      "questions": [
+        {
+          "question": "...",
+          "options": [
+            "...", 
+            "...",
+            "...",
+            "..."
+          ],
+          "answer": 2,
+          "explication": "..."
+        }
+      ]
+
     }
   ]
 }
