@@ -46,7 +46,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .dice { display:inline-block; transition:transform 0.4s; font-size:1.1rem; }
 .btn-random:hover .dice { transform:rotate(180deg); }
 
-@media (max-width: 899px) {
+@media (max-width: 900px) {
   .histoire-layout { flex-direction: column; }
 
   #view-histoire .sidebar {width: 100%;height: 120px; min-height: 120px; flex-shrink: 0; border-right: none; border-top: 1px solid var(--border); order: 2; flex-direction: row;}
@@ -117,6 +117,22 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 /* ── SECTION LABEL ── */
 .section-label { font-size:0.6rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text3); display:flex; align-items:center; gap:10px; }
 .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── SHARED TOOLBAR ── */
+.shared-toolbar-wrap {
+  padding: 10px 16px 0;
+  flex-shrink: 0;
+}
+.tb-zone-indicator {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--accent2);
+  background: var(--accent-glow);
+  border: 1px solid rgba(124,109,250,0.25);
+  border-radius: 20px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
 
 /* ── TOOLBAR ── */
 .toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:3px; padding:7px 10px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; flex-shrink:0; }
@@ -205,19 +221,18 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .chapter-item .ch-count { font-size:0.62rem; color:var(--text3); margin-top:2px; }
 .chapter-item.active .ch-name { color:var(--accent2); }
 
-.timer-wrap {
-display: flex;
-gap: 8px;
-max-width: 127px;
-padding: 5px 12px 5px 8px;
-align-items: center;
-background: var(--surface2);
-border: 1px solid var(--border2);
-border-radius: 10px;
-flex-shrink: 0;
-transition: border-color 0.3s;
-}
 
+.timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: border-color 0.3s;
+}
 .timer-wrap.urgent {
   border-color: #e05050;
   background: rgba(224,80,80,0.07);
@@ -284,10 +299,10 @@ transition: border-color 0.3s;
   <!-- MAIN NAV TABS -->
   <div class="nav-tabs">
     <button class="nav-tab active" id="nav-editeur" onclick="switchView('editeur')">
-      <span>📝</span><span class="btn-text">Français</span>
+      📝 Éditeur
     </button>
     <button class="nav-tab" id="nav-histoire" onclick="switchView('histoire')">
-      <span>🏛️</span><span class="btn-text">Histoire</span>
+      🏛️ Histoire
     </button>
   </div>
 
@@ -296,8 +311,24 @@ transition: border-color 0.3s;
   <div class="theme-toggle" onclick="toggleTheme()"></div>
   <span class="theme-icon">☀️</span>
 
+  <!-- TIMER (visible en mode éditeur uniquement) -->
+  <div class="timer-wrap" id="timerWrap" style="display:none">
+    <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
+      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
+        stroke-dasharray="94.25" stroke-dashoffset="0"
+        stroke-linecap="round" transform="rotate(-90 18 18)"
+        id="timerArc"/>
+    </svg>
+    <div class="timer-info">
+      <span class="timer-label">Temps</span>
+      <span class="timer-display" id="timerDisplay">28:00</span>
+    </div>
+    <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
+  </div>
+
   <button class="btn-random" id="btnRandom" onclick="loadRandom()">
-    <span class="dice">🎲</span> <span class="btn-text">Texte aléatoire</span>
+    <span class="dice">🎲</span> Texte aléatoire
   </button>
 </div>
 
@@ -318,10 +349,10 @@ transition: border-color 0.3s;
     <!-- MAIN -->
     <div class="main">
       <div class="panels-area">
- 
+
         <!-- PANEL TEXTE -->
         <div class="star-panel active" id="panel-texte">
- 
+
           <!-- TOOLBAR COMMUNE -->
           <div class="shared-toolbar-wrap">
             <div class="toolbar" id="toolbar-shared">
@@ -353,9 +384,9 @@ transition: border-color 0.3s;
               <span class="tb-zone-indicator" id="zoneIndicator">Éditeur</span>
             </div>
           </div>
- 
+
           <div class="scroll-area" style="padding-bottom:0; padding-top:8px;">
- 
+
             <div class="section-label">Éditeur de texte</div>
             <div class="text-intro-block" id="textIntroBlock" style="display:none">
               <div class="text-intro-title" id="textIntroTitle"></div>
@@ -370,7 +401,7 @@ transition: border-color 0.3s;
                 </div>
               </div>
             </div>
- 
+
             <div class="section-label" style="margin-top:4px;">Zone libre</div>
             <div class="free-section">
               <div class="editor-wrap" style="flex:1;min-height:0;display:flex;flex-direction:column;">
@@ -380,7 +411,7 @@ transition: border-color 0.3s;
                 </div>
               </div>
             </div>
- 
+
           </div>
         </div>
 
@@ -522,7 +553,7 @@ let currentIndex = -1;
 let savedRange = null;
 let savedRangeFor = null;
 let hlColors = { editor: '#ffeb3b', freeEditor: '#ffeb3b' };
- 
+
 // ── CHARGEMENT textes.json ─────────────────────────────────────────────────────
 async function loadTextes() {
   try {
@@ -546,7 +577,7 @@ async function loadTextes() {
     showToast('⚠️ textes.json introuvable');
   }
 }
- 
+
 // ── SIDEBAR ───────────────────────────────────────────────────────────────────
 function renderSidebar() {
   const list = document.getElementById('sidebarList');
@@ -557,7 +588,7 @@ function renderSidebar() {
     </div>
   `).join('');
 }
- 
+
 function loadText(i) {
   currentIndex = i;
   document.getElementById('editor').innerHTML = texts[i].replace(/\n/g, '<br>');
@@ -595,7 +626,7 @@ function loadText(i) {
   startTimer();
   showToast(`Texte #${i+1} chargé — 28 min ⏱`);
 }
- 
+
 function updateStarPanels(i) {
   const d = starData[i];
   document.getElementById('title-1').textContent = d.title1;
@@ -608,13 +639,13 @@ function updateStarPanels(i) {
   document.getElementById('intro-3').textContent = d.intro3;
   document.getElementById('content-3').innerHTML = d.content3;
 }
- 
+
 function loadRandom() {
   let i;
   do { i = Math.floor(Math.random() * texts.length); } while (i === currentIndex && texts.length > 1);
   loadText(i);
 }
- 
+
 // ── TABS ──────────────────────────────────────────────────────────────────────
 function switchTab(panelId, el) {
   document.querySelectorAll('.star-sidebar .star-tab').forEach(t => t.classList.remove('active'));
@@ -622,7 +653,7 @@ function switchTab(panelId, el) {
   el.classList.add('active');
   document.getElementById(panelId).classList.add('active');
 }
- 
+
 // ── THEME ─────────────────────────────────────────────────────────────────────
 function toggleTheme() {
   const html = document.documentElement;
@@ -632,29 +663,29 @@ function toggleTheme() {
   document.getElementById('freeColorPicker').value = isDark ? '#1a1a2e' : '#e8e8f0';
   showToast(isDark ? 'Mode jour ☀️' : 'Mode nuit 🌙');
 }
- 
+
 // ── FORMATTING ────────────────────────────────────────────────────────────────
 function fmt(cmd) { document.getElementById('editor').focus(); document.execCommand(cmd, false, null); }
 function fmtFree(cmd) { document.getElementById('freeEditor').focus(); document.execCommand(cmd, false, null); }
 function setFontSize(v) { document.getElementById('editor').focus(); document.execCommand('fontSize', false, v); }
 function setFontSizeFree(v) { document.getElementById('freeEditor').focus(); document.execCommand('fontSize', false, v); }
- 
+
 // ── FORMATTING ────────────────────────────────────────────────────────────────
 let activeEditorId = 'editor'; // zone active par défaut
- 
+
 function setActiveEditor(id) {
   activeEditorId = id;
   const labels = { editor: 'Éditeur', freeEditor: 'Zone libre' };
   const ind = document.getElementById('zoneIndicator');
   if (ind) ind.textContent = labels[id] || id;
 }
- 
+
 // Écoute focus sur chaque zone
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('editor').addEventListener('focus', () => setActiveEditor('editor'));
   document.getElementById('freeEditor').addEventListener('focus', () => setActiveEditor('freeEditor'));
 });
- 
+
 function fmtActive(cmd) {
   document.getElementById(activeEditorId).focus();
   document.execCommand(cmd, false, null);
@@ -680,7 +711,7 @@ function changeHlColorActive(v) {
   hlColors['freeEditor'] = v;
   document.getElementById('hlSwatch').style.background = v;
 }
- 
+
 function saveSelection(editorId) {
   const sel = window.getSelection();
   if (sel && sel.rangeCount > 0) {
@@ -688,7 +719,7 @@ function saveSelection(editorId) {
     savedRangeFor = editorId;
   }
 }
- 
+
 function restoreSelection(editorId) {
   document.getElementById(editorId).focus();
   if (savedRange && savedRangeFor === editorId) {
@@ -697,7 +728,7 @@ function restoreSelection(editorId) {
     sel.addRange(savedRange);
   }
 }
- 
+
 // Fonctions héritées (compatibilité)
 function fmt(cmd) { document.getElementById('editor').focus(); document.execCommand(cmd, false, null); }
 function fmtFree(cmd) { document.getElementById('freeEditor').focus(); document.execCommand(cmd, false, null); }
@@ -705,7 +736,7 @@ function setFontSize(v) { document.getElementById('editor').focus(); document.ex
 function setFontSizeFree(v) { document.getElementById('freeEditor').focus(); document.execCommand('fontSize', false, v); }
 function setColor(v) { restoreSelection('editor'); document.execCommand('foreColor', false, v); }
 function setColorFree(v) { restoreSelection('freeEditor'); document.execCommand('foreColor', false, v); }
- 
+
 function applyHighlight(editorId) {
   const editor = document.getElementById(editorId);
   editor.focus();
@@ -714,25 +745,25 @@ function applyHighlight(editorId) {
   document.execCommand('styleWithCSS', false, true);
   document.execCommand('backColor', false, hlColors[editorId]);
 }
- 
+
 function changeHlColor(v, editorId) {
   hlColors[editorId] = v;
   const swatchId = editorId === 'editor' ? 'hlSwatch' : 'hlSwatchFree';
   const el = document.getElementById(swatchId);
   if (el) el.style.background = v;
 }
- 
+
 function initSwatches() {
   const s = document.getElementById('hlSwatch');
   if (s) s.style.background = hlColors['editor'];
 }
- 
+
 // ── TIMER ─────────────────────────────────────────────────────────────────────
 const TIMER_DURATION = 28 * 60; // 28 minutes en secondes
 let timerSeconds = TIMER_DURATION;
 let timerInterval = null;
 const CIRCUMFERENCE = 2 * Math.PI * 15; // r=15 → 94.25
- 
+
 function startTimer() {
   clearInterval(timerInterval);
   timerSeconds = TIMER_DURATION;
@@ -741,7 +772,7 @@ function startTimer() {
   updateTimerDisplay();
   timerInterval = setInterval(tickTimer, 1000);
 }
- 
+
 function tickTimer() {
   timerSeconds--;
   updateTimerDisplay();
@@ -753,7 +784,7 @@ function tickTimer() {
     showToast('⏱ Temps écoulé !');
   }
 }
- 
+
 function updateTimerDisplay() {
   const m = Math.floor(timerSeconds / 60);
   const s = timerSeconds % 60;
@@ -777,12 +808,12 @@ function updateTimerDisplay() {
     wrap.classList.remove('urgent');
   }
 }
- 
+
 function resetTimer() {
   startTimer();
   showToast('⏱ Timer relancé');
 }
- 
+
 // ── COUNTERS ──────────────────────────────────────────────────────────────────
 function updateCounter() {
   const n = document.getElementById('editor').innerText.replace(/\n/g,'').length;
@@ -794,7 +825,7 @@ function updateFreeCounter() {
 }
 document.getElementById('editor').addEventListener('input', updateCounter);
 document.getElementById('freeEditor').addEventListener('input', updateFreeCounter);
- 
+
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -803,7 +834,7 @@ function showToast(msg) {
   clearTimeout(t._to);
   t._to = setTimeout(() => t.classList.remove('show'), 2200);
 }
- 
+
 // ── VIEW SWITCHER ─────────────────────────────────────────────────────────────
 function switchView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -818,14 +849,14 @@ function switchView(view) {
   // Load quiz when switching to histoire
   if (view === 'histoire') loadQuiz();
 }
- 
+
 // ── QUIZ ──────────────────────────────────────────────────────────────────────
 let quizData = null;
 let quizLoaded = false;
 let quizAnswers = {};
 let quizCurrentPage = 0;
 let quizCurrentChapter = 0;
- 
+
 async function loadQuiz() {
   if (quizLoaded) return;
   try {
@@ -846,7 +877,7 @@ async function loadQuiz() {
       </div>`;
   }
 }
- 
+
 function renderChapterSidebar() {
   const chapters = quizData.chapitres || [{ titre: quizData.titre, icone: '🏛️', questions: quizData.questions }];
   quizData._chapters = chapters;
@@ -859,7 +890,7 @@ function renderChapterSidebar() {
     </div>
   `).join('');
 }
- 
+
 function loadChapter(idx) {
   const chapters = quizData._chapters;
   quizCurrentChapter = idx;
@@ -879,7 +910,7 @@ function loadChapter(idx) {
   document.getElementById('quiz-content').style.display = 'block';
   renderQuizQuestion();
 }
- 
+
 function renderQuizQuestion() {
   const ch = quizData._chapters[quizCurrentChapter];
   const questions = ch._shuffled || ch.questions;
@@ -891,7 +922,7 @@ function renderQuizQuestion() {
   const total = questions.length;
   const answered = quizAnswers[quizCurrentPage];
   const letters = ['A', 'B', 'C', 'D', 'E'];
- 
+
   const optionsHTML = q.options.map((opt, oi) => {
     let cls = 'quiz-option';
     if (answered !== undefined) {
@@ -903,7 +934,7 @@ function renderQuizQuestion() {
       <span class="quiz-option-letter">${letters[oi]}</span>${opt}
     </div>`;
   }).join('');
- 
+
   let feedbackHTML = '';
   if (answered !== undefined) {
     if (answered === q.answer) {
@@ -912,10 +943,10 @@ function renderQuizQuestion() {
       feedbackHTML = `<div class="quiz-feedback ko">✗ Bonne réponse : <strong>${q.options[q.answer]}</strong>${q.explication ? ' — ' + q.explication : ''}</div>`;
     }
   }
- 
+
   const isLast = quizCurrentPage === total - 1;
   const allAnswered = Object.keys(quizAnswers).length === total;
- 
+
   content.innerHTML = `
     <div class="quiz-question-block">
       <div class="quiz-q-num">Question ${quizCurrentPage + 1} / ${total}</div>
@@ -930,7 +961,7 @@ function renderQuizQuestion() {
         ? `<button class="quiz-btn quiz-btn-primary" onclick="showQuizResult()">Résultats 🏁</button>`
         : `<button class="quiz-btn quiz-btn-primary" onclick="quizNext()">Suiv. →</button>`}
     </div>`;
- 
+
   // Badge score live
   const badge = document.getElementById('quiz-score-badge');
   const answered_count = Object.keys(quizAnswers).length;
@@ -940,23 +971,23 @@ function renderQuizQuestion() {
     badge.style.display = 'inline';
   }
 }
- 
+
 function answerQuiz(optionIndex) {
   if (quizAnswers[quizCurrentPage] !== undefined) return;
   quizAnswers[quizCurrentPage] = optionIndex;
   renderQuizQuestion();
 }
- 
+
 function quizNext() {
   const ch = quizData._chapters[quizCurrentChapter];
   const total = (ch._shuffled || ch.questions).length;
   if (quizCurrentPage < total - 1) { quizCurrentPage++; renderQuizQuestion(); }
 }
- 
+
 function quizPrev() {
   if (quizCurrentPage > 0) { quizCurrentPage--; renderQuizQuestion(); }
 }
- 
+
 function showQuizResult() {
   const ch = quizData._chapters[quizCurrentChapter];
   const questions = ch._shuffled || ch.questions;
@@ -976,8 +1007,8 @@ function showQuizResult() {
       <button class="quiz-btn quiz-btn-primary" onclick="loadChapter(${quizCurrentChapter})">🔄 Recommencer ce chapitre</button>
     </div>`;
 }
- 
- 
+
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initSwatches();
 loadTextes();
