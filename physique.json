@@ -24,18 +24,94 @@
       "description": "",
       "questions": [
         {
-          "question": "...",
+          "question": "La configuration éléctronique de l'atome de carbone ayant pour numéro atomique 6 est :",
           "options": [
-            "...", 
-            "...",
-            "...",
-            "..."
+            "(1s)1 (2s)2 (2p)2", 
+            "(1s)6 (2s)2 (2p)6",
+            "(1s)2 (2s)2 (2p)2",
+            "(1s)6 (2s)3 (2p)3"
           ],
           "answer": 2,
-          "explication": "..."
+          "explication": "L'atome de carbone forme 2 liaisons dans sa première couche et 4 dans sa seconde couche, soit une configuration électronique de (1s)2 (2s)2 (2p)2."
+        },
+        {
+          "question": "La configuration éléctronique de l'atome d' aluminium ayant pour numéro atomique 13 est :",
+          "options": [
+            "(1s)2 (2s)2 (2p)6 (3s)2 (3p)1", 
+            "(1s)2 (2s)2 (2p)6 (3s)2 (3p)3",
+            "(1s)2 (2s)1 (2p)6 (3s)1 (3p)2",
+            "(1s)1 (2s)2 (2p)6 (3s)3 (3p)1"
+          ],
+          "answer": 0,
+          "explication": "L'atome d'aluminium a 13 électrons, donc sa configuration électronique est (1s)2 (2s)2 (2p)6 (3s)2 (3p)1."
+        },
+        {
+          "question": "Combien de laisons covalentes peut former l'atome d'azote ayant pour numéro atomique 7 et configuration électronique (1s)2 (2s)2 (2p)3 ?",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "answer": 2,
+          "explication": "L'atome d'azote a 5 électrons de valence, donc il peut formé jusqu'à 3 liaisons covalentes pour atteindre une configuration stable."
+        },
+        {
+          "question": "Combien de liaisons covalentes peut former l'atome de soufre ayant pour numéro atomique 16 et configuration électronique (1s)2 (2s)2 (2p)6 (3s)2 (3p)4 ?",
+          "options": [
+            "2",
+            "4",
+            "6",
+            "il est déjà stable"
+          ],
+          "answer": 0,
+          "explication": "L'atome de soufre a 6 électrons de valence, donc il peut formé jusqu'à 2 liaisons covalentes pour atteindre une configuration stable."
+        },
+        {
+          "question": "Combien de doublets non-liants peut former l'atome de phosphore ayant pour numéro atomique 15 et configuration électronique (1s)2 (2s)2 (2p)6 (3s)2 (3p)3 et qu'il a 3 liaisons covalentes ?",
+          "options": [
+            "3",
+            "2",
+            "1",
+            "0"
+          ],
+          "answer": 2,
+          "explication": "L'atome de phosphore a 5 électrons de valence, donc s'il forme 3 liaisons covalentes, il lui reste 2 électrons de valence qui forment un doublet non-liant."
+        },
+        {
+          "question": "Combien de doublets non-liants peut former l'atome de chlore ayant pour numéro atomique 17 et configuration électronique (1s)2 (2s)2 (2p)6 (3s)2 (3p)5 et qu'il a 1 liaison covalente ?",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "answer": 0,
+          "explication": "L'atome de chlore a 7 électrons de valence, donc s'il forme 1 liaison covalente, il lui reste 6 électrons de valence qui forment 3 doublets non-liants."
+        },
+        {
+          "question": "Quelle shema de Lewis correspond à la molécule de dioxygène O2 sachant que le numéro atomique de l'oxygène est 8 ?",
+          "options": [
+            "O=O",
+            "O-O",
+            "&ltO=O&gt",
+            "&ltO-O&gt"
+          ],
+          "answer": 2,
+          "explication": "La molécule de dioxygène O2 est constituée de deux atomes d'oxygène qui forment 2 liaisons covalentes et 2 doublets non-liants, ce qui correspond au schéma de Lewis <O=O>."
+        },
+        {
+          "question": "Quelle shema de Lewis correspond à la molécule de dioxyde de carbone CO2 sachant que le numéro atomique du carbone est 6 et celui de l'oxygène est 8 ?",
+          "options": [
+            "O=C=O",
+            "O-C-O",
+            "&ltO-C-O&gt",
+            "&ltO=C=O&gt"
+          ],
+          "answer": 3,
+          "explication": "La molécule de dioxyde de carbone CO2 est constituée de deux atomes d'oxygène qui forment 2 liaisons covalentes avec un atome de carbone, ce qui correspond au schéma de Lewis <O=C=O>."
         }
       ]
-
     }
   ]
 }
