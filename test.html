@@ -284,7 +284,7 @@ transition: border-color 0.3s;
   <!-- MAIN NAV TABS -->
   <div class="nav-tabs">
     <button class="nav-tab active" id="nav-editeur" onclick="switchView('editeur')">
-      <span>📝</span><span class="btn-text">Éditeur</span>
+      <span>📝</span><span class="btn-text">Français</span>
     </button>
     <button class="nav-tab" id="nav-histoire" onclick="switchView('histoire')">
       <span>🏛️</span><span class="btn-text">Histoire</span>
@@ -318,56 +318,50 @@ transition: border-color 0.3s;
     <!-- MAIN -->
     <div class="main">
       <div class="panels-area">
-
+ 
         <!-- PANEL TEXTE -->
         <div class="star-panel active" id="panel-texte">
-          <div class="scroll-area" style="padding-bottom:0;">
-          <!-- TIMER (visible en mode éditeur uniquement) -->
-            <div class="timer-wrap" id="timerWrap" style="display:none">
-              <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
-                <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
-                <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
-                  stroke-dasharray="94.25" stroke-dashoffset="0"
-                  stroke-linecap="round" transform="rotate(-90 18 18)"
-                  id="timerArc"/>
-              </svg>
-              <div class="timer-info">
-                <span class="timer-label">Temps</span>
-                <span class="timer-display" id="timerDisplay">28:00</span>
+ 
+          <!-- TOOLBAR COMMUNE -->
+          <div class="shared-toolbar-wrap">
+            <div class="toolbar" id="toolbar-shared">
+              <button class="tb-btn" onclick="fmtActive('bold')" title="Gras"><b>B</b></button>
+              <button class="tb-btn" onclick="fmtActive('italic')" title="Italique"><i style="font-family:Georgia">I</i></button>
+              <button class="tb-btn" onclick="fmtActive('underline')" title="Souligné"><u>U</u></button>
+              <button class="tb-btn" onclick="fmtActive('strikeThrough')" title="Barré"><s>S</s></button>
+              <div class="tb-sep"></div>
+              <button class="tb-btn" onclick="fmtActive('justifyLeft')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect y="3.1" width="9" height="1.8" rx="0.9"/><rect y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+              <button class="tb-btn" onclick="fmtActive('justifyCenter')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="2" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="1" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+              <button class="tb-btn" onclick="fmtActive('justifyRight')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="4" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="2" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
+              <div class="tb-sep"></div>
+              <span class="tb-label">Taille</span>
+              <select class="tb-select" id="sharedFontSize" onchange="setFontSizeActive(this.value)">
+                <option value="1">XS</option><option value="2" selected>S</option><option value="3">M</option><option value="4">L</option><option value="5">XL</option><option value="6">XXL</option>
+              </select>
+              <div class="tb-sep"></div>
+              <span class="tb-label">Texte</span>
+              <input type="color" class="tb-color" id="colorPicker" value="#1a1a2e" style="border-radius:6px;margin-left:0;" onmousedown="saveSelectionActive()" onchange="setColorActive(this.value)">
+              <div class="tb-sep"></div>
+              <div class="hl-group" id="hlGroup">
+                <button class="tb-btn hl-btn" onclick="applyHighlightActive()" title="Surligner la sélection">🖊 Surligner <span class="hl-swatch" id="hlSwatch"></span></button>
+                <input type="color" class="tb-color hl-color-btn" id="hlColorPicker" value="#ffeb3b" title="Couleur de surlignage" onchange="changeHlColorActive(this.value)">
               </div>
-              <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
+              <div class="tb-sep"></div>
+              <button class="tb-btn" onclick="fmtActive('removeFormat')" style="width:auto;padding:0 8px;font-size:0.63rem;font-weight:500;">Effacer</button>
+              <!-- indicateur zone active -->
+              <div class="tb-sep"></div>
+              <span class="tb-zone-indicator" id="zoneIndicator">Éditeur</span>
             </div>
+          </div>
+ 
+          <div class="scroll-area" style="padding-bottom:0; padding-top:8px;">
+ 
             <div class="section-label">Éditeur de texte</div>
             <div class="text-intro-block" id="textIntroBlock" style="display:none">
               <div class="text-intro-title" id="textIntroTitle"></div>
               <div class="text-intro-body" id="textIntroBody"></div>
             </div>
             <div class="editor-block">
-              <div class="toolbar" id="toolbar-editor">
-                <button class="tb-btn" onclick="fmt('bold')" title="Gras"><b>B</b></button>
-                <button class="tb-btn" onclick="fmt('italic')" title="Italique"><i style="font-family:Georgia">I</i></button>
-                <button class="tb-btn" onclick="fmt('underline')" title="Souligné"><u>U</u></button>
-                <button class="tb-btn" onclick="fmt('strikeThrough')" title="Barré"><s>S</s></button>
-                <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="fmt('justifyLeft')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect y="3.1" width="9" height="1.8" rx="0.9"/><rect y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
-                <button class="tb-btn" onclick="fmt('justifyCenter')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="2" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="1" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
-                <button class="tb-btn" onclick="fmt('justifyRight')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="4" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="2" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
-                <div class="tb-sep"></div>
-                <span class="tb-label">Taille</span>
-                <select class="tb-select" onchange="setFontSize(this.value)">
-                  <option value="1">XS</option><option value="2">S</option><option value="3" selected>M</option><option value="4">L</option><option value="5">XL</option><option value="6">XXL</option>
-                </select>
-                <div class="tb-sep"></div>
-                <span class="tb-label">Texte</span>
-                <input type="color" class="tb-color" id="colorPicker" value="#1a1a2e" style="border-radius:6px;margin-left:0;" onmousedown="saveSelection('editor')" onchange="setColor(this.value)">
-                <div class="tb-sep"></div>
-                <div class="hl-group" id="hlGroup">
-                  <button class="tb-btn hl-btn" id="hlBtn" onclick="applyHighlight('editor')" title="Surligner la sélection">🖊 Surligner <span class="hl-swatch" id="hlSwatch"></span></button>
-                  <input type="color" class="tb-color hl-color-btn" id="hlColorPicker" value="#ffeb3b" title="Couleur de surlignage" onchange="changeHlColor(this.value, 'editor')">
-                </div>
-                <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="fmt('removeFormat')" style="width:auto;padding:0 8px;font-size:0.63rem;font-weight:500;">Effacer</button>
-              </div>
               <div class="editor-wrap">
                 <div class="editor-zone" id="editor" contenteditable="true" spellcheck="true" data-placeholder="Choisissez un texte dans la liste…"></div>
                 <div class="editor-footer">
@@ -376,34 +370,9 @@ transition: border-color 0.3s;
                 </div>
               </div>
             </div>
-
+ 
             <div class="section-label" style="margin-top:4px;">Zone libre</div>
             <div class="free-section">
-              <div class="toolbar" id="toolbar-free">
-                <button class="tb-btn" onclick="fmtFree('bold')"><b>B</b></button>
-                <button class="tb-btn" onclick="fmtFree('italic')"><i style="font-family:Georgia">I</i></button>
-                <button class="tb-btn" onclick="fmtFree('underline')"><u>U</u></button>
-                <button class="tb-btn" onclick="fmtFree('strikeThrough')"><s>S</s></button>
-                <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="fmtFree('justifyLeft')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect y="3.1" width="9" height="1.8" rx="0.9"/><rect y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
-                <button class="tb-btn" onclick="fmtFree('justifyCenter')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="2" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="1" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
-                <button class="tb-btn" onclick="fmtFree('justifyRight')"><svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect y="0" width="13" height="1.8" rx="0.9"/><rect x="4" y="3.1" width="9" height="1.8" rx="0.9"/><rect x="2" y="6.2" width="11" height="1.8" rx="0.9"/></svg></button>
-                <div class="tb-sep"></div>
-                <span class="tb-label">Taille</span>
-                <select class="tb-select" onchange="setFontSizeFree(this.value)">
-                  <option value="1">XS</option><option value="2">S</option><option value="3" selected>M</option><option value="4">L</option><option value="5">XL</option><option value="6">XXL</option>
-                </select>
-                <div class="tb-sep"></div>
-                <span class="tb-label">Texte</span>
-                <input type="color" class="tb-color" id="freeColorPicker" value="#1a1a2e" style="border-radius:6px;margin-left:0;" onmousedown="saveSelection('freeEditor')" onchange="setColorFree(this.value)">
-                <div class="tb-sep"></div>
-                <div class="hl-group" id="hlGroupFree">
-                  <button class="tb-btn hl-btn" id="hlBtnFree" onclick="applyHighlight('freeEditor')" title="Surligner la sélection">🖊 Surligner <span class="hl-swatch" id="hlSwatchFree"></span></button>
-                  <input type="color" class="tb-color hl-color-btn" id="hlColorPickerFree" value="#ffeb3b" title="Couleur de surlignage" onchange="changeHlColor(this.value, 'freeEditor')">
-                </div>
-                <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="fmtFree('removeFormat')" style="width:auto;padding:0 8px;font-size:0.63rem;font-weight:500;">Effacer</button>
-              </div>
               <div class="editor-wrap" style="flex:1;min-height:0;display:flex;flex-direction:column;">
                 <div class="editor-zone" id="freeEditor" contenteditable="true" spellcheck="true" style="flex:1;min-height:0;overflow-y:auto;" data-placeholder="Écrivez librement ici…"></div>
                 <div class="editor-footer">
@@ -411,7 +380,7 @@ transition: border-color 0.3s;
                 </div>
               </div>
             </div>
-
+ 
           </div>
         </div>
 
@@ -553,7 +522,7 @@ let currentIndex = -1;
 let savedRange = null;
 let savedRangeFor = null;
 let hlColors = { editor: '#ffeb3b', freeEditor: '#ffeb3b' };
-
+ 
 // ── CHARGEMENT textes.json ─────────────────────────────────────────────────────
 async function loadTextes() {
   try {
@@ -577,7 +546,7 @@ async function loadTextes() {
     showToast('⚠️ textes.json introuvable');
   }
 }
-
+ 
 // ── SIDEBAR ───────────────────────────────────────────────────────────────────
 function renderSidebar() {
   const list = document.getElementById('sidebarList');
@@ -588,7 +557,7 @@ function renderSidebar() {
     </div>
   `).join('');
 }
-
+ 
 function loadText(i) {
   currentIndex = i;
   document.getElementById('editor').innerHTML = texts[i].replace(/\n/g, '<br>');
@@ -621,11 +590,12 @@ function loadText(i) {
   document.execCommand('selectAll', false, null);
   document.execCommand('fontSize', false, '2');
   window.getSelection()?.removeAllRanges();
+  setActiveEditor('editor');
   // Lancer le timer
   startTimer();
   showToast(`Texte #${i+1} chargé — 28 min ⏱`);
 }
-
+ 
 function updateStarPanels(i) {
   const d = starData[i];
   document.getElementById('title-1').textContent = d.title1;
@@ -638,13 +608,13 @@ function updateStarPanels(i) {
   document.getElementById('intro-3').textContent = d.intro3;
   document.getElementById('content-3').innerHTML = d.content3;
 }
-
+ 
 function loadRandom() {
   let i;
   do { i = Math.floor(Math.random() * texts.length); } while (i === currentIndex && texts.length > 1);
   loadText(i);
 }
-
+ 
 // ── TABS ──────────────────────────────────────────────────────────────────────
 function switchTab(panelId, el) {
   document.querySelectorAll('.star-sidebar .star-tab').forEach(t => t.classList.remove('active'));
@@ -652,7 +622,7 @@ function switchTab(panelId, el) {
   el.classList.add('active');
   document.getElementById(panelId).classList.add('active');
 }
-
+ 
 // ── THEME ─────────────────────────────────────────────────────────────────────
 function toggleTheme() {
   const html = document.documentElement;
@@ -662,13 +632,55 @@ function toggleTheme() {
   document.getElementById('freeColorPicker').value = isDark ? '#1a1a2e' : '#e8e8f0';
   showToast(isDark ? 'Mode jour ☀️' : 'Mode nuit 🌙');
 }
-
+ 
 // ── FORMATTING ────────────────────────────────────────────────────────────────
 function fmt(cmd) { document.getElementById('editor').focus(); document.execCommand(cmd, false, null); }
 function fmtFree(cmd) { document.getElementById('freeEditor').focus(); document.execCommand(cmd, false, null); }
 function setFontSize(v) { document.getElementById('editor').focus(); document.execCommand('fontSize', false, v); }
 function setFontSizeFree(v) { document.getElementById('freeEditor').focus(); document.execCommand('fontSize', false, v); }
-
+ 
+// ── FORMATTING ────────────────────────────────────────────────────────────────
+let activeEditorId = 'editor'; // zone active par défaut
+ 
+function setActiveEditor(id) {
+  activeEditorId = id;
+  const labels = { editor: 'Éditeur', freeEditor: 'Zone libre' };
+  const ind = document.getElementById('zoneIndicator');
+  if (ind) ind.textContent = labels[id] || id;
+}
+ 
+// Écoute focus sur chaque zone
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('editor').addEventListener('focus', () => setActiveEditor('editor'));
+  document.getElementById('freeEditor').addEventListener('focus', () => setActiveEditor('freeEditor'));
+});
+ 
+function fmtActive(cmd) {
+  document.getElementById(activeEditorId).focus();
+  document.execCommand(cmd, false, null);
+}
+function setFontSizeActive(v) {
+  document.getElementById(activeEditorId).focus();
+  document.execCommand('fontSize', false, v);
+}
+function saveSelectionActive() {
+  saveSelection(activeEditorId);
+}
+function setColorActive(v) {
+  restoreSelection(activeEditorId);
+  document.execCommand('foreColor', false, v);
+}
+function applyHighlightActive() {
+  applyHighlight(activeEditorId);
+}
+function changeHlColorActive(v) {
+  hlColors[activeEditorId] = v;
+  // met à jour les deux swatches (une seule couleur partagée)
+  hlColors['editor'] = v;
+  hlColors['freeEditor'] = v;
+  document.getElementById('hlSwatch').style.background = v;
+}
+ 
 function saveSelection(editorId) {
   const sel = window.getSelection();
   if (sel && sel.rangeCount > 0) {
@@ -676,7 +688,7 @@ function saveSelection(editorId) {
     savedRangeFor = editorId;
   }
 }
-
+ 
 function restoreSelection(editorId) {
   document.getElementById(editorId).focus();
   if (savedRange && savedRangeFor === editorId) {
@@ -685,11 +697,15 @@ function restoreSelection(editorId) {
     sel.addRange(savedRange);
   }
 }
-
+ 
+// Fonctions héritées (compatibilité)
+function fmt(cmd) { document.getElementById('editor').focus(); document.execCommand(cmd, false, null); }
+function fmtFree(cmd) { document.getElementById('freeEditor').focus(); document.execCommand(cmd, false, null); }
+function setFontSize(v) { document.getElementById('editor').focus(); document.execCommand('fontSize', false, v); }
+function setFontSizeFree(v) { document.getElementById('freeEditor').focus(); document.execCommand('fontSize', false, v); }
 function setColor(v) { restoreSelection('editor'); document.execCommand('foreColor', false, v); }
 function setColorFree(v) { restoreSelection('freeEditor'); document.execCommand('foreColor', false, v); }
-
-// Surlignage : bouton qui applique la couleur courante
+ 
 function applyHighlight(editorId) {
   const editor = document.getElementById(editorId);
   editor.focus();
@@ -698,26 +714,25 @@ function applyHighlight(editorId) {
   document.execCommand('styleWithCSS', false, true);
   document.execCommand('backColor', false, hlColors[editorId]);
 }
-
-// Changer la couleur de surlignage — met à jour la pastille et la variable
+ 
 function changeHlColor(v, editorId) {
   hlColors[editorId] = v;
   const swatchId = editorId === 'editor' ? 'hlSwatch' : 'hlSwatchFree';
-  document.getElementById(swatchId).style.background = v;
+  const el = document.getElementById(swatchId);
+  if (el) el.style.background = v;
 }
-
-// Init des swatches
+ 
 function initSwatches() {
-  document.getElementById('hlSwatch').style.background = hlColors['editor'];
-  document.getElementById('hlSwatchFree').style.background = hlColors['freeEditor'];
+  const s = document.getElementById('hlSwatch');
+  if (s) s.style.background = hlColors['editor'];
 }
-
+ 
 // ── TIMER ─────────────────────────────────────────────────────────────────────
 const TIMER_DURATION = 28 * 60; // 28 minutes en secondes
 let timerSeconds = TIMER_DURATION;
 let timerInterval = null;
 const CIRCUMFERENCE = 2 * Math.PI * 15; // r=15 → 94.25
-
+ 
 function startTimer() {
   clearInterval(timerInterval);
   timerSeconds = TIMER_DURATION;
@@ -726,7 +741,7 @@ function startTimer() {
   updateTimerDisplay();
   timerInterval = setInterval(tickTimer, 1000);
 }
-
+ 
 function tickTimer() {
   timerSeconds--;
   updateTimerDisplay();
@@ -738,7 +753,7 @@ function tickTimer() {
     showToast('⏱ Temps écoulé !');
   }
 }
-
+ 
 function updateTimerDisplay() {
   const m = Math.floor(timerSeconds / 60);
   const s = timerSeconds % 60;
@@ -762,12 +777,12 @@ function updateTimerDisplay() {
     wrap.classList.remove('urgent');
   }
 }
-
+ 
 function resetTimer() {
   startTimer();
   showToast('⏱ Timer relancé');
 }
-
+ 
 // ── COUNTERS ──────────────────────────────────────────────────────────────────
 function updateCounter() {
   const n = document.getElementById('editor').innerText.replace(/\n/g,'').length;
@@ -779,7 +794,7 @@ function updateFreeCounter() {
 }
 document.getElementById('editor').addEventListener('input', updateCounter);
 document.getElementById('freeEditor').addEventListener('input', updateFreeCounter);
-
+ 
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -788,7 +803,7 @@ function showToast(msg) {
   clearTimeout(t._to);
   t._to = setTimeout(() => t.classList.remove('show'), 2200);
 }
-
+ 
 // ── VIEW SWITCHER ─────────────────────────────────────────────────────────────
 function switchView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -803,14 +818,14 @@ function switchView(view) {
   // Load quiz when switching to histoire
   if (view === 'histoire') loadQuiz();
 }
-
+ 
 // ── QUIZ ──────────────────────────────────────────────────────────────────────
 let quizData = null;
 let quizLoaded = false;
 let quizAnswers = {};
 let quizCurrentPage = 0;
 let quizCurrentChapter = 0;
-
+ 
 async function loadQuiz() {
   if (quizLoaded) return;
   try {
@@ -831,7 +846,7 @@ async function loadQuiz() {
       </div>`;
   }
 }
-
+ 
 function renderChapterSidebar() {
   const chapters = quizData.chapitres || [{ titre: quizData.titre, icone: '🏛️', questions: quizData.questions }];
   quizData._chapters = chapters;
@@ -844,7 +859,7 @@ function renderChapterSidebar() {
     </div>
   `).join('');
 }
-
+ 
 function loadChapter(idx) {
   const chapters = quizData._chapters;
   quizCurrentChapter = idx;
@@ -864,7 +879,7 @@ function loadChapter(idx) {
   document.getElementById('quiz-content').style.display = 'block';
   renderQuizQuestion();
 }
-
+ 
 function renderQuizQuestion() {
   const ch = quizData._chapters[quizCurrentChapter];
   const questions = ch._shuffled || ch.questions;
@@ -876,7 +891,7 @@ function renderQuizQuestion() {
   const total = questions.length;
   const answered = quizAnswers[quizCurrentPage];
   const letters = ['A', 'B', 'C', 'D', 'E'];
-
+ 
   const optionsHTML = q.options.map((opt, oi) => {
     let cls = 'quiz-option';
     if (answered !== undefined) {
@@ -888,7 +903,7 @@ function renderQuizQuestion() {
       <span class="quiz-option-letter">${letters[oi]}</span>${opt}
     </div>`;
   }).join('');
-
+ 
   let feedbackHTML = '';
   if (answered !== undefined) {
     if (answered === q.answer) {
@@ -897,10 +912,10 @@ function renderQuizQuestion() {
       feedbackHTML = `<div class="quiz-feedback ko">✗ Bonne réponse : <strong>${q.options[q.answer]}</strong>${q.explication ? ' — ' + q.explication : ''}</div>`;
     }
   }
-
+ 
   const isLast = quizCurrentPage === total - 1;
   const allAnswered = Object.keys(quizAnswers).length === total;
-
+ 
   content.innerHTML = `
     <div class="quiz-question-block">
       <div class="quiz-q-num">Question ${quizCurrentPage + 1} / ${total}</div>
@@ -915,7 +930,7 @@ function renderQuizQuestion() {
         ? `<button class="quiz-btn quiz-btn-primary" onclick="showQuizResult()">Résultats 🏁</button>`
         : `<button class="quiz-btn quiz-btn-primary" onclick="quizNext()">Suiv. →</button>`}
     </div>`;
-
+ 
   // Badge score live
   const badge = document.getElementById('quiz-score-badge');
   const answered_count = Object.keys(quizAnswers).length;
@@ -925,23 +940,23 @@ function renderQuizQuestion() {
     badge.style.display = 'inline';
   }
 }
-
+ 
 function answerQuiz(optionIndex) {
   if (quizAnswers[quizCurrentPage] !== undefined) return;
   quizAnswers[quizCurrentPage] = optionIndex;
   renderQuizQuestion();
 }
-
+ 
 function quizNext() {
   const ch = quizData._chapters[quizCurrentChapter];
   const total = (ch._shuffled || ch.questions).length;
   if (quizCurrentPage < total - 1) { quizCurrentPage++; renderQuizQuestion(); }
 }
-
+ 
 function quizPrev() {
   if (quizCurrentPage > 0) { quizCurrentPage--; renderQuizQuestion(); }
 }
-
+ 
 function showQuizResult() {
   const ch = quizData._chapters[quizCurrentChapter];
   const questions = ch._shuffled || ch.questions;
@@ -961,8 +976,8 @@ function showQuizResult() {
       <button class="quiz-btn quiz-btn-primary" onclick="loadChapter(${quizCurrentChapter})">🔄 Recommencer ce chapitre</button>
     </div>`;
 }
-
-
+ 
+ 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initSwatches();
 loadTextes();
