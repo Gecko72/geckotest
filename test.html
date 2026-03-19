@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Révision</title>
+<title>Révison!</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,31 +46,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .dice { display:inline-block; transition:transform 0.4s; font-size:1.1rem; }
 .btn-random:hover .dice { transform:rotate(180deg); }
 
-@media (max-width: 900px) {
-  .histoire-layout { flex-direction: column; }
 
-  #view-histoire .sidebar {width: 100%;height: 120px; min-height: 120px; flex-shrink: 0; border-right: none; border-top: 1px solid var(--border); order: 2; flex-direction: row;}
-  #view-histoire .sidebar-header { display: none; }
-  #view-histoire .sidebar-list { display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 6px; gap: 4px; flex-wrap: nowrap; width: 100%;}
-  #view-histoire .sidebar-list::-webkit-scrollbar { height: 3px; width: 0; }
-  #view-histoire .sidebar-item { flex-shrink: 0; width: 120px; margin-bottom: 0; }
-  .histoire-main { order: 1; flex: 1; min-height: 0; }
-
-  #view-editeur .sidebar { display:none; }
-
-  .btn-random { padding:10px 10px; font-size:0.85rem; }
-  .logo { display:none; }
-  .scroll-area { padding:0px 0px 0; }
-  .editor-zone { padding:5px 7px; }
-  .btn-text { display:none; }
-  .btn-edt { display:none;}
-  .btn-histoire { display:none;}
-  .theme-toggle { justify-content: left;}
-  .topbar { justify-content : left;}
-  .star-panel.active { padding:0px 0px; }
-  .btn-text { display:none; }
-  .quiz-chapter-icon { display:none; }
-}
 
 /* ── APP ── */
 .app { display:flex; flex:1; overflow:hidden; }
@@ -162,7 +138,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .editor-wrap:focus-within { border-color:rgba(124,109,250,0.5); box-shadow:0 0 0 3px rgba(124,109,250,0.07); }
 .editor-zone { padding:20px 24px; font-family:'Lora',serif; font-size:1rem; line-height:1.85; color:var(--text); outline:none; min-height:120px; }
 .editor-zone:empty::before { content:attr(data-placeholder); color:var(--text3); pointer-events:none; font-style:italic; }
-.free-section { flex:1; min-height:0; display:flex; flex-direction:column; gap:10px; padding-bottom:16px; }
+.free-section { flex:1; min-height:20; display:flex; flex-direction:column; gap:10px; padding-bottom:16px; }
 .editor-footer { padding:7px 16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
 .char-count { font-size:0.63rem; color:var(--text3); }
 .active-tag { font-size:0.6rem; color:var(--accent2); background:var(--accent-glow); border:1px solid rgba(124,109,250,0.25); border-radius:20px; padding:2px 10px; }
@@ -284,26 +260,118 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .quiz-result-emoji { font-size: 2.5rem; }
 .quiz-error { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 20px; text-align: center; color: var(--text3); font-size: 0.82rem; }
 
+/* ── NAV DROPDOWN ── */
+.nav-dropdown { position: relative; }
+.nav-tab-dropdown { display: flex; align-items: center; gap: 6px; }
+.dropdown-arrow { font-size: 0.65rem; color: var(--text3); transition: transform 0.2s; }
+.nav-dropdown.open .dropdown-arrow { transform: rotate(180deg); }
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px var(--shadow);
+  min-width: 220px;
+  padding: 6px;
+  z-index: 100;
+  flex-direction: column;
+  gap: 2px;
+}
+.nav-dropdown.open .dropdown-menu { display: flex; }
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+.dropdown-item:hover { background: var(--surface2); }
+.dropdown-item.active { background: var(--accent-glow); }
+.dropdown-item.active .dm-label { color: var(--accent2); }
+.dm-icon { font-size: 1.3rem; flex-shrink: 0; }
+.dm-separator { height: 1px; background: var(--border); margin: 4px 6px; }
+.dm-label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+.dm-desc { font-size: 0.68rem; color: var(--text3); margin-top: 1px; }
+
 /* ── TOAST ── */
 .toast { position:fixed; bottom:22px; right:22px; background:var(--surface); border:1px solid var(--border2); color:var(--text); padding:10px 16px; border-radius:10px; font-size:0.74rem; display:flex; align-items:center; gap:8px; transform:translateY(14px); opacity:0; transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1); z-index:999; box-shadow:0 8px 32px var(--shadow); }
 .toast::before { content:''; width:6px; height:6px; background:var(--accent); border-radius:50%; box-shadow:0 0 6px var(--accent); flex-shrink:0; }
 .toast.show { transform:translateY(0); opacity:1; }
+
+@media (max-width: 900px) {
+  .histoire-layout { flex-direction: column; }
+
+  #view-histoire .sidebar {width: 100%;height: 120px; min-height: 120px; flex-shrink: 0; border-right: none; border-top: 1px solid var(--border); order: 2; flex-direction: row;}
+  #view-histoire .sidebar-header { display: none; }
+  #view-histoire .sidebar-list { display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 6px; gap: 4px; flex-wrap: nowrap; width: 100%;}
+  #view-histoire .sidebar-list::-webkit-scrollbar { height: 3px; width: 0; }
+  #view-histoire .sidebar-item { flex-shrink: 0; width: 120px; margin-bottom: 0; }
+  .histoire-main { order: 1; flex: 1; min-height: 0; }
+
+  #view-editeur .sidebar { display:none; }
+
+  .btn-random { padding:10px 10px; font-size:0.85rem; }
+  .logo { display:none; }
+  .scroll-area { padding:0px 0px 0; }
+  .editor-zone { padding:5px 7px; }
+  .btn-text { display:none; }
+  .btn-edt { display:none;}
+  .btn-histoire { display:none;}
+  .theme-toggle { justify-content: left;}
+  .topbar { justify-content : left;}
+  .star-panel.active { padding:0px 0px; }
+  .btn-text { display:none; }
+  .quiz-chapter-icon { display:none; }
+  .scroll-area { padding:10px 5px 0; }
+}
+
 </style>
 </head>
 <body>
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <div class="logo"><div class="logo-dot"></div>Révision</div>
+  <div class="logo"><div class="logo-dot"></div>Révison!</div>
 
-  <!-- MAIN NAV TABS -->
-  <div class="nav-tabs">
-    <button class="nav-tab active" id="nav-editeur" onclick="switchView('editeur')">
-      <span>class="btn-emo"📝</span> <span>class="btn-text"Éditeur</span>
+
+  <!-- DROPDOWN UNIQUE -->
+  <div class="nav-dropdown" id="navDropdown">
+    <button class="nav-tab nav-tab-dropdown active" id="nav-editeur" onclick="toggleMatDropdown(event)">
+      <span id="navMatiereIcon">📝</span>
+      <span id="navMatiereLabel"class="btn-text">Éditeur</span>
+      <span class="dropdown-arrow">▾</span>
     </button>
-    <button class="nav-tab" id="nav-histoire" onclick="switchView('histoire')">
-       <span>class="btn-emo"🏛️</span> <span>class="btn-text"Histoire</span>
-    </button>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <div class="dropdown-item active" data-mat="editeur" onclick="selectMatiere('editeur', '📝', 'Éditeur', event)">
+        <span class="dm-icon">📝</span>
+        <div>
+          <div class="dm-label">Éditeur</div>
+          <div class="dm-desc">Lecture et annotation de textes</div>
+        </div>
+      </div>
+      <div class="dm-separator"></div>
+      <div class="dropdown-item" data-mat="histoire" onclick="selectMatiere('histoire', '🏛️', 'Histoire', event)">
+        <span class="dm-icon">🏛️</span>
+        <div>
+          <div class="dm-label">Histoire</div>
+          <div class="dm-desc">Dates, événements, chronologie</div>
+        </div>
+      </div>
+      <div class="dropdown-item" data-mat="physique" onclick="selectMatiere('physique', '⚗️', 'Physique-Chimie', event)">
+        <span class="dm-icon">⚗️</span>
+        <div>
+          <div class="dm-label">Physique-Chimie</div>
+          <div class="dm-desc">Formules, lois, expériences</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="topbar-sep"></div>
@@ -311,24 +379,9 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   <div class="theme-toggle" onclick="toggleTheme()"></div>
   <span class="theme-icon">☀️</span>
 
-  <!-- TIMER (visible en mode éditeur uniquement) -->
-  <div class="timer-wrap" id="timerWrap" style="display:none">
-    <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
-      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
-      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
-        stroke-dasharray="94.25" stroke-dashoffset="0"
-        stroke-linecap="round" transform="rotate(-90 18 18)"
-        id="timerArc"/>
-    </svg>
-    <div class="timer-info">
-      <span class="timer-label">Temps</span>
-      <span class="timer-display" id="timerDisplay">28:00</span>
-    </div>
-    <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
-  </div>
 
   <button class="btn-random" id="btnRandom" onclick="loadRandom()">
-    <span class="dice">🎲</span> Texte aléatoire
+    <span class="dice">🎲</span> <span class="btn-text">Texte aléatoire</span>
   </button>
 </div>
 
@@ -349,7 +402,21 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
     <!-- MAIN -->
     <div class="main">
       <div class="panels-area">
-
+          <!-- TIMER (visible en mode éditeur uniquement) -->
+  <div class="timer-wrap" id="timerWrap" style="display:none">
+    <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
+      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
+        stroke-dasharray="94.25" stroke-dashoffset="0"
+        stroke-linecap="round" transform="rotate(-90 18 18)"
+        id="timerArc"/>
+    </svg>
+    <div class="timer-info">
+      <span class="timer-label">Temps</span>
+      <span class="timer-display" id="timerDisplay">28:00</span>
+    </div>
+    <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
+  </div>
         <!-- PANEL TEXTE -->
         <div class="star-panel active" id="panel-texte">
 
@@ -835,18 +902,55 @@ function showToast(msg) {
   t._to = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+// ── MATIÈRE DROPDOWN ──────────────────────────────────────────────────────────
+let currentMatiere = 'histoire';
+const matiereFiles = {
+  histoire:  'dates.json',
+  physique:  'physique.json'
+};
+
+function toggleMatDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('navDropdown');
+  const isOpen = dd.classList.contains('open');
+  closeAllDropdowns();
+  if (!isOpen) {
+    dd.classList.add('open');
+    dd.querySelectorAll('.dropdown-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.mat === currentMatiere);
+    });
+  }
+}
+
+function selectMatiere(mat, icon, label, e) {
+  e.stopPropagation();
+  currentMatiere = mat;
+  document.getElementById('navMatiereIcon').textContent = icon;
+  document.getElementById('navMatiereLabel').textContent = label;
+  closeAllDropdowns();
+  if (mat === 'editeur') {
+    switchView('editeur');
+  } else {
+    quizLoaded = false;
+    quizData = null;
+    switchView('histoire');
+  }
+}
+
+function closeAllDropdowns() {
+  document.getElementById('navDropdown').classList.remove('open');
+}
+
+document.addEventListener('click', closeAllDropdowns);
+
 // ── VIEW SWITCHER ─────────────────────────────────────────────────────────────
 function switchView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
-  document.getElementById('nav-' + view).classList.add('active');
-  // Show/hide editor-only controls
   const isEditor = view === 'editeur';
   document.getElementById('btnRandom').style.display = isEditor ? 'flex' : 'none';
   const tw = document.getElementById('timerWrap');
   if (!isEditor) tw.style.display = 'none';
-  // Load quiz when switching to histoire
   if (view === 'histoire') loadQuiz();
 }
 
@@ -859,8 +963,11 @@ let quizCurrentChapter = 0;
 
 async function loadQuiz() {
   if (quizLoaded) return;
+  const file = matiereFiles[currentMatiere] || 'dates.json';
+  const matiereLabels = { histoire: 'Histoire', physique: 'Physique-Chimie' };
+  document.getElementById('quiz-loading').style.display = 'flex';
   try {
-    const res = await fetch('dates.json');
+    const res = await fetch(file);
     if (!res.ok) throw new Error('Fichier introuvable');
     quizData = await res.json();
     quizLoaded = true;
@@ -871,8 +978,8 @@ async function loadQuiz() {
     document.getElementById('quiz-loading').innerHTML = `
       <div class="quiz-error">
         <div style="font-size:2.5rem;">⚠️</div>
-        <strong style="color:var(--text);font-size:0.9rem;">Fichier dates.json introuvable</strong>
-        <p style="line-height:1.6;">Placez <code>dates.json</code> dans le même dossier<br>que ce fichier HTML, puis rechargez.</p>
+        <strong style="color:var(--text);font-size:0.9rem;">Fichier ${file} introuvable</strong>
+        <p style="line-height:1.6;">Placez <code>${file}</code> dans le même dossier<br>que ce fichier HTML pour la matière <strong>${matiereLabels[currentMatiere]}</strong>.</p>
         <button class="quiz-btn quiz-btn-ghost" onclick="quizLoaded=false; loadQuiz()">↺ Réessayer</button>
       </div>`;
   }
