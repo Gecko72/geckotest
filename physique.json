@@ -1,0 +1,41 @@
+{
+  "chapitres": [
+    {
+      "titre": "Forces et champs",
+      "icone": "🍎​",
+      "description": "",
+      "questions": [
+        {
+          "question": "",
+          "options": [
+            "", 
+            "",
+            "",
+            ""
+          ],
+          "answer": 2,
+          "explication": ""
+        }
+      ]
+    },
+    {
+      "titre": "De la structure aux propriétés.",
+      "icone": "⚛️",
+      "description": "",
+      "questions": [
+        {
+          "question": "...",
+          "options": [
+            "...", 
+            "...",
+            "...",
+            "..."
+          ],
+          "answer": 2,
+          "explication": "..."
+        }
+      ]
+
+    }
+  ]
+}
