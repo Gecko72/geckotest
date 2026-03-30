@@ -1355,9 +1355,12 @@ function showQuizResult() {
     </div>`;
   // Sauvegarde dans Firebase si connecté
   if (currentUser) {
-    saveScore(currentMatiere, ch.titre, correct, total).then(isRecord => {
+    saveScore(currentMatiere, ch.titre, correct, total).then(res => {
       const el = document.getElementById('quiz-save-status');
-      if (el) el.textContent = isRecord ? '🏆 Nouveau record enregistré !' : '💾 Score sauvegardé';
+      if (!el) return;
+      if (res.ok)    el.textContent = res.isRecord ? '🏆 Nouveau record enregistré !' : '💾 Score sauvegardé';
+      else if (res.error === 'not-logged-in') el.textContent = '';
+      else           el.textContent = `⚠️ Erreur sauvegarde (${res.error})`;
     });
   }
 }
@@ -1528,9 +1531,12 @@ function showFigResult() {
     </div>`;
   // Sauvegarde dans Firebase si connecté
   if (currentUser) {
-    saveScore('figures', 'Figures de style', good, total).then(isRecord => {
+    saveScore('figures', 'Figures de style', good, total).then(res => {
       const el = document.getElementById('fig-save-status');
-      if (el) el.textContent = isRecord ? '🏆 Nouveau record enregistré !' : '💾 Score sauvegardé';
+      if (!el) return;
+      if (res.ok)    el.textContent = res.isRecord ? '🏆 Nouveau record enregistré !' : '💾 Score sauvegardé';
+      else if (res.error === 'not-logged-in') el.textContent = '';
+      else           el.textContent = `⚠️ Erreur sauvegarde (${res.error})`;
     });
   }
 }
@@ -1703,7 +1709,7 @@ function authSignOut() {
 
 // ── SAUVEGARDER UN SCORE ──────────────────────────────────────────────────────
 async function saveScore(mat, chapterTitle, score, total) {
-  if (!currentUser || !fbDb) return false;
+  if (!currentUser || !fbDb) return { ok: false, error: 'not-logged-in' };
   const pct      = Math.round(score / total * 100);
   const key      = `${mat}__${chapterTitle}`;
   const isRecord = !userBests[key] || pct > userBests[key].pct;
@@ -1713,8 +1719,11 @@ async function saveScore(mat, chapterTitle, score, total) {
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
     if (isRecord) { userBests[key] = { score, total, pct }; updateChapterBadges(); }
-  } catch(e) { showToast('⚠️ Erreur sauvegarde score'); return false; }
-  return isRecord;
+    return { ok: true, isRecord };
+  } catch(e) {
+    console.error('[saveScore]', e.code, e.message);
+    return { ok: false, error: e.code || e.message };
+  }
 }
 
 // ── CHARGER LES MEILLEURS SCORES ─────────────────────────────────────────────
