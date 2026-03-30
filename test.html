@@ -1583,7 +1583,7 @@ if (FIREBASE_READY) {
 
 // ── Nom → faux email interne pour Firebase Email/Password ────────────────────
 function nameToEmail(name) {
-  return name.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'') + '@revision.local';
+  return name.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'') + '@revision.app';
 }
 
 // ── UI AUTH ───────────────────────────────────────────────────────────────────
@@ -1593,7 +1593,7 @@ function renderAuthUI(user) {
   if (user) {
     signinBtn.style.display = 'none';
     avatarBtn.style.display = 'flex';
-    const name = user.displayName || nameToEmail(user.email).split('@')[0];
+    const name = user.displayName || user.email.split('@')[0];
     document.getElementById('authMenuName').textContent  = name;
     document.getElementById('authMenuEmail').textContent = '';
     avatarBtn.textContent = name[0].toUpperCase();
@@ -1651,12 +1651,14 @@ async function authDoLogin() {
     showToast(`👋 Bonjour ${name} !`);
   } catch(err) {
     const msgs = {
-      'auth/user-not-found':   "Nom d'utilisateur inconnu.",
-      'auth/wrong-password':   'Mot de passe incorrect.',
-      'auth/invalid-credential': "Nom ou mot de passe incorrect.",
-      'auth/too-many-requests':'Trop de tentatives, réessayez plus tard.'
+      'auth/user-not-found':           "Nom d'utilisateur inconnu.",
+      'auth/wrong-password':           'Mot de passe incorrect.',
+      'auth/invalid-credential':       "Nom ou mot de passe incorrect.",
+      'auth/invalid-email':            "Nom d'utilisateur invalide.",
+      'auth/too-many-requests':        'Trop de tentatives, réessayez plus tard.',
+      'auth/configuration-not-found':  "⚠️ Activez Email/Mot de passe dans Firebase Console → Authentication → Méthodes de connexion."
     };
-    errEl.textContent = msgs[err.code] || 'Erreur de connexion.';
+    errEl.textContent = msgs[err.code] || `Erreur : ${err.message}`;
     errEl.classList.add('show');
   }
 }
@@ -1672,16 +1674,19 @@ async function authDoRegister() {
   const slug = name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
   if (!slug) { errEl.textContent = "Nom invalide (lettres/chiffres uniquement)."; errEl.classList.add('show'); return; }
   try {
-    const cred = await fbAuth.createUserWithEmailAndPassword(nameToEmail(name), pass);
+    const cred = await fbAuth.createUserWithEmailAndPassword(slug + '@revision.app', pass);
     await cred.user.updateProfile({ displayName: name });
     document.getElementById('authOverlay').classList.remove('open');
     showToast(`✅ Compte créé ! Bonjour ${name} !`);
   } catch(err) {
     const msgs = {
-      'auth/email-already-in-use': "Ce nom d'utilisateur est déjà pris.",
-      'auth/weak-password':        'Mot de passe trop faible (6 caractères min.).'
+      'auth/email-already-in-use':     "Ce nom d'utilisateur est déjà pris.",
+      'auth/invalid-email':            "Nom d'utilisateur invalide (lettres/chiffres uniquement).",
+      'auth/weak-password':            'Mot de passe trop faible (6 caractères min.).',
+      'auth/operation-not-allowed':    "⚠️ Activez Email/Mot de passe dans Firebase Console → Authentication → Méthodes de connexion.",
+      'auth/configuration-not-found':  "⚠️ Activez Email/Mot de passe dans Firebase Console → Authentication → Méthodes de connexion."
     };
-    errEl.textContent = msgs[err.code] || 'Erreur lors de la création du compte.';
+    errEl.textContent = msgs[err.code] || `Erreur : ${err.message}`;
     errEl.classList.add('show');
   }
 }
