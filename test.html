@@ -9,6 +9,10 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
   onload="katexReady=true"></script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -436,6 +440,11 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .scores-table td { padding:8px 8px; color:var(--text2); border-bottom:1px solid var(--border); }
 .scores-table tr:last-child td { border-bottom:none; }
 .scores-empty { color:var(--text3); text-align:center; padding:32px; font-size:0.82rem; }
+.scores-modal-actions { display:flex; gap:8px; padding:12px 20px; border-top:1px solid var(--border); flex-shrink:0; }
+.scores-action-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.75rem; font-weight:500; cursor:pointer; transition:all 0.15s; border:1px solid var(--border2); background:var(--surface2); color:var(--text2); }
+.scores-action-btn:hover { border-color:var(--accent); color:var(--text); }
+.scores-action-btn.import { border-color:rgba(80,200,120,0.4); color:#2e8f50; background:rgba(80,200,120,0.07); }
+.scores-action-btn.import:hover { background:rgba(80,200,120,0.14); }
 </style>
 </head>
 <body>
@@ -557,6 +566,13 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
       <button class="scores-modal-close" onclick="document.getElementById('scoresOverlay').classList.remove('open')">✕</button>
     </div>
     <div class="scores-modal-body" id="scoresModalBody"></div>
+    <div class="scores-modal-actions">
+      <button class="scores-action-btn" onclick="exportScores()">💾 Exporter (.json)</button>
+      <button class="scores-action-btn import" onclick="document.getElementById('importFileInput').click()">📥 Importer</button>
+      <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importScores(event)">
+      <span style="flex:1"></span>
+      <button class="scores-action-btn" style="color:#e05050;border-color:rgba(224,80,80,0.3);background:rgba(224,80,80,0.06)" onclick="clearMyScores()">🗑 Tout effacer</button>
+    </div>
   </div>
 </div>
 
@@ -1520,77 +1536,55 @@ function showFigResult() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// ── BASE DE DONNÉES LOCALE (IndexedDB) ──────────────────────────────────────
+// ── FIREBASE — CONNEXION & RÉSULTATS ──────────────────────────────────────
 // ════════════════════════════════════════════════════════════════════════════
-// Stockage local dans le navigateur — aucun serveur, aucune configuration
-// Les données sont conservées même après fermeture du navigateur.
+//
+//  ▶  CONFIGURATION (Console Firebase → ⚙️ Paramètres → Vos apps → SDK config) :
+//     1. Créez un projet sur https://console.firebase.google.com
+//     2. Activez Authentication → Email/Mot de passe
+//     3. Créez une base Firestore (mode production)
+//     4. Appliquez ces règles Firestore :
+//
+//        rules_version = '2';
+//        service cloud.firestore {
+//          match /databases/{database}/documents {
+//            match /users/{userId}/{document=**} {
+//              allow read, write: if request.auth != null && request.auth.uid == userId;
+//            }
+//          }
+//        }
+//
+// ════════════════════════════════════════════════════════════════════════════
 
-let currentUser = null; // { username } si connecté
-let userBests   = {};   // meilleurs scores en mémoire
-let _db         = null; // instance IndexedDB
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyANF3Jr6d-E3Ni5nnD6MPTXHOcp8O8I2z0",
+  authDomain: "gecko-revision.firebaseapp.com",
+  projectId: "gecko-revision",
+  storageBucket: "gecko-revision.firebasestorage.app",
+  messagingSenderId: "96192457936",
+  appId: "1:96192457936:web:337862f0ed5888e4d682d5"
+};
 
-// ── Ouvre/crée la base IndexedDB ─────────────────────────────────────────────
-function openDB() {
-  return new Promise((resolve, reject) => {
-    if (_db) { resolve(_db); return; }
-    const req = indexedDB.open('revision_db', 1);
-    req.onupgradeneeded = e => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains('users')) {
-        db.createObjectStore('users', { keyPath: 'username' });
-      }
-      if (!db.objectStoreNames.contains('scores')) {
-        const s = db.createObjectStore('scores', { keyPath: 'id', autoIncrement: true });
-        s.createIndex('by_user', 'username', { unique: false });
-      }
-    };
-    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
-    req.onerror   = () => reject(req.error);
+const FIREBASE_READY = FIREBASE_CONFIG.apiKey !== "VOTRE_API_KEY";
+
+let fbAuth = null, fbDb = null, currentUser = null, userBests = {};
+
+if (FIREBASE_READY) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  fbAuth = firebase.auth();
+  fbDb   = firebase.firestore();
+  fbAuth.onAuthStateChanged(user => {
+    currentUser = user;
+    renderAuthUI(user);
+    if (user) loadUserBests();
+    else { userBests = {}; updateChapterBadges(); }
   });
 }
 
-function dbGet(store, key) {
-  return openDB().then(db => new Promise((res, rej) => {
-    const tx = db.transaction(store, 'readonly');
-    const req = tx.objectStore(store).get(key);
-    req.onsuccess = () => res(req.result);
-    req.onerror   = () => rej(req.error);
-  }));
+// ── Nom → faux email interne pour Firebase Email/Password ────────────────────
+function nameToEmail(name) {
+  return name.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'') + '@revision.local';
 }
-
-function dbPut(store, value) {
-  return openDB().then(db => new Promise((res, rej) => {
-    const tx = db.transaction(store, 'readwrite');
-    const req = tx.objectStore(store).put(value);
-    req.onsuccess = () => res(req.result);
-    req.onerror   = () => rej(req.error);
-  }));
-}
-
-function dbGetAllByIndex(store, index, value) {
-  return openDB().then(db => new Promise((res, rej) => {
-    const tx  = db.transaction(store, 'readonly');
-    const req = tx.objectStore(store).index(index).getAll(value);
-    req.onsuccess = () => res(req.result);
-    req.onerror   = () => rej(req.error);
-  }));
-}
-
-// ── Hachage SHA-256 (Web Crypto API, natif dans tous les navigateurs) ────────
-async function hashPassword(pass) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-
-// ── INIT : restaure la session ────────────────────────────────────────────────
-openDB().then(() => {
-  const saved = sessionStorage.getItem('revision_user');
-  if (saved) {
-    currentUser = JSON.parse(saved);
-    renderAuthUI(currentUser);
-    loadUserBests();
-  }
-});
 
 // ── UI AUTH ───────────────────────────────────────────────────────────────────
 function renderAuthUI(user) {
@@ -1599,9 +1593,10 @@ function renderAuthUI(user) {
   if (user) {
     signinBtn.style.display = 'none';
     avatarBtn.style.display = 'flex';
-    document.getElementById('authMenuName').textContent  = user.username;
+    const name = user.displayName || nameToEmail(user.email).split('@')[0];
+    document.getElementById('authMenuName').textContent  = name;
     document.getElementById('authMenuEmail').textContent = '';
-    avatarBtn.textContent = user.username[0].toUpperCase();
+    avatarBtn.textContent = name[0].toUpperCase();
   } else {
     signinBtn.style.display = 'flex';
     avatarBtn.style.display = 'none';
@@ -1615,16 +1610,19 @@ function toggleAuthMenu(e) {
 }
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('#authWrap')) {
-    document.getElementById('authMenu')?.classList.remove('open');
-  }
+  if (!e.target.closest('#authWrap')) document.getElementById('authMenu')?.classList.remove('open');
 });
 
 function authSignIn() {
   switchAuthTab('login');
   document.getElementById('loginName').value = '';
   document.getElementById('loginPass').value = '';
-  document.getElementById('loginError').classList.remove('show');
+  const errEl = document.getElementById('loginError');
+  errEl.classList.remove('show');
+  if (!FIREBASE_READY) {
+    errEl.textContent = '⚙️ Renseignez FIREBASE_CONFIG dans le code source.';
+    errEl.classList.add('show');
+  }
   document.getElementById('authOverlay').classList.add('open');
 }
 
@@ -1641,82 +1639,86 @@ function switchAuthTab(tab) {
 }
 
 async function authDoLogin() {
+  if (!FIREBASE_READY) return;
   const name  = document.getElementById('loginName').value.trim();
   const pass  = document.getElementById('loginPass').value;
   const errEl = document.getElementById('loginError');
   errEl.classList.remove('show');
   if (!name || !pass) { errEl.textContent = 'Remplissez tous les champs.'; errEl.classList.add('show'); return; }
-  const user = await dbGet('users', name.toLowerCase());
-  if (!user) { errEl.textContent = "Nom d'utilisateur inconnu."; errEl.classList.add('show'); return; }
-  const hash = await hashPassword(pass);
-  if (hash !== user.passwordHash) { errEl.textContent = 'Mot de passe incorrect.'; errEl.classList.add('show'); return; }
-  currentUser = { username: user.displayName };
-  sessionStorage.setItem('revision_user', JSON.stringify(currentUser));
-  document.getElementById('authOverlay').classList.remove('open');
-  renderAuthUI(currentUser);
-  loadUserBests();
-  showToast(`👋 Bonjour ${user.displayName} !`);
+  try {
+    await fbAuth.signInWithEmailAndPassword(nameToEmail(name), pass);
+    document.getElementById('authOverlay').classList.remove('open');
+    showToast(`👋 Bonjour ${name} !`);
+  } catch(err) {
+    const msgs = {
+      'auth/user-not-found':   "Nom d'utilisateur inconnu.",
+      'auth/wrong-password':   'Mot de passe incorrect.',
+      'auth/invalid-credential': "Nom ou mot de passe incorrect.",
+      'auth/too-many-requests':'Trop de tentatives, réessayez plus tard.'
+    };
+    errEl.textContent = msgs[err.code] || 'Erreur de connexion.';
+    errEl.classList.add('show');
+  }
 }
 
 async function authDoRegister() {
+  if (!FIREBASE_READY) return;
   const name  = document.getElementById('registerName').value.trim();
   const pass  = document.getElementById('registerPass').value;
   const errEl = document.getElementById('registerError');
   errEl.classList.remove('show');
   if (!name || !pass) { errEl.textContent = 'Remplissez tous les champs.'; errEl.classList.add('show'); return; }
-  if (pass.length < 6) { errEl.textContent = 'Le mot de passe doit faire au moins 6 caractères.'; errEl.classList.add('show'); return; }
-  const key = name.toLowerCase();
-  const existing = await dbGet('users', key);
-  if (existing) { errEl.textContent = "Ce nom d'utilisateur est déjà pris."; errEl.classList.add('show'); return; }
-  const hash = await hashPassword(pass);
-  await dbPut('users', { username: key, displayName: name, passwordHash: hash, createdAt: Date.now() });
-  currentUser = { username: name };
-  sessionStorage.setItem('revision_user', JSON.stringify(currentUser));
-  document.getElementById('authOverlay').classList.remove('open');
-  renderAuthUI(currentUser);
-  showToast(`✅ Compte créé ! Bonjour ${name} !`);
+  if (pass.length < 6) { errEl.textContent = 'Mot de passe : 6 caractères minimum.'; errEl.classList.add('show'); return; }
+  const slug = name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  if (!slug) { errEl.textContent = "Nom invalide (lettres/chiffres uniquement)."; errEl.classList.add('show'); return; }
+  try {
+    const cred = await fbAuth.createUserWithEmailAndPassword(nameToEmail(name), pass);
+    await cred.user.updateProfile({ displayName: name });
+    document.getElementById('authOverlay').classList.remove('open');
+    showToast(`✅ Compte créé ! Bonjour ${name} !`);
+  } catch(err) {
+    const msgs = {
+      'auth/email-already-in-use': "Ce nom d'utilisateur est déjà pris.",
+      'auth/weak-password':        'Mot de passe trop faible (6 caractères min.).'
+    };
+    errEl.textContent = msgs[err.code] || 'Erreur lors de la création du compte.';
+    errEl.classList.add('show');
+  }
 }
 
-// Touche Entrée pour valider
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('loginPass')?.addEventListener('keydown',    e => { if (e.key === 'Enter') authDoLogin(); });
-  document.getElementById('registerPass')?.addEventListener('keydown', e => { if (e.key === 'Enter') authDoRegister(); });
+  document.getElementById('loginPass')?.addEventListener('keydown',    e => { if (e.key==='Enter') authDoLogin(); });
+  document.getElementById('registerPass')?.addEventListener('keydown', e => { if (e.key==='Enter') authDoRegister(); });
 });
 
 function authSignOut() {
   document.getElementById('authMenu').classList.remove('open');
-  currentUser = null;
-  userBests   = {};
-  sessionStorage.removeItem('revision_user');
-  renderAuthUI(null);
-  updateChapterBadges();
-  showToast('👋 Déconnecté');
+  fbAuth.signOut().then(() => { userBests={}; updateChapterBadges(); showToast('👋 Déconnecté'); });
 }
 
 // ── SAUVEGARDER UN SCORE ──────────────────────────────────────────────────────
 async function saveScore(mat, chapterTitle, score, total) {
-  if (!currentUser) return false;
+  if (!currentUser || !fbDb) return false;
   const pct      = Math.round(score / total * 100);
   const key      = `${mat}__${chapterTitle}`;
   const isRecord = !userBests[key] || pct > userBests[key].pct;
-  await dbPut('scores', {
-    username: currentUser.username, mat, chapterTitle, score, total, pct,
-    timestamp: Date.now()
-  });
-  if (isRecord) {
-    userBests[key] = { score, total, pct };
-    updateChapterBadges();
-  }
+  try {
+    await fbDb.collection('users').doc(currentUser.uid).collection('scores').add({
+      mat, chapterTitle, score, total, pct,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    if (isRecord) { userBests[key] = { score, total, pct }; updateChapterBadges(); }
+  } catch(e) { showToast('⚠️ Erreur sauvegarde score'); return false; }
   return isRecord;
 }
 
 // ── CHARGER LES MEILLEURS SCORES ─────────────────────────────────────────────
 async function loadUserBests() {
-  if (!currentUser) return;
+  if (!currentUser || !fbDb) return;
   userBests = {};
-  const all = await dbGetAllByIndex('scores', 'by_user', currentUser.username);
-  all.forEach(d => {
-    const key = `${d.mat}__${d.chapterTitle}`;
+  const snap = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
+  snap.forEach(doc => {
+    const d = doc.data(), key = `${d.mat}__${d.chapterTitle}`;
     if (!userBests[key] || d.pct > userBests[key].pct)
       userBests[key] = { score: d.score, total: d.total, pct: d.pct };
   });
@@ -1735,37 +1737,34 @@ function updateChapterBadges() {
     if (best) {
       if (!badge) { badge = document.createElement('div'); badge.className = 'ch-best'; el.appendChild(badge); }
       const color = best.pct >= 80 ? '#3aaa60' : best.pct >= 60 ? '#f0a500' : '#e05050';
-      badge.textContent      = `Meilleur : ${best.pct}%`;
+      badge.textContent      = `Meilleur : ${best.pct}%`;
       badge.style.color       = color;
       badge.style.borderColor = color + '44';
       badge.style.background  = color + '15';
-    } else if (badge) {
-      badge.remove();
-    }
+    } else if (badge) { badge.remove(); }
   });
 }
 
 // ── MODAL MES RÉSULTATS ───────────────────────────────────────────────────────
 async function showMyScores() {
   document.getElementById('authMenu').classList.remove('open');
-  if (!currentUser) return;
+  if (!currentUser || !fbDb) return;
   const overlay = document.getElementById('scoresOverlay');
   const body    = document.getElementById('scoresModalBody');
   overlay.classList.add('open');
   body.innerHTML = '<p class="scores-empty">Chargement…</p>';
-  const all = await dbGetAllByIndex('scores', 'by_user', currentUser.username);
-  if (!all.length) {
-    body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>';
-    return;
-  }
-  all.sort((a, b) => b.timestamp - a.timestamp);
-  const ICONS = { editeur: '📝', histoire: '🏛️', physique: '⚗️', figures: '🎭' };
-  const rows = all.slice(0, 60).map(d => {
-    const date  = new Date(d.timestamp).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
+  const snap = await fbDb.collection('users').doc(currentUser.uid)
+    .collection('scores').orderBy('timestamp','desc').limit(60).get();
+  if (snap.empty) { body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
+  const ICONS = { editeur:'📝', histoire:'🏛️', physique:'⚗️', figures:'🎭' };
+  const rows = snap.docs.map(doc => {
+    const d = doc.data();
+    const ts = d.timestamp?.toDate?.();
+    const date = ts ? ts.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
     const color = d.pct >= 80 ? '#3aaa60' : d.pct >= 60 ? '#f0a500' : '#e05050';
     return `<tr>
       <td>${date}</td>
-      <td>${ICONS[d.mat] || ''} ${d.mat}</td>
+      <td>${ICONS[d.mat]||''} ${d.mat}</td>
       <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.chapterTitle}</td>
       <td>${d.score}/${d.total}</td>
       <td style="color:${color};font-weight:700">${d.pct}%</td>
@@ -1779,6 +1778,69 @@ async function showMyScores() {
 
 function closeScoresModal(e) {
   if (e.target === e.currentTarget) document.getElementById('scoresOverlay').classList.remove('open');
+}
+
+// ── EXPORT / IMPORT / EFFACER ────────────────────────────────────────────────────
+async function exportScores() {
+  if (!currentUser || !fbDb) return;
+  const snap = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
+  if (snap.empty) { showToast('Aucun score à exporter'); return; }
+  const scores = snap.docs.map(doc => doc.data()).map(d => ({
+    mat: d.mat, chapterTitle: d.chapterTitle,
+    score: d.score, total: d.total, pct: d.pct,
+    timestamp: d.timestamp?.toMillis?.() || Date.now()
+  }));
+  const blob = new Blob([JSON.stringify({ scores }, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), {
+    href: url,
+    download: `scores_${currentUser.displayName || 'moi'}.json`
+  });
+  a.click(); URL.revokeObjectURL(url);
+  showToast(`💾 ${scores.length} score(s) exporté(s)`);
+}
+
+async function importScores(event) {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file || !currentUser || !fbDb) return;
+  try {
+    const data = JSON.parse(await file.text());
+    if (!Array.isArray(data.scores)) throw new Error();
+    const ref  = fbDb.collection('users').doc(currentUser.uid).collection('scores');
+    const snap = await ref.get();
+    const existingKeys = new Set(snap.docs.map(d => {
+      const dd = d.data();
+      return `${dd.mat}|${dd.chapterTitle}|${dd.timestamp?.toMillis?.()}`;
+    }));
+    let added = 0;
+    for (const s of data.scores) {
+      const k = `${s.mat}|${s.chapterTitle}|${s.timestamp}`;
+      if (!existingKeys.has(k)) {
+        await ref.add({
+          mat: s.mat, chapterTitle: s.chapterTitle,
+          score: s.score, total: s.total, pct: s.pct,
+          timestamp: firebase.firestore.Timestamp.fromMillis(s.timestamp || Date.now())
+        });
+        added++;
+      }
+    }
+    await loadUserBests();
+    showToast(`📥 ${added} score(s) importé(s)`);
+    showMyScores();
+  } catch(e) { showToast('⚠️ Fichier invalide'); }
+}
+
+async function clearMyScores() {
+  if (!currentUser || !fbDb) return;
+  if (!confirm('Effacer tous vos scores ? Action irréversible.')) return;
+  const snap = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
+  const batch = fbDb.batch();
+  snap.docs.forEach(doc => batch.delete(doc.ref));
+  await batch.commit();
+  userBests = {}; updateChapterBadges();
+  showToast('🗑 Scores effacés');
+  showMyScores();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
