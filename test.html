@@ -443,8 +443,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .scores-modal-actions { display:flex; gap:8px; padding:12px 20px; border-top:1px solid var(--border); flex-shrink:0; }
 .scores-action-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.75rem; font-weight:500; cursor:pointer; transition:all 0.15s; border:1px solid var(--border2); background:var(--surface2); color:var(--text2); }
 .scores-action-btn:hover { border-color:var(--accent); color:var(--text); }
-.scores-action-btn.import { border-color:rgba(80,200,120,0.4); color:#2e8f50; background:rgba(80,200,120,0.07); }
-.scores-action-btn.import:hover { background:rgba(80,200,120,0.14); }
+
 </style>
 </head>
 <body>
@@ -567,9 +566,6 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
     </div>
     <div class="scores-modal-body" id="scoresModalBody"></div>
     <div class="scores-modal-actions">
-      <button class="scores-action-btn" onclick="exportScores()">💾 Exporter (.json)</button>
-      <button class="scores-action-btn import" onclick="document.getElementById('importFileInput').click()">📥 Importer</button>
-      <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importScores(event)">
       <span style="flex:1"></span>
       <button class="scores-action-btn" style="color:#e05050;border-color:rgba(224,80,80,0.3);background:rgba(224,80,80,0.06)" onclick="clearMyScores()">🗑 Tout effacer</button>
     </div>
@@ -1582,8 +1578,16 @@ if (FIREBASE_READY) {
   fbAuth.onAuthStateChanged(user => {
     currentUser = user;
     renderAuthUI(user);
-    if (user) loadUserBests();
-    else { userBests = {}; updateChapterBadges(); }
+    if (user) {
+      // Restauration instantanée depuis le cache local
+      userBests = lsGetBests(user.uid);
+      updateChapterBadges();
+      // Sync Firestore en arrière-plan
+      loadUserBests();
+    } else {
+      userBests = {};
+      updateChapterBadges();
+    }
   });
 }
 
@@ -1707,10 +1711,17 @@ function authSignOut() {
   fbAuth.signOut().then(() => { userBests={}; updateChapterBadges(); showToast('👋 Déconnecté'); });
 }
 
-// ── LOCALSTORAGE (fallback garanti) ──────────────────────────────────────────
-function lsKey(uid)      { return `revision_scores_${uid}`; }
+// ── LOCALSTORAGE ────────────────────────────────────────────────────────────
+function lsKey(uid)       { return `revision_scores_${uid}`; }
+function lsBestsKey(uid)  { return `revision_bests_${uid}`; }
 function lsGetScores(uid) {
   try { return JSON.parse(localStorage.getItem(lsKey(uid)) || '[]'); } catch { return []; }
+}
+function lsGetBests(uid) {
+  try { return JSON.parse(localStorage.getItem(lsBestsKey(uid)) || 'null') || {}; } catch { return {}; }
+}
+function lsSaveBests(uid, bests) {
+  localStorage.setItem(lsBestsKey(uid), JSON.stringify(bests));
 }
 function lsSaveEntry(uid, entry) {
   const scores = lsGetScores(uid);
@@ -1718,7 +1729,10 @@ function lsSaveEntry(uid, entry) {
   if (scores.length > 500) scores.splice(0, scores.length - 500);
   localStorage.setItem(lsKey(uid), JSON.stringify(scores));
 }
-function lsClearScores(uid) { localStorage.removeItem(lsKey(uid)); }
+function lsClearScores(uid) {
+  localStorage.removeItem(lsKey(uid));
+  localStorage.removeItem(lsBestsKey(uid));
+}
 
 // ── SAUVEGARDER UN SCORE ──────────────────────────────────────────────────────
 async function saveScore(mat, chapterTitle, score, total) {
@@ -1730,7 +1744,11 @@ async function saveScore(mat, chapterTitle, score, total) {
 
   // 1. Sauvegarde locale (toujours fiable)
   lsSaveEntry(currentUser.uid, entry);
-  if (isRecord) { userBests[key] = { score, total, pct }; updateChapterBadges(); }
+  if (isRecord) {
+    userBests[key] = { score, total, pct };
+    lsSaveBests(currentUser.uid, userBests); // Met à jour le cache bests
+    updateChapterBadges();
+  }
 
   // 2. Sauvegarde Firebase (si disponible)
   if (fbDb) {
@@ -1748,29 +1766,32 @@ async function saveScore(mat, chapterTitle, score, total) {
 // ── CHARGER LES MEILLEURS SCORES ─────────────────────────────────────────────
 async function loadUserBests() {
   if (!currentUser) return;
-  userBests = {};
-  let scores = lsGetScores(currentUser.uid);  // local d'abord
+  let scores = lsGetScores(currentUser.uid);
 
   if (fbDb) {
     try {
       const snap = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
-      const fbScores = [];
-      snap.forEach(doc => fbScores.push(doc.data()));
-      // Fusionne : déduplique par mat+chapitre+timestamp arrondi à la seconde
-      const seen = new Set(scores.map(s => `${s.mat}|${s.chapterTitle}|${Math.round(s.timestamp/1000)}`));
-      fbScores.forEach(d => {
+      const seen = new Set(scores.map(s => `${s.mat}|${s.chapterTitle}|${Math.round(s.timestamp/1000)}`))
+      let hasNew = false;
+      snap.forEach(doc => {
+        const d  = doc.data();
         const ts = d.timestamp?.toMillis?.() || 0;
         const k  = `${d.mat}|${d.chapterTitle}|${Math.round(ts/1000)}`;
-        if (!seen.has(k)) { scores.push({ ...d, timestamp: ts }); seen.add(k); }
+        if (!seen.has(k)) { scores.push({ ...d, timestamp: ts }); seen.add(k); hasNew = true; }
       });
+      // Persiste les données Firestore manquantes en local
+      if (hasNew) localStorage.setItem(lsKey(currentUser.uid), JSON.stringify(scores));
     } catch(e) { console.warn('[loadUserBests Firebase]', e.code); }
   }
 
+  const bests = {};
   scores.forEach(d => {
     const k = `${d.mat}__${d.chapterTitle}`;
-    if (!userBests[k] || d.pct > userBests[k].pct)
-      userBests[k] = { score: d.score, total: d.total, pct: d.pct };
+    if (!bests[k] || d.pct > bests[k].pct)
+      bests[k] = { score: d.score, total: d.total, pct: d.pct };
   });
+  userBests = bests;
+  lsSaveBests(currentUser.uid, bests); // Cache pour le prochain chargement
   updateChapterBadges();
 }
 
@@ -1795,35 +1816,11 @@ function updateChapterBadges() {
 }
 
 // ── MODAL MES RÉSULTATS ───────────────────────────────────────────────────────
-async function showMyScores() {
-  document.getElementById('authMenu').classList.remove('open');
-  if (!currentUser) return;
-  const overlay = document.getElementById('scoresOverlay');
-  const body    = document.getElementById('scoresModalBody');
-  overlay.classList.add('open');
-  body.innerHTML = '<p class="scores-empty">Chargement…</p>';
-
-  let scores = lsGetScores(currentUser.uid);
-
-  if (fbDb) {
-    try {
-      const snap = await fbDb.collection('users').doc(currentUser.uid)
-        .collection('scores').orderBy('timestamp','desc').limit(200).get();
-      const seen = new Set(scores.map(s => `${s.mat}|${s.chapterTitle}|${Math.round(s.timestamp/1000)}`));
-      snap.forEach(doc => {
-        const d  = doc.data(), ts = d.timestamp?.toMillis?.() || 0;
-        const k  = `${d.mat}|${d.chapterTitle}|${Math.round(ts/1000)}`;
-        if (!seen.has(k)) { scores.push({ ...d, timestamp: ts }); seen.add(k); }
-      });
-    } catch(e) { console.warn('[showMyScores Firebase]', e.code); }
-  }
-
-  scores.sort((a, b) => b.timestamp - a.timestamp);
-  scores = scores.slice(0, 60);
-
-  if (!scores.length) { body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
+function _renderScoreRows(scores, body) {
+  const sorted = [...scores].sort((a, b) => b.timestamp - a.timestamp).slice(0, 60);
+  if (!sorted.length) { body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
   const ICONS = { editeur:'📝', histoire:'🏛️', physique:'⚗️', figures:'🎭' };
-  const rows = scores.map(d => {
+  const rows = sorted.map(d => {
     const date  = d.timestamp ? new Date(d.timestamp).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
     const color = d.pct >= 80 ? '#3aaa60' : d.pct >= 60 ? '#f0a500' : '#e05050';
     return `<tr>
@@ -1840,68 +1837,56 @@ async function showMyScores() {
   </table>`;
 }
 
+async function showMyScores() {
+  document.getElementById('authMenu').classList.remove('open');
+  if (!currentUser) return;
+  const overlay = document.getElementById('scoresOverlay');
+  const body    = document.getElementById('scoresModalBody');
+  overlay.classList.add('open');
+
+  // Affichage immédiat depuis localStorage
+  let scores = lsGetScores(currentUser.uid);
+  _renderScoreRows(scores, body);
+
+  // Sync Firestore en arrière-plan, re-rendu seulement si nouvelles données
+  if (fbDb) {
+    try {
+      const snap = await fbDb.collection('users').doc(currentUser.uid)
+        .collection('scores').orderBy('timestamp','desc').limit(200).get();
+      const seen = new Set(scores.map(s => `${s.mat}|${s.chapterTitle}|${Math.round(s.timestamp/1000)}`));
+      let hasNew = false;
+      snap.forEach(doc => {
+        const d  = doc.data(), ts = d.timestamp?.toMillis?.() || 0;
+        const k  = `${d.mat}|${d.chapterTitle}|${Math.round(ts/1000)}`;
+        if (!seen.has(k)) { scores.push({ ...d, timestamp: ts }); seen.add(k); hasNew = true; }
+      });
+      if (hasNew) {
+        localStorage.setItem(lsKey(currentUser.uid), JSON.stringify(scores));
+        _renderScoreRows(scores, body);
+      }
+    } catch(e) { console.warn('[showMyScores Firebase]', e.code); }
+  }
+}
+
 function closeScoresModal(e) {
   if (e.target === e.currentTarget) document.getElementById('scoresOverlay').classList.remove('open');
 }
 
-// ── EXPORT / IMPORT / EFFACER ────────────────────────────────────────────────────
-async function exportScores() {
-  if (!currentUser || !fbDb) return;
-  const snap = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
-  if (snap.empty) { showToast('Aucun score à exporter'); return; }
-  const scores = snap.docs.map(doc => doc.data()).map(d => ({
-    mat: d.mat, chapterTitle: d.chapterTitle,
-    score: d.score, total: d.total, pct: d.pct,
-    timestamp: d.timestamp?.toMillis?.() || Date.now()
-  }));
-  const blob = new Blob([JSON.stringify({ scores }, null, 2)], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = Object.assign(document.createElement('a'), {
-    href: url,
-    download: `scores_${currentUser.displayName || 'moi'}.json`
-  });
-  a.click(); URL.revokeObjectURL(url);
-  showToast(`💾 ${scores.length} score(s) exporté(s)`);
-}
-
-async function importScores(event) {
-  const file = event.target.files[0];
-  event.target.value = '';
-  if (!file || !currentUser || !fbDb) return;
-  try {
-    const data = JSON.parse(await file.text());
-    if (!Array.isArray(data.scores)) throw new Error();
-    const ref  = fbDb.collection('users').doc(currentUser.uid).collection('scores');
-    const snap = await ref.get();
-    const existingKeys = new Set(snap.docs.map(d => {
-      const dd = d.data();
-      return `${dd.mat}|${dd.chapterTitle}|${dd.timestamp?.toMillis?.()}`;
-    }));
-    let added = 0;
-    for (const s of data.scores) {
-      const k = `${s.mat}|${s.chapterTitle}|${s.timestamp}`;
-      if (!existingKeys.has(k)) {
-        await ref.add({
-          mat: s.mat, chapterTitle: s.chapterTitle,
-          score: s.score, total: s.total, pct: s.pct,
-          timestamp: firebase.firestore.Timestamp.fromMillis(s.timestamp || Date.now())
-        });
-        added++;
-      }
-    }
-    await loadUserBests();
-    showToast(`📥 ${added} score(s) importé(s)`);
-    showMyScores();
-  } catch(e) { showToast('⚠️ Fichier invalide'); }
-}
-
+// ── EFFACER LES SCORES ───────────────────────────────────────────────────────
 async function clearMyScores() {
-  if (!currentUser || !fbDb) return;
-  if (!confirm('Effacer tous vos scores ? Action irréversible.')) return;
-  const snap = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
-  const batch = fbDb.batch();
-  snap.docs.forEach(doc => batch.delete(doc.ref));
-  await batch.commit();
+  if (!currentUser) return;
+  if (!confirm('Effacer tous vos scores ? Action irréversible.')) return;
+  // 1. Efface le localStorage (scores + cache bests)
+  lsClearScores(currentUser.uid);
+  // 2. Efface Firestore
+  if (fbDb) {
+    try {
+      const snap  = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
+      const batch = fbDb.batch();
+      snap.docs.forEach(doc => batch.delete(doc.ref));
+      await batch.commit();
+    } catch(e) { console.error('[clearMyScores Firebase]', e); }
+  }
   userBests = {}; updateChapterBadges();
   showToast('🗑 Scores effacés');
   showMyScores();
