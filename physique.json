@@ -3,19 +3,71 @@
     {
       "titre": "Forces et champs",
       "icone": "🍎​",
-      "description": "",
+      "description": "Questions sur la force de gravitation universelle et les champs de force.",
       "questions": [
         {
-          "question": "",
+          "question": "Quelle est la formule de la force de gravitation universelle entre deux masses m1 et m2 séparées par une distance AB ?",
           "options": [
-            "", 
-            "",
-            "",
-            ""
+            "$$\\vec{F} = G \\cdot \\frac{m_1 \\cdot m_2}{AB^2}\\cdot \\frac{\\vec{AB}}{AB}$$",
+            "$$\\vec{F} = -G \\cdot \\frac{m_1 \\cdot m_2}{AB^2}$$",
+            "$$\\vec{F} = -G \\cdot \\frac{m_1 \\cdot m_2}{AB^2}\\cdot \\frac{\\vec{AB}}{AB}$$",
+            "$$\\vec{F} = G \\cdot \\frac{m_1 \\cdot m_2}{AB^2}$$"
           ],
           "answer": 2,
-          "explication": ""
-        }
+          "explication": "Un objet de masse m_a situé au point A exerce sur un système de masse m_b situé au point B une force gravitationnelle"
+        },
+        {
+          "question": "Proton et électron ont des charges opposées. Ainsi:",
+          "options": [
+            "ils s'attirent",
+            "ils se repoussent",
+            "ils n'ont pas d'effet l'un sur l'autre",
+            "leur interaction dépend de leur vitesse"
+          ],
+          "answer": 0,
+          "explication": "Proton et électron ont des charges opposées. Ainsi, ils s'attirent."
+        },
+        {
+          "question": "Deux charges de même signe:",
+          "options": [
+            "s'attirent",
+            "se repoussent",
+            "n'ont pas d'effet l'une sur l'autre",
+            "leur interaction dépend de leur vitesse"
+          ],
+          "answer": 1,
+          "explication": "Deux charges de même signe se repoussent."
+        },
+        {
+          "question": "Un objet de charge qA situé au point A exerce sur un système de charge qB situé en B une force électrostatique.",
+          "options": [
+            "$$\\vec{F}_{A/B} = \\frac{1}{4\\pi \\varepsilon_0} \\cdot \\frac{q_A q_B}{AB^2}$$",
+            "$$\\vec{F} = -G \\cdot \\frac{m_1 \\cdot m_2}{AB^2}\\cdot \\frac{\\vec{AB}}{AB}$$",
+            "$$\\vec{F}_{A/B} = -\\frac{1}{4\\pi \\varepsilon_0} \\cdot \\frac{q_A q_B}{AB^2} \\cdot \\frac{\\vec{AB}}{AB}$$",
+            "$$\\vec{F}_{A/B} = \\frac{1}{4\\pi \\varepsilon_0} \\cdot \\frac{q_A q_B}{AB^2} \\cdot \\frac{\\vec{AB}}{AB}$$"
+          ],
+          "answer": 3,
+          "explication": "Un objet de charge qA situé au point A exerce sur un système de charge qB situé en B une force électrostatique"},
+        {
+          "question": "Au voisinage de l'astre attracteur, un système de masse m subit son poids:",
+          "options": [
+            "$$\\vec{P} = \\frac{m}{\\vec{g}}$$",
+            "$$\\vec{P} = m \\cdot \\vec{g}$$",
+            "$$\\vec{P} = m - \\vec{g}$$",
+            "$$\\vec{P} = m + \\vec{g}$$"
+          ],
+          "answer": 1,
+          "explication": "L'astre attracteur crée alors en tout point de l'espace un champ de gravitation, alors nommé champ de pesanteur, est le vecteur g , vertical vers le bas, uniforme. Les lignes de champ sont alors des lignes verticales vers le bas."},
+          {
+          "question": "Loin de l'astre attracteur, un astre attracteur de masse M situé en A crée sur un système de masse m situé en B une force:",
+          "options": [
+            "$$\\vec{P} = \\frac{m}{\\vec{g}}$$",
+            "$$\\vec{P} = m \\cdot \\vec{g}$$",
+            "$$\\vec{P} = m - \\vec{g}$$",
+            "$$\\vec{P} = m + \\vec{g}$$"
+          ],
+          "answer": 1,
+          "explication": "Un objet de charge qA situé au point A exerce sur un système de charge qB situé en B une force électrostatique"}
       ]
     },
     {
