@@ -383,6 +383,59 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .toast { position:fixed; bottom:22px; right:22px; background:var(--surface); border:1px solid var(--border2); color:var(--text); padding:10px 16px; border-radius:10px; font-size:0.74rem; display:flex; align-items:center; gap:8px; transform:translateY(14px); opacity:0; transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1); z-index:999; box-shadow:0 8px 32px var(--shadow); }
 .toast::before { content:''; width:6px; height:6px; background:var(--accent); border-radius:50%; box-shadow:0 0 6px var(--accent); flex-shrink:0; }
 .toast.show { transform:translateY(0); opacity:1; }
+
+/* ── AUTH ── */
+.auth-wrap { position:relative; flex-shrink:0; }
+.auth-signin-btn { display:flex; align-items:center; gap:7px; padding:7px 14px; background:var(--surface2); border:1px solid var(--border2); border-radius:8px; font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; color:var(--text2); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.auth-signin-btn:hover { border-color:var(--accent); color:var(--text); }
+.auth-avatar-btn { width:34px; height:34px; border-radius:50%; overflow:hidden; border:2px solid var(--accent); cursor:pointer; flex-shrink:0; padding:0; background:var(--accent-glow); display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; color:var(--accent2); }
+.auth-avatar-btn img { width:100%; height:100%; object-fit:cover; }
+.auth-menu { position:absolute; top:calc(100% + 8px); right:0; background:var(--surface); border:1px solid var(--border2); border-radius:12px; box-shadow:0 8px 32px var(--shadow); min-width:210px; padding:6px; z-index:200; display:none; flex-direction:column; gap:2px; }
+.auth-menu.open { display:flex; }
+.auth-menu-user { padding:10px 12px 8px; border-bottom:1px solid var(--border); margin-bottom:4px; }
+.auth-menu-name { font-size:0.82rem; font-weight:600; color:var(--text); display:block; }
+.auth-menu-email { font-size:0.68rem; color:var(--text3); display:block; margin-top:2px; }
+.auth-menu-item { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:0.8rem; color:var(--text2); transition:background 0.12s; border:none; background:none; font-family:'Inter',sans-serif; width:100%; text-align:left; }
+.auth-menu-item:hover { background:var(--surface2); color:var(--text); }
+.auth-menu-item.danger { color:#e05050; }
+.auth-menu-item.danger:hover { background:rgba(224,80,80,0.08); }
+
+/* ── MEILLEUR SCORE BADGE (sidebar chapitres) ── */
+.ch-best { font-size:0.58rem; color:var(--accent2); background:var(--accent-glow); border:1px solid rgba(124,109,250,0.2); border-radius:10px; padding:1px 6px; margin-top:3px; display:inline-block; }
+
+/* ── MODAL AUTH ── */
+.auth-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:600; align-items:center; justify-content:center; padding:20px; }
+.auth-overlay.open { display:flex; }
+.auth-modal { background:var(--surface); border:1px solid var(--border2); border-radius:16px; width:100%; max-width:360px; padding:28px 28px 24px; box-shadow:0 24px 64px rgba(0,0,0,0.3); display:flex; flex-direction:column; gap:0; }
+.auth-modal-title { font-size:1rem; font-weight:700; color:var(--text); margin-bottom:6px; text-align:center; }
+.auth-modal-subtitle { font-size:0.72rem; color:var(--text3); text-align:center; margin-bottom:20px; }
+.auth-tabs { display:flex; gap:4px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:3px; margin-bottom:18px; }
+.auth-tab { flex:1; padding:6px; border:none; border-radius:6px; background:transparent; font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; color:var(--text2); cursor:pointer; transition:all 0.15s; }
+.auth-tab.active { background:var(--surface); color:var(--text); font-weight:600; box-shadow:0 1px 4px var(--shadow); }
+.auth-field { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+.auth-field label { font-size:0.7rem; font-weight:600; color:var(--text2); }
+.auth-field input { padding:9px 12px; background:var(--editor-bg); border:1px solid var(--border2); border-radius:8px; font-family:'Inter',sans-serif; font-size:0.85rem; color:var(--text); outline:none; transition:border-color 0.15s; }
+.auth-field input:focus { border-color:var(--accent); }
+.auth-submit { margin-top:6px; padding:10px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.auth-submit:hover { background:var(--accent2); }
+.auth-error { font-size:0.72rem; color:#e05050; background:rgba(224,80,80,0.08); border:1px solid rgba(224,80,80,0.3); border-radius:6px; padding:7px 10px; margin-top:4px; display:none; }
+.auth-error.show { display:block; }
+
+/* ── MODAL SCORES ── */
+.scores-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:500; align-items:center; justify-content:center; padding:20px; }
+.scores-overlay.open { display:flex; }
+.scores-modal { background:var(--surface); border:1px solid var(--border2); border-radius:16px; width:100%; max-width:580px; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 24px 64px rgba(0,0,0,0.3); }
+.scores-modal-hdr { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.scores-modal-hdr span { font-weight:600; font-size:0.9rem; }
+.scores-modal-close { background:none; border:none; cursor:pointer; font-size:1.2rem; color:var(--text3); line-height:1; }
+.scores-modal-body { flex:1; overflow-y:auto; padding:16px 20px; }
+.scores-modal-body::-webkit-scrollbar { width:4px; }
+.scores-modal-body::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:2px; }
+.scores-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+.scores-table th { font-weight:600; color:var(--text3); padding:6px 8px; text-align:left; border-bottom:1px solid var(--border); font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase; }
+.scores-table td { padding:8px 8px; color:var(--text2); border-bottom:1px solid var(--border); }
+.scores-table tr:last-child td { border-bottom:none; }
+.scores-empty { color:var(--text3); text-align:center; padding:32px; font-size:0.82rem; }
 </style>
 </head>
 <body>
@@ -456,6 +509,55 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   <button class="btn-random" id="btnRandom" onclick="loadRandom()">
     <span class="dice">🎲</span> Texte aléatoire
   </button>
+
+  <!-- AUTH --> 
+  <div class="auth-wrap" id="authWrap">
+    <button class="auth-signin-btn" id="authSigninBtn" onclick="authSignIn()">🔑 Se connecter</button>
+    <button class="auth-avatar-btn" id="authAvatarBtn" style="display:none" onclick="toggleAuthMenu(event)"></button>
+    <div class="auth-menu" id="authMenu">
+      <div class="auth-menu-user">
+        <span class="auth-menu-name" id="authMenuName"></span>
+        <span class="auth-menu-email" id="authMenuEmail"></span>
+      </div>
+      <button class="auth-menu-item" onclick="showMyScores()">📊 Mes résultats</button>
+      <button class="auth-menu-item danger" onclick="authSignOut()">↩ Se déconnecter</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AUTH -->
+<div class="auth-overlay" id="authOverlay" onclick="closeAuthModal(event)">
+  <div class="auth-modal" onclick="event.stopPropagation()">
+    <div class="auth-modal-title">👤 Compte</div>
+    <div class="auth-modal-subtitle">Connectez-vous pour sauvegarder vos résultats</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="authTabLogin" onclick="switchAuthTab('login')">Se connecter</button>
+      <button class="auth-tab" id="authTabRegister" onclick="switchAuthTab('register')">S'inscrire</button>
+    </div>
+    <div id="authFormLogin">
+      <div class="auth-field"><label>Nom d'utilisateur</label><input type="text" id="loginName" autocomplete="username" placeholder="ex : Paul"></div>
+      <div class="auth-field"><label>Mot de passe</label><input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••••"></div>
+      <div class="auth-error" id="loginError"></div>
+      <button class="auth-submit" onclick="authDoLogin()">Se connecter</button>
+    </div>
+    <div id="authFormRegister" style="display:none">
+      <div class="auth-field"><label>Nom d'utilisateur</label><input type="text" id="registerName" autocomplete="username" placeholder="ex : Paul"></div>
+      <div class="auth-field"><label>Mot de passe</label><input type="password" id="registerPass" autocomplete="new-password" placeholder="6 caractères minimum"></div>
+      <div class="auth-error" id="registerError"></div>
+      <button class="auth-submit" onclick="authDoRegister()">Créer le compte</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SCORES -->
+<div class="scores-overlay" id="scoresOverlay" onclick="closeScoresModal(event)">
+  <div class="scores-modal">
+    <div class="scores-modal-hdr">
+      <span>📊 Mes résultats</span>
+      <button class="scores-modal-close" onclick="document.getElementById('scoresOverlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="scores-modal-body" id="scoresModalBody"></div>
+  </div>
 </div>
 
 <div class="app">
@@ -1232,8 +1334,16 @@ function showQuizResult() {
       <div class="quiz-result-emoji">${emoji}</div>
       <div class="quiz-result-score">${correct} / ${total}</div>
       <div class="quiz-result-label">${msg} (${pct}%)</div>
+      <div id="quiz-save-status" style="font-size:0.72rem;color:var(--text3);min-height:1.2em"></div>
       <button class="quiz-btn quiz-btn-primary" onclick="loadChapter(${quizCurrentChapter})">🔄 Recommencer ce chapitre</button>
     </div>`;
+  // Sauvegarde dans Firebase si connecté
+  if (currentUser) {
+    saveScore(currentMatiere, ch.titre, correct, total).then(isRecord => {
+      const el = document.getElementById('quiz-save-status');
+      if (el) el.textContent = isRecord ? '🏆 Nouveau record enregistré !' : '💾 Score sauvegardé';
+    });
+  }
 }
  
  
@@ -1397,14 +1507,283 @@ function showFigResult() {
       <div class="quiz-result-emoji">${emoji}</div>
       <div class="quiz-result-score">${good} / ${total}</div>
       <div class="quiz-result-label">${pct}% de bonnes réponses</div>
+      <div id="fig-save-status" style="font-size:0.72rem;color:var(--text3);min-height:1.2em"></div>
       <button class="quiz-btn quiz-btn-primary" onclick="figRestart()">🔀 Recommencer</button>
     </div>`;
+  // Sauvegarde dans Firebase si connecté
+  if (currentUser) {
+    saveScore('figures', 'Figures de style', good, total).then(isRecord => {
+      const el = document.getElementById('fig-save-status');
+      if (el) el.textContent = isRecord ? '🏆 Nouveau record enregistré !' : '💾 Score sauvegardé';
+    });
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ── BASE DE DONNÉES LOCALE (IndexedDB) ──────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// Stockage local dans le navigateur — aucun serveur, aucune configuration
+// Les données sont conservées même après fermeture du navigateur.
+
+let currentUser = null; // { username } si connecté
+let userBests   = {};   // meilleurs scores en mémoire
+let _db         = null; // instance IndexedDB
+
+// ── Ouvre/crée la base IndexedDB ─────────────────────────────────────────────
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (_db) { resolve(_db); return; }
+    const req = indexedDB.open('revision_db', 1);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('users')) {
+        db.createObjectStore('users', { keyPath: 'username' });
+      }
+      if (!db.objectStoreNames.contains('scores')) {
+        const s = db.createObjectStore('scores', { keyPath: 'id', autoIncrement: true });
+        s.createIndex('by_user', 'username', { unique: false });
+      }
+    };
+    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+function dbGet(store, key) {
+  return openDB().then(db => new Promise((res, rej) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => res(req.result);
+    req.onerror   = () => rej(req.error);
+  }));
+}
+
+function dbPut(store, value) {
+  return openDB().then(db => new Promise((res, rej) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(value);
+    req.onsuccess = () => res(req.result);
+    req.onerror   = () => rej(req.error);
+  }));
+}
+
+function dbGetAllByIndex(store, index, value) {
+  return openDB().then(db => new Promise((res, rej) => {
+    const tx  = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).index(index).getAll(value);
+    req.onsuccess = () => res(req.result);
+    req.onerror   = () => rej(req.error);
+  }));
+}
+
+// ── Hachage SHA-256 (Web Crypto API, natif dans tous les navigateurs) ────────
+async function hashPassword(pass) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── INIT : restaure la session ────────────────────────────────────────────────
+openDB().then(() => {
+  const saved = sessionStorage.getItem('revision_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    renderAuthUI(currentUser);
+    loadUserBests();
+  }
+});
+
+// ── UI AUTH ───────────────────────────────────────────────────────────────────
+function renderAuthUI(user) {
+  const signinBtn = document.getElementById('authSigninBtn');
+  const avatarBtn = document.getElementById('authAvatarBtn');
+  if (user) {
+    signinBtn.style.display = 'none';
+    avatarBtn.style.display = 'flex';
+    document.getElementById('authMenuName').textContent  = user.username;
+    document.getElementById('authMenuEmail').textContent = '';
+    avatarBtn.textContent = user.username[0].toUpperCase();
+  } else {
+    signinBtn.style.display = 'flex';
+    avatarBtn.style.display = 'none';
+    document.getElementById('authMenu').classList.remove('open');
+  }
+}
+
+function toggleAuthMenu(e) {
+  e.stopPropagation();
+  document.getElementById('authMenu').classList.toggle('open');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#authWrap')) {
+    document.getElementById('authMenu')?.classList.remove('open');
+  }
+});
+
+function authSignIn() {
+  switchAuthTab('login');
+  document.getElementById('loginName').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('authOverlay').classList.add('open');
+}
+
+function closeAuthModal(e) {
+  if (e.target === e.currentTarget) document.getElementById('authOverlay').classList.remove('open');
+}
+
+function switchAuthTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('authTabLogin').classList.toggle('active', isLogin);
+  document.getElementById('authTabRegister').classList.toggle('active', !isLogin);
+  document.getElementById('authFormLogin').style.display    = isLogin ? 'block' : 'none';
+  document.getElementById('authFormRegister').style.display = isLogin ? 'none'  : 'block';
+}
+
+async function authDoLogin() {
+  const name  = document.getElementById('loginName').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  errEl.classList.remove('show');
+  if (!name || !pass) { errEl.textContent = 'Remplissez tous les champs.'; errEl.classList.add('show'); return; }
+  const user = await dbGet('users', name.toLowerCase());
+  if (!user) { errEl.textContent = "Nom d'utilisateur inconnu."; errEl.classList.add('show'); return; }
+  const hash = await hashPassword(pass);
+  if (hash !== user.passwordHash) { errEl.textContent = 'Mot de passe incorrect.'; errEl.classList.add('show'); return; }
+  currentUser = { username: user.displayName };
+  sessionStorage.setItem('revision_user', JSON.stringify(currentUser));
+  document.getElementById('authOverlay').classList.remove('open');
+  renderAuthUI(currentUser);
+  loadUserBests();
+  showToast(`👋 Bonjour ${user.displayName} !`);
+}
+
+async function authDoRegister() {
+  const name  = document.getElementById('registerName').value.trim();
+  const pass  = document.getElementById('registerPass').value;
+  const errEl = document.getElementById('registerError');
+  errEl.classList.remove('show');
+  if (!name || !pass) { errEl.textContent = 'Remplissez tous les champs.'; errEl.classList.add('show'); return; }
+  if (pass.length < 6) { errEl.textContent = 'Le mot de passe doit faire au moins 6 caractères.'; errEl.classList.add('show'); return; }
+  const key = name.toLowerCase();
+  const existing = await dbGet('users', key);
+  if (existing) { errEl.textContent = "Ce nom d'utilisateur est déjà pris."; errEl.classList.add('show'); return; }
+  const hash = await hashPassword(pass);
+  await dbPut('users', { username: key, displayName: name, passwordHash: hash, createdAt: Date.now() });
+  currentUser = { username: name };
+  sessionStorage.setItem('revision_user', JSON.stringify(currentUser));
+  document.getElementById('authOverlay').classList.remove('open');
+  renderAuthUI(currentUser);
+  showToast(`✅ Compte créé ! Bonjour ${name} !`);
+}
+
+// Touche Entrée pour valider
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('loginPass')?.addEventListener('keydown',    e => { if (e.key === 'Enter') authDoLogin(); });
+  document.getElementById('registerPass')?.addEventListener('keydown', e => { if (e.key === 'Enter') authDoRegister(); });
+});
+
+function authSignOut() {
+  document.getElementById('authMenu').classList.remove('open');
+  currentUser = null;
+  userBests   = {};
+  sessionStorage.removeItem('revision_user');
+  renderAuthUI(null);
+  updateChapterBadges();
+  showToast('👋 Déconnecté');
+}
+
+// ── SAUVEGARDER UN SCORE ──────────────────────────────────────────────────────
+async function saveScore(mat, chapterTitle, score, total) {
+  if (!currentUser) return false;
+  const pct      = Math.round(score / total * 100);
+  const key      = `${mat}__${chapterTitle}`;
+  const isRecord = !userBests[key] || pct > userBests[key].pct;
+  await dbPut('scores', {
+    username: currentUser.username, mat, chapterTitle, score, total, pct,
+    timestamp: Date.now()
+  });
+  if (isRecord) {
+    userBests[key] = { score, total, pct };
+    updateChapterBadges();
+  }
+  return isRecord;
+}
+
+// ── CHARGER LES MEILLEURS SCORES ─────────────────────────────────────────────
+async function loadUserBests() {
+  if (!currentUser) return;
+  userBests = {};
+  const all = await dbGetAllByIndex('scores', 'by_user', currentUser.username);
+  all.forEach(d => {
+    const key = `${d.mat}__${d.chapterTitle}`;
+    if (!userBests[key] || d.pct > userBests[key].pct)
+      userBests[key] = { score: d.score, total: d.total, pct: d.pct };
+  });
+  updateChapterBadges();
+}
+
+// ── BADGES MEILLEUR SCORE SUR LES CHAPITRES ──────────────────────────────────
+function updateChapterBadges() {
+  if (!quizData?._chapters) return;
+  quizData._chapters.forEach((ch, i) => {
+    const el = document.getElementById(`ch-item-${i}`);
+    if (!el) return;
+    const key  = `${currentMatiere}__${ch.titre}`;
+    const best = userBests[key];
+    let badge  = el.querySelector('.ch-best');
+    if (best) {
+      if (!badge) { badge = document.createElement('div'); badge.className = 'ch-best'; el.appendChild(badge); }
+      const color = best.pct >= 80 ? '#3aaa60' : best.pct >= 60 ? '#f0a500' : '#e05050';
+      badge.textContent      = `Meilleur : ${best.pct}%`;
+      badge.style.color       = color;
+      badge.style.borderColor = color + '44';
+      badge.style.background  = color + '15';
+    } else if (badge) {
+      badge.remove();
+    }
+  });
+}
+
+// ── MODAL MES RÉSULTATS ───────────────────────────────────────────────────────
+async function showMyScores() {
+  document.getElementById('authMenu').classList.remove('open');
+  if (!currentUser) return;
+  const overlay = document.getElementById('scoresOverlay');
+  const body    = document.getElementById('scoresModalBody');
+  overlay.classList.add('open');
+  body.innerHTML = '<p class="scores-empty">Chargement…</p>';
+  const all = await dbGetAllByIndex('scores', 'by_user', currentUser.username);
+  if (!all.length) {
+    body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>';
+    return;
+  }
+  all.sort((a, b) => b.timestamp - a.timestamp);
+  const ICONS = { editeur: '📝', histoire: '🏛️', physique: '⚗️', figures: '🎭' };
+  const rows = all.slice(0, 60).map(d => {
+    const date  = new Date(d.timestamp).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
+    const color = d.pct >= 80 ? '#3aaa60' : d.pct >= 60 ? '#f0a500' : '#e05050';
+    return `<tr>
+      <td>${date}</td>
+      <td>${ICONS[d.mat] || ''} ${d.mat}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.chapterTitle}</td>
+      <td>${d.score}/${d.total}</td>
+      <td style="color:${color};font-weight:700">${d.pct}%</td>
+    </tr>`;
+  }).join('');
+  body.innerHTML = `<table class="scores-table">
+    <thead><tr><th>Date</th><th>Matière</th><th>Chapitre</th><th>Score</th><th>%</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function closeScoresModal(e) {
+  if (e.target === e.currentTarget) document.getElementById('scoresOverlay').classList.remove('open');
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initSwatches();
 loadTextes().then(() => {
-  // Lit le hash de l'URL (ex: test.html#histoire → 'histoire')
   const mat = location.hash.slice(1) || 'editeur';
   applyMatiere(mat);
 });
