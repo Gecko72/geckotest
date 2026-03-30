@@ -1707,34 +1707,69 @@ function authSignOut() {
   fbAuth.signOut().then(() => { userBests={}; updateChapterBadges(); showToast('👋 Déconnecté'); });
 }
 
+// ── LOCALSTORAGE (fallback garanti) ──────────────────────────────────────────
+function lsKey(uid)      { return `revision_scores_${uid}`; }
+function lsGetScores(uid) {
+  try { return JSON.parse(localStorage.getItem(lsKey(uid)) || '[]'); } catch { return []; }
+}
+function lsSaveEntry(uid, entry) {
+  const scores = lsGetScores(uid);
+  scores.push(entry);
+  if (scores.length > 500) scores.splice(0, scores.length - 500);
+  localStorage.setItem(lsKey(uid), JSON.stringify(scores));
+}
+function lsClearScores(uid) { localStorage.removeItem(lsKey(uid)); }
+
 // ── SAUVEGARDER UN SCORE ──────────────────────────────────────────────────────
 async function saveScore(mat, chapterTitle, score, total) {
-  if (!currentUser || !fbDb) return { ok: false, error: 'not-logged-in' };
+  if (!currentUser) return { ok: false, error: 'not-logged-in' };
   const pct      = Math.round(score / total * 100);
   const key      = `${mat}__${chapterTitle}`;
   const isRecord = !userBests[key] || pct > userBests[key].pct;
-  try {
-    await fbDb.collection('users').doc(currentUser.uid).collection('scores').add({
-      mat, chapterTitle, score, total, pct,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    if (isRecord) { userBests[key] = { score, total, pct }; updateChapterBadges(); }
-    return { ok: true, isRecord };
-  } catch(e) {
-    console.error('[saveScore]', e.code, e.message);
-    return { ok: false, error: e.code || e.message };
+  const entry    = { mat, chapterTitle, score, total, pct, timestamp: Date.now() };
+
+  // 1. Sauvegarde locale (toujours fiable)
+  lsSaveEntry(currentUser.uid, entry);
+  if (isRecord) { userBests[key] = { score, total, pct }; updateChapterBadges(); }
+
+  // 2. Sauvegarde Firebase (si disponible)
+  if (fbDb) {
+    try {
+      await fbDb.collection('users').doc(currentUser.uid).collection('scores').add({
+        ...entry,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch(e) { console.warn('[saveScore Firebase]', e.code, e.message); }
   }
+
+  return { ok: true, isRecord };
 }
 
 // ── CHARGER LES MEILLEURS SCORES ─────────────────────────────────────────────
 async function loadUserBests() {
-  if (!currentUser || !fbDb) return;
+  if (!currentUser) return;
   userBests = {};
-  const snap = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
-  snap.forEach(doc => {
-    const d = doc.data(), key = `${d.mat}__${d.chapterTitle}`;
-    if (!userBests[key] || d.pct > userBests[key].pct)
-      userBests[key] = { score: d.score, total: d.total, pct: d.pct };
+  let scores = lsGetScores(currentUser.uid);  // local d'abord
+
+  if (fbDb) {
+    try {
+      const snap = await fbDb.collection('users').doc(currentUser.uid).collection('scores').get();
+      const fbScores = [];
+      snap.forEach(doc => fbScores.push(doc.data()));
+      // Fusionne : déduplique par mat+chapitre+timestamp arrondi à la seconde
+      const seen = new Set(scores.map(s => `${s.mat}|${s.chapterTitle}|${Math.round(s.timestamp/1000)}`));
+      fbScores.forEach(d => {
+        const ts = d.timestamp?.toMillis?.() || 0;
+        const k  = `${d.mat}|${d.chapterTitle}|${Math.round(ts/1000)}`;
+        if (!seen.has(k)) { scores.push({ ...d, timestamp: ts }); seen.add(k); }
+      });
+    } catch(e) { console.warn('[loadUserBests Firebase]', e.code); }
+  }
+
+  scores.forEach(d => {
+    const k = `${d.mat}__${d.chapterTitle}`;
+    if (!userBests[k] || d.pct > userBests[k].pct)
+      userBests[k] = { score: d.score, total: d.total, pct: d.pct };
   });
   updateChapterBadges();
 }
@@ -1762,19 +1797,34 @@ function updateChapterBadges() {
 // ── MODAL MES RÉSULTATS ───────────────────────────────────────────────────────
 async function showMyScores() {
   document.getElementById('authMenu').classList.remove('open');
-  if (!currentUser || !fbDb) return;
+  if (!currentUser) return;
   const overlay = document.getElementById('scoresOverlay');
   const body    = document.getElementById('scoresModalBody');
   overlay.classList.add('open');
   body.innerHTML = '<p class="scores-empty">Chargement…</p>';
-  const snap = await fbDb.collection('users').doc(currentUser.uid)
-    .collection('scores').orderBy('timestamp','desc').limit(60).get();
-  if (snap.empty) { body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
+
+  let scores = lsGetScores(currentUser.uid);
+
+  if (fbDb) {
+    try {
+      const snap = await fbDb.collection('users').doc(currentUser.uid)
+        .collection('scores').orderBy('timestamp','desc').limit(200).get();
+      const seen = new Set(scores.map(s => `${s.mat}|${s.chapterTitle}|${Math.round(s.timestamp/1000)}`));
+      snap.forEach(doc => {
+        const d  = doc.data(), ts = d.timestamp?.toMillis?.() || 0;
+        const k  = `${d.mat}|${d.chapterTitle}|${Math.round(ts/1000)}`;
+        if (!seen.has(k)) { scores.push({ ...d, timestamp: ts }); seen.add(k); }
+      });
+    } catch(e) { console.warn('[showMyScores Firebase]', e.code); }
+  }
+
+  scores.sort((a, b) => b.timestamp - a.timestamp);
+  scores = scores.slice(0, 60);
+
+  if (!scores.length) { body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
   const ICONS = { editeur:'📝', histoire:'🏛️', physique:'⚗️', figures:'🎭' };
-  const rows = snap.docs.map(doc => {
-    const d = doc.data();
-    const ts = d.timestamp?.toDate?.();
-    const date = ts ? ts.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+  const rows = scores.map(d => {
+    const date  = d.timestamp ? new Date(d.timestamp).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
     const color = d.pct >= 80 ? '#3aaa60' : d.pct >= 60 ? '#f0a500' : '#e05050';
     return `<tr>
       <td>${date}</td>
