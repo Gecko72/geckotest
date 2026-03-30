@@ -3,8 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Révision</title>
+<title>Révision!</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+  onload="katexReady=true"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -385,7 +389,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <div class="logo"><div class="logo-dot"></div>Révision</div>
+  <div class="logo"><div class="logo-dot"></div>Révision!</div>
 
 
   <!-- DROPDOWN UNIQUE -->
@@ -396,7 +400,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
       <span class="dropdown-arrow">▾</span>
     </button>
     <div class="dropdown-menu" id="dropdownMenu">
-      <div class="dropdown-item active" data-mat="editeur" onclick="selectMatiere('editeur', '📝', 'Éditeur', event)">
+      <div class="dropdown-item active" data-mat="editeur" onclick="selectMatiere('editeur', '📝', 'Français', event)">
         <span class="dm-icon">📝</span>
         <div>
           <div class="dm-label">Français</div>
@@ -708,7 +712,7 @@ let currentIndex = -1;
 let savedRange = null;
 let savedRangeFor = null;
 let hlColors = { editor: '#ffeb3b', freeEditor: '#ffeb3b' };
-
+ 
 // ── CHARGEMENT textes.json ─────────────────────────────────────────────────────
 async function loadTextes() {
   try {
@@ -732,7 +736,7 @@ async function loadTextes() {
     showToast('⚠️ textes.json introuvable');
   }
 }
-
+ 
 // ── SIDEBAR ───────────────────────────────────────────────────────────────────
 function renderSidebar() {
   const list = document.getElementById('sidebarList');
@@ -743,7 +747,7 @@ function renderSidebar() {
     </div>
   `).join('');
 }
-
+ 
 function loadText(i) {
   currentIndex = i;
   document.getElementById('editor').innerHTML = texts[i].replace(/\n/g, '<br>');
@@ -781,7 +785,7 @@ function loadText(i) {
   startTimer();
   showToast(`Texte #${i+1} chargé — 28 min ⏱`);
 }
-
+ 
 function updateStarPanels(i) {
   const d = starData[i];
   document.getElementById('title-1').textContent = d.title1;
@@ -794,13 +798,13 @@ function updateStarPanels(i) {
   document.getElementById('intro-3').textContent = d.intro3;
   document.getElementById('content-3').innerHTML = d.content3;
 }
-
+ 
 function loadRandom() {
   let i;
   do { i = Math.floor(Math.random() * texts.length); } while (i === currentIndex && texts.length > 1);
   loadText(i);
 }
-
+ 
 // ── TABS ──────────────────────────────────────────────────────────────────────
 function switchTab(panelId, el) {
   document.querySelectorAll('.star-sidebar .star-tab').forEach(t => t.classList.remove('active'));
@@ -808,7 +812,7 @@ function switchTab(panelId, el) {
   el.classList.add('active');
   document.getElementById(panelId).classList.add('active');
 }
-
+ 
 // ── THEME ─────────────────────────────────────────────────────────────────────
 function toggleTheme() {
   const html = document.documentElement;
@@ -818,29 +822,29 @@ function toggleTheme() {
   document.getElementById('freeColorPicker').value = isDark ? '#1a1a2e' : '#e8e8f0';
   showToast(isDark ? 'Mode jour ☀️' : 'Mode nuit 🌙');
 }
-
+ 
 // ── FORMATTING ────────────────────────────────────────────────────────────────
 function fmt(cmd) { document.getElementById('editor').focus(); document.execCommand(cmd, false, null); }
 function fmtFree(cmd) { document.getElementById('freeEditor').focus(); document.execCommand(cmd, false, null); }
 function setFontSize(v) { document.getElementById('editor').focus(); document.execCommand('fontSize', false, v); }
 function setFontSizeFree(v) { document.getElementById('freeEditor').focus(); document.execCommand('fontSize', false, v); }
-
+ 
 // ── FORMATTING ────────────────────────────────────────────────────────────────
 let activeEditorId = 'editor'; // zone active par défaut
-
+ 
 function setActiveEditor(id) {
   activeEditorId = id;
   const labels = { editor: 'Éditeur', freeEditor: 'Zone libre' };
   const ind = document.getElementById('zoneIndicator');
   if (ind) ind.textContent = labels[id] || id;
 }
-
+ 
 // Écoute focus sur chaque zone
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('editor').addEventListener('focus', () => setActiveEditor('editor'));
   document.getElementById('freeEditor').addEventListener('focus', () => setActiveEditor('freeEditor'));
 });
-
+ 
 function fmtActive(cmd) {
   document.getElementById(activeEditorId).focus();
   document.execCommand(cmd, false, null);
@@ -866,7 +870,7 @@ function changeHlColorActive(v) {
   hlColors['freeEditor'] = v;
   document.getElementById('hlSwatch').style.background = v;
 }
-
+ 
 function saveSelection(editorId) {
   const sel = window.getSelection();
   if (sel && sel.rangeCount > 0) {
@@ -874,7 +878,7 @@ function saveSelection(editorId) {
     savedRangeFor = editorId;
   }
 }
-
+ 
 function restoreSelection(editorId) {
   document.getElementById(editorId).focus();
   if (savedRange && savedRangeFor === editorId) {
@@ -883,7 +887,7 @@ function restoreSelection(editorId) {
     sel.addRange(savedRange);
   }
 }
-
+ 
 // Fonctions héritées (compatibilité)
 function fmt(cmd) { document.getElementById('editor').focus(); document.execCommand(cmd, false, null); }
 function fmtFree(cmd) { document.getElementById('freeEditor').focus(); document.execCommand(cmd, false, null); }
@@ -891,7 +895,7 @@ function setFontSize(v) { document.getElementById('editor').focus(); document.ex
 function setFontSizeFree(v) { document.getElementById('freeEditor').focus(); document.execCommand('fontSize', false, v); }
 function setColor(v) { restoreSelection('editor'); document.execCommand('foreColor', false, v); }
 function setColorFree(v) { restoreSelection('freeEditor'); document.execCommand('foreColor', false, v); }
-
+ 
 function applyHighlight(editorId) {
   const editor = document.getElementById(editorId);
   editor.focus();
@@ -900,25 +904,25 @@ function applyHighlight(editorId) {
   document.execCommand('styleWithCSS', false, true);
   document.execCommand('backColor', false, hlColors[editorId]);
 }
-
+ 
 function changeHlColor(v, editorId) {
   hlColors[editorId] = v;
   const swatchId = editorId === 'editor' ? 'hlSwatch' : 'hlSwatchFree';
   const el = document.getElementById(swatchId);
   if (el) el.style.background = v;
 }
-
+ 
 function initSwatches() {
   const s = document.getElementById('hlSwatch');
   if (s) s.style.background = hlColors['editor'];
 }
-
+ 
 // ── TIMER ─────────────────────────────────────────────────────────────────────
 const TIMER_DURATION = 28 * 60; // 28 minutes en secondes
 let timerSeconds = TIMER_DURATION;
 let timerInterval = null;
 const CIRCUMFERENCE = 2 * Math.PI * 15; // r=15 → 94.25
-
+ 
 function startTimer() {
   clearInterval(timerInterval);
   timerSeconds = TIMER_DURATION;
@@ -927,7 +931,7 @@ function startTimer() {
   updateTimerDisplay();
   timerInterval = setInterval(tickTimer, 1000);
 }
-
+ 
 function tickTimer() {
   timerSeconds--;
   updateTimerDisplay();
@@ -939,7 +943,7 @@ function tickTimer() {
     showToast('⏱ Temps écoulé !');
   }
 }
-
+ 
 function updateTimerDisplay() {
   const m = Math.floor(timerSeconds / 60);
   const s = timerSeconds % 60;
@@ -963,12 +967,12 @@ function updateTimerDisplay() {
     wrap.classList.remove('urgent');
   }
 }
-
+ 
 function resetTimer() {
   startTimer();
   showToast('⏱ Timer relancé');
 }
-
+ 
 // ── COUNTERS ──────────────────────────────────────────────────────────────────
 function updateCounter() {
   const n = document.getElementById('editor').innerText.replace(/\n/g,'').length;
@@ -980,7 +984,7 @@ function updateFreeCounter() {
 }
 document.getElementById('editor').addEventListener('input', updateCounter);
 document.getElementById('freeEditor').addEventListener('input', updateFreeCounter);
-
+ 
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -989,14 +993,14 @@ function showToast(msg) {
   clearTimeout(t._to);
   t._to = setTimeout(() => t.classList.remove('show'), 2200);
 }
-
+ 
 // ── MATIÈRE DROPDOWN ──────────────────────────────────────────────────────────
 let currentMatiere = 'histoire';
 const matiereFiles = {
   histoire:  'dates.json',
   physique:  'physique.json'
 };
-
+ 
 function toggleMatDropdown(e) {
   e.stopPropagation();
   const dd = document.getElementById('navDropdown');
@@ -1009,7 +1013,7 @@ function toggleMatDropdown(e) {
     });
   }
 }
-
+ 
 function selectMatiere(mat, icon, label, e) {
   e.stopPropagation();
   currentMatiere = mat;
@@ -1025,14 +1029,18 @@ function selectMatiere(mat, icon, label, e) {
     quizData = null;
     switchView('histoire');
   }
+  // Update URL
+  const newUrl = mat === 'editeur' ? window.location.pathname : `${window.location.pathname}?mat=${mat}`;
+  history.replaceState(null, '', newUrl);
 }
-
+ 
 function closeAllDropdowns() {
   document.getElementById('navDropdown').classList.remove('open');
 }
-
+ 
 document.addEventListener('click', closeAllDropdowns);
-
+ 
+// ── VIEW SWITCHER ─────────────────────────────────────────────────────────────
 function switchView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
@@ -1043,13 +1051,14 @@ function switchView(view) {
   if (view === 'histoire') loadQuiz();
   if (view === 'figures') initFigures();
 }
-
+ 
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
 let quizData = null;
 let quizLoaded = false;
 let quizAnswers = {};
 let quizCurrentPage = 0;
 let quizCurrentChapter = 0;
-
+ 
 async function loadQuiz() {
   if (quizLoaded) return;
   const file = matiereFiles[currentMatiere] || 'dates.json';
@@ -1073,7 +1082,7 @@ async function loadQuiz() {
       </div>`;
   }
 }
-
+ 
 function renderChapterSidebar() {
   const chapters = quizData.chapitres || [{ titre: quizData.titre, icone: '🏛️', questions: quizData.questions }];
   quizData._chapters = chapters;
@@ -1086,7 +1095,7 @@ function renderChapterSidebar() {
     </div>
   `).join('');
 }
-
+ 
 function loadChapter(idx) {
   const chapters = quizData._chapters;
   quizCurrentChapter = idx;
@@ -1095,6 +1104,7 @@ function loadChapter(idx) {
   document.querySelectorAll('.chapter-item').forEach(el => el.classList.remove('active'));
   document.getElementById('ch-item-' + idx)?.classList.add('active');
   const ch = chapters[idx];
+  // Mélange aléatoire des questions (Fisher-Yates)
   ch._shuffled = [...ch.questions].sort(() => Math.random() - 0.5);
   document.getElementById('quiz-chapter-icon').textContent = ch.icone || '📖';
   document.getElementById('quiz-chapter-name').textContent = ch.titre;
@@ -1105,7 +1115,7 @@ function loadChapter(idx) {
   document.getElementById('quiz-content').style.display = 'block';
   renderQuizQuestion();
 }
-
+ 
 function renderQuizQuestion() {
   const ch = quizData._chapters[quizCurrentChapter];
   const questions = ch._shuffled || ch.questions;
@@ -1117,7 +1127,7 @@ function renderQuizQuestion() {
   const total = questions.length;
   const answered = quizAnswers[quizCurrentPage];
   const letters = ['A', 'B', 'C', 'D', 'E'];
-
+ 
   const optionsHTML = q.options.map((opt, oi) => {
     let cls = 'quiz-option';
     if (answered !== undefined) {
@@ -1129,7 +1139,7 @@ function renderQuizQuestion() {
       <span class="quiz-option-letter">${letters[oi]}</span>${opt}
     </div>`;
   }).join('');
-
+ 
   let feedbackHTML = '';
   if (answered !== undefined) {
     if (answered === q.answer) {
@@ -1138,10 +1148,10 @@ function renderQuizQuestion() {
       feedbackHTML = `<div class="quiz-feedback ko">✗ Bonne réponse : <strong>${q.options[q.answer]}</strong>${q.explication ? ' — ' + q.explication : ''}</div>`;
     }
   }
-
+ 
   const isLast = quizCurrentPage === total - 1;
   const allAnswered = Object.keys(quizAnswers).length === total;
-
+ 
   content.innerHTML = `
     <div class="quiz-question-block">
       <div class="quiz-q-num">Question ${quizCurrentPage + 1} / ${total}</div>
@@ -1156,7 +1166,8 @@ function renderQuizQuestion() {
         ? `<button class="quiz-btn quiz-btn-primary" onclick="showQuizResult()">Résultats 🏁</button>`
         : `<button class="quiz-btn quiz-btn-primary" onclick="quizNext()">Suiv. →</button>`}
     </div>`;
-
+ 
+  // Badge score live
   const badge = document.getElementById('quiz-score-badge');
   const answered_count = Object.keys(quizAnswers).length;
   if (answered_count > 0) {
@@ -1164,24 +1175,26 @@ function renderQuizQuestion() {
     badge.textContent = `${correct} / ${answered_count}`;
     badge.style.display = 'inline';
   }
+  // Rendu des formules mathématiques
+  renderMath(content);
 }
-
+ 
 function answerQuiz(optionIndex) {
   if (quizAnswers[quizCurrentPage] !== undefined) return;
   quizAnswers[quizCurrentPage] = optionIndex;
   renderQuizQuestion();
 }
-
+ 
 function quizNext() {
   const ch = quizData._chapters[quizCurrentChapter];
   const total = (ch._shuffled || ch.questions).length;
   if (quizCurrentPage < total - 1) { quizCurrentPage++; renderQuizQuestion(); }
 }
-
+ 
 function quizPrev() {
   if (quizCurrentPage > 0) { quizCurrentPage--; renderQuizQuestion(); }
 }
-
+ 
 function showQuizResult() {
   const ch = quizData._chapters[quizCurrentChapter];
   const questions = ch._shuffled || ch.questions;
@@ -1201,7 +1214,33 @@ function showQuizResult() {
       <button class="quiz-btn quiz-btn-primary" onclick="loadChapter(${quizCurrentChapter})">🔄 Recommencer ce chapitre</button>
     </div>`;
 }
-
+ 
+ 
+// ── FIGURES DE STYLE ─────────────────────────────────────────────────────────
+ 
+// ── MATH RENDERING (KaTeX) ────────────────────────────────────────────────────
+let katexReady = false;
+ 
+function renderMath(el) {
+  if (!el) return;
+  // Attend que KaTeX soit chargé
+  const attempt = () => {
+    if (typeof renderMathInElement !== 'undefined') {
+      renderMathInElement(el, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true  },
+          { left: '$',  right: '$',  display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true  }
+        ],
+        throwOnError: false
+      });
+    } else {
+      setTimeout(attempt, 150);
+    }
+  };
+  setTimeout(attempt, 0);
+}
 
 let figData = null;  
 let figDeck = []; 
@@ -1343,7 +1382,20 @@ function showFigResult() {
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initSwatches();
-loadTextes();
+loadTextes().then(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const mat = urlParams.get('mat');
+  const matiereData = {
+    editeur: { icon: '📝', label: 'Français' },
+    histoire: { icon: '🏛️', label: 'Histoire' },
+    physique: { icon: '⚗️', label: 'Physique-Chimie' },
+    figures: { icon: '🎭', label: 'Figures de style' }
+  };
+  if (mat && matiereData[mat]) {
+    const data = matiereData[mat];
+    selectMatiere(mat, data.icon, data.label, {});
+  }
+});
 </script>
 </body>
 </html>
