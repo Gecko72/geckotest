@@ -1014,12 +1014,22 @@ function toggleMatDropdown(e) {
   }
 }
  
-function selectMatiere(mat, icon, label, e) {
-  e.stopPropagation();
+const MATIERE_CONFIG = {
+  editeur:  { icon: '📝', label: 'Français' },
+  histoire: { icon: '🏛️', label: 'Histoire' },
+  physique: { icon: '⚗️', label: 'Physique-Chimie' },
+  figures:  { icon: '🎭', label: 'Figures de style' }
+};
+
+function applyMatiere(mat) {
+  if (!MATIERE_CONFIG[mat]) mat = 'editeur';
+  const cfg = MATIERE_CONFIG[mat];
   currentMatiere = mat;
-  document.getElementById('navMatiereIcon').textContent = icon;
-  document.getElementById('navMatiereLabel').textContent = label;
-  closeAllDropdowns();
+  document.getElementById('navMatiereIcon').textContent = cfg.icon;
+  document.getElementById('navMatiereLabel').textContent = cfg.label;
+  document.querySelectorAll('.dropdown-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.mat === mat);
+  });
   if (mat === 'editeur') {
     switchView('editeur');
   } else if (mat === 'figures') {
@@ -1029,10 +1039,21 @@ function selectMatiere(mat, icon, label, e) {
     quizData = null;
     switchView('histoire');
   }
-  // Update URL
-  const newUrl = mat === 'editeur' ? window.location.pathname : `${window.location.pathname}?mat=${mat}`;
-  history.replaceState(null, '', newUrl);
 }
+
+function selectMatiere(mat, icon, label, e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  closeAllDropdowns();
+  applyMatiere(mat);
+  // Met à jour le hash — fonctionne partout (file://, http, https)
+  location.hash = mat;
+}
+
+// Boutons Retour / Avant du navigateur
+window.addEventListener('hashchange', () => {
+  const mat = location.hash.slice(1) || 'editeur';
+  applyMatiere(mat);
+});
  
 function closeAllDropdowns() {
   document.getElementById('navDropdown').classList.remove('open');
@@ -1383,18 +1404,9 @@ function showFigResult() {
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initSwatches();
 loadTextes().then(() => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const mat = urlParams.get('mat');
-  const matiereData = {
-    editeur: { icon: '📝', label: 'Français' },
-    histoire: { icon: '🏛️', label: 'Histoire' },
-    physique: { icon: '⚗️', label: 'Physique-Chimie' },
-    figures: { icon: '🎭', label: 'Figures de style' }
-  };
-  if (mat && matiereData[mat]) {
-    const data = matiereData[mat];
-    selectMatiere(mat, data.icon, data.label, {});
-  }
+  // Lit le hash de l'URL (ex: test.html#histoire → 'histoire')
+  const mat = location.hash.slice(1) || 'editeur';
+  applyMatiere(mat);
 });
 </script>
 </body>
