@@ -76,7 +76,6 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   .theme-toggle { justify-content: left;}
   .topbar { justify-content : left;}
   .star-panel.active { padding:0px 0px; }
-  .btn-text { display:none; }
   .quiz-chapter-icon { display:none; }
 }
 
@@ -536,7 +535,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   <div class="nav-dropdown" id="navDropdown">
     <button class="nav-tab nav-tab-dropdown active" id="nav-editeur" onclick="toggleMatDropdown(event)">
       <span id="navMatiereIcon">📝</span>
-      <span id="navMatiereLabel">Français</span>
+      <span class="btn-text" id="navMatiereLabel">Français</span>
       <span class="dropdown-arrow">▾</span>
     </button>
     <div class="dropdown-menu" id="dropdownMenu">
@@ -577,29 +576,15 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   <div class="theme-toggle" onclick="toggleTheme()"></div>
   <span class="theme-icon">☀️</span>
 
-  <!-- TIMER (visible en mode éditeur uniquement) -->
-  <div class="timer-wrap" id="timerWrap" style="display:none">
-    <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
-      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
-      <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
-        stroke-dasharray="94.25" stroke-dashoffset="0"
-        stroke-linecap="round" transform="rotate(-90 18 18)"
-        id="timerArc"/>
-    </svg>
-    <div class="timer-info">
-      <span class="timer-label">Temps</span>
-      <span class="timer-display" id="timerDisplay">28:00</span>
-    </div>
-    <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
-  </div>
+
 
   <button class="btn-random" id="btnRandom" onclick="loadRandom()">
-    <span class="dice">🎲</span> Texte aléatoire
+    <span class="dice">🎲</span> <span class="btn-text">Texte aléatoire</span>
   </button>
 
   <!-- AUTH --> 
   <div class="auth-wrap" id="authWrap">
-    <button class="auth-signin-btn" id="authSigninBtn" onclick="authSignIn()">🔑 Se connecter</button>
+    <button class="auth-signin-btn" id="authSigninBtn" onclick="authSignIn()">🔑 <span class="btn-text">Se connecter</span></button>
     <button class="auth-avatar-btn" id="authAvatarBtn" style="display:none" onclick="toggleAuthMenu(event)"></button>
     <div class="auth-menu" id="authMenu">
       <div class="auth-menu-user">
@@ -723,7 +708,21 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 
         <!-- PANEL TEXTE -->
         <div class="star-panel active" id="panel-texte">
-
+            <!-- TIMER (visible en mode éditeur uniquement) -->
+          <div class="timer-wrap" id="timerWrap" style="display:none">
+            <svg class="timer-ring" width="36" height="36" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
+              <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="2.5"
+                stroke-dasharray="94.25" stroke-dashoffset="0"
+                stroke-linecap="round" transform="rotate(-90 18 18)"
+                id="timerArc"/>
+            </svg>
+            <div class="timer-info">
+              <span class="timer-label">Temps</span>
+              <span class="timer-display" id="timerDisplay">28:00</span>
+            </div>
+            <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
+          </div>
           <!-- TOOLBAR COMMUNE -->
           <div class="shared-toolbar-wrap">
             <div class="toolbar" id="toolbar-shared">
