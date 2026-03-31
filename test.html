@@ -1696,13 +1696,25 @@ function showFigResult() {
 //     1. Créez un projet sur https://console.firebase.google.com
 //     2. Activez Authentication → Email/Mot de passe
 //     3. Créez une base Firestore (mode production)
-//     4. Appliquez ces règles Firestore :
+//     4. Appliquez ces règles Firestore (Firebase Console → Firestore → Règles) :
 //
 //        rules_version = '2';
 //        service cloud.firestore {
 //          match /databases/{database}/documents {
+//            function isAdmin() {
+//              return request.auth != null
+//                  && request.auth.uid in ['PwAW2cbWKaNdcJyjKr1cecatrfG3'];
+//            }
+//            // Scores et données privées
 //            match /users/{userId}/{document=**} {
-//              allow read, write: if request.auth != null && request.auth.uid == userId;
+//              allow read, write: if request.auth != null
+//                  && (request.auth.uid == userId || isAdmin());
+//            }
+//            // Profils publics (XP + nom) — lisibles par tous les connectés
+//            match /profiles/{userId} {
+//              allow read:  if request.auth != null;
+//              allow write: if request.auth != null
+//                  && (request.auth.uid == userId || isAdmin());
 //            }
 //          }
 //        }
@@ -1784,6 +1796,18 @@ function switchAuthTab(tab) {
   document.getElementById('authFormRegister').style.display = isLogin ? 'none'  : 'block';
 }
 
+// ── Sauvegarde du profil public (nom + XP) dans /profiles/{uid} ─────────────
+async function saveProfile(user) {
+  if (!fbDb || !user) return;
+  const existing = await fbDb.collection('profiles').doc(user.uid).get().catch(() => null);
+  const name = user.displayName || user.email.split('@')[0];
+  const data = existing?.data() || {};
+  await fbDb.collection('profiles').doc(user.uid).set(
+    { displayName: name, uid: user.uid, ...(!data.xp && { xp:0, xp_histoire:0, xp_physique:0, xp_figures:0 }) },
+    { merge: true }
+  ).catch(e => console.warn('[saveProfile]', e));
+}
+
 async function authDoLogin() {
   if (!FIREBASE_READY) return;
   const name  = document.getElementById('loginName').value.trim();
@@ -1792,7 +1816,8 @@ async function authDoLogin() {
   errEl.classList.remove('show');
   if (!name || !pass) { errEl.textContent = 'Remplissez tous les champs.'; errEl.classList.add('show'); return; }
   try {
-    await fbAuth.signInWithEmailAndPassword(nameToEmail(name), pass);
+    const cred = await fbAuth.signInWithEmailAndPassword(nameToEmail(name), pass);
+    await saveProfile(cred.user);
     document.getElementById('authOverlay').classList.remove('open');
     showToast(`👋 Bonjour ${name} !`);
   } catch(err) {
@@ -1822,6 +1847,7 @@ async function authDoRegister() {
   try {
     const cred = await fbAuth.createUserWithEmailAndPassword(slug + '@revision.app', pass);
     await cred.user.updateProfile({ displayName: name });
+    await saveProfile(cred.user);
     document.getElementById('authOverlay').classList.remove('open');
     showToast(`✅ Compte créé ! Bonjour ${name} !`);
   } catch(err) {
@@ -2084,25 +2110,22 @@ function closeAdminPanel(e) {
 
 async function adminLoadUsers() {
   if (!fbDb || !isAdmin()) return;
-  const body = document.getElementById('adminBody');
+  const body   = document.getElementById('adminBody');
   const status = document.getElementById('adminStatus');
   body.innerHTML = '<div class="admin-loading">⏳ Chargement des utilisateurs…</div>';
   status.textContent = '';
   try {
-    const snap = await fbDb.collection('users').get();
+    const snap = await fbDb.collection('profiles').get();
     adminAllUsers = [];
-    snap.forEach(doc => {
-      const d = doc.data();
-      adminAllUsers.push({ uid: doc.id, ...d });
-    });
-    // Récupère les noms depuis les profils Auth si possible (Firestore uniquement)
-    document.getElementById('adminUserCount').textContent = `${adminAllUsers.length} utilisateur${adminAllUsers.length > 1 ? 's' : ''}`;
+    snap.forEach(doc => adminAllUsers.push({ uid: doc.id, ...doc.data() }));
+    document.getElementById('adminUserCount').textContent =
+      `${adminAllUsers.length} utilisateur${adminAllUsers.length > 1 ? 's' : ''}`;
     document.getElementById('adminSearch').value = '';
     adminFiltered = [...adminAllUsers];
     adminRenderTable(adminFiltered);
     status.textContent = `Actualisé à ${new Date().toLocaleTimeString('fr-FR')}`;
   } catch(e) {
-    body.innerHTML = `<div class="admin-empty">⚠️ Erreur : ${e.message}</div>`;
+    body.innerHTML = `<div class="admin-empty">⚠️ Erreur de lecture : ${e.message}<br><small>Vérifiez les règles Firestore dans le commentaire du code.</small></div>`;
   }
 }
 
@@ -2178,7 +2201,7 @@ async function adminSaveUser(uid) {
   }
 
   try {
-    await fbDb.collection('users').doc(uid).set(upd, { merge: true });
+    await fbDb.collection('profiles').doc(uid).set(upd, { merge: true });
     // Met à jour le cache local si c'est l'utilisateur courant
     if (uid === currentUser?.uid) {
       for (const scope of ADMIN_SUBJECTS) {
@@ -2345,11 +2368,11 @@ function gainXp(amount, mat) {
     }
   }
   renderXpStats();
-  // Sync Firestore
+  // Sync Firestore → profiles/{uid} (lisible par l'admin)
   if (fbDb && currentUser) {
-    const upd = { xp: gAfter };
+    const upd = { xp: gAfter, displayName: currentUser.displayName || currentUser.email.split('@')[0], uid: currentUser.uid };
     if (mat && XP_SUBJECTS[mat]) upd[`xp_${mat}`] = lsGetXp(mat);
-    fbDb.collection('users').doc(currentUser.uid).set(upd, { merge: true }).catch(e => console.warn('[gainXp]', e));
+    fbDb.collection('profiles').doc(currentUser.uid).set(upd, { merge: true }).catch(e => console.warn('[gainXp]', e));
   }
   // Level-up notifications
   if (gLvUp) showLevelUp(getLevelData(gAfter).level, getLevelData(gAfter).title, null);
@@ -2369,20 +2392,21 @@ async function loadUserXp() {
   renderXpStats();
   if (!fbDb || !currentUser) return;
   try {
-    const doc  = await fbDb.collection('users').doc(currentUser.uid).get();
+    const doc  = await fbDb.collection('profiles').doc(currentUser.uid).get();
     const data = doc.data() || {};
     let changed = false;
     const scopes = ['global', ...Object.keys(XP_SUBJECTS)];
+    const fsUpd = { displayName: currentUser.displayName || currentUser.email.split('@')[0], uid: currentUser.uid };
+    let needWrite = !doc.exists;
     for (const scope of scopes) {
       const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
       const fsXp  = data[fsKey] || 0;
       const lsXp  = lsGetXp(scope);
       if (fsXp > lsXp) { lsSaveXp(scope, fsXp); changed = true; }
-      else if (lsXp > fsXp) {
-        const upd = {}; upd[fsKey] = lsXp;
-        fbDb.collection('users').doc(currentUser.uid).set(upd, { merge: true }).catch(() => {});
-      }
+      else if (lsXp > fsXp) { fsUpd[fsKey] = lsXp; needWrite = true; }
+      else fsUpd[fsKey] = lsXp;
     }
+    if (needWrite) fbDb.collection('profiles').doc(currentUser.uid).set(fsUpd, { merge: true }).catch(() => {});
     if (changed) renderXpStats();
   } catch(e) { console.warn('[loadUserXp]', e); }
 }
