@@ -1742,6 +1742,8 @@ if (FIREBASE_READY) {
     currentUser = user;
     renderAuthUI(user);
     if (user) {
+      // Migration XP anonyme → UID (XP gagné avant connexion)
+      migrateLocalXp(user.uid);
       // Restauration instantanée depuis le cache local
       userBests = lsGetBests(user.uid);
       updateChapterBadges();
@@ -2261,6 +2263,23 @@ function _xpKey(scope) {
   const uid = currentUser ? currentUser.uid : '__local__';
   return `revision_xp_${scope}_${uid}`;
 }
+
+// Transfère l'XP anonyme (__local__) vers le compte connecté
+function migrateLocalXp(uid) {
+  const scopes = ['global', ...Object.keys(XP_SUBJECTS)];
+  for (const scope of scopes) {
+    const localKey = `revision_xp_${scope}___local__`;
+    const uidKey   = `revision_xp_${scope}_${uid}`;
+    const localVal = localStorage.getItem(localKey);
+    if (localVal !== null) {
+      const localXp = parseInt(localVal, 10) || 0;
+      const uidXp   = parseInt(localStorage.getItem(uidKey) || '0', 10);
+      if (localXp > uidXp) localStorage.setItem(uidKey, String(localXp));
+      localStorage.removeItem(localKey);
+    }
+  }
+}
+
 function lsGetXp(scope = 'global') {
   // Migration depuis l'ancienne clé globale (sans scope)
   if (scope === 'global') {
