@@ -164,12 +164,12 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .text-intro-body { font-family:'Lora',serif; font-size:0.84rem; color:var(--text2); line-height:1.6; font-style:italic; }
 
 /* ── EDITOR ── */
-.editor-block { display:flex; flex-direction:column; gap:10px; }
+.editor-block { display:flex; flex-direction:column; gap:10px; max-height:50vh; }
 .editor-wrap { display:flex; flex-direction:column; background:var(--editor-bg); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.2s,box-shadow 0.2s; }
 .editor-wrap:focus-within { border-color:rgba(124,109,250,0.5); box-shadow:0 0 0 3px rgba(124,109,250,0.07); }
-.editor-zone { padding:20px 24px; font-family:'Lora',serif; font-size:1rem; line-height:1.85; color:var(--text); outline:none; min-height:120px; }
+.editor-zone { padding:20px 24px; font-family:'Lora',serif; font-size:1rem; line-height:1.85; color:var(--text); outline:none; min-height:120px; overflow-y:auto; }
 .editor-zone:empty::before { content:attr(data-placeholder); color:var(--text3); pointer-events:none; font-style:italic; }
-.free-section { flex:1; min-height:0; display:flex; flex-direction:column; gap:10px; padding-bottom:16px; }
+.free-section { flex:1; min-height:120px; display:flex; flex-direction:column; gap:10px; padding-bottom:16px; }
 .editor-footer { padding:7px 16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
 .char-count { font-size:0.63rem; color:var(--text3); }
 .active-tag { font-size:0.6rem; color:var(--accent2); background:var(--accent-glow); border:1px solid rgba(124,109,250,0.25); border-radius:20px; padding:2px 10px; }
@@ -521,6 +521,30 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .admin-msg-btn.reply { background:var(--accent); color:#fff; border-color:var(--accent); }
 .admin-msg-unread { border-left:3px solid var(--accent); }
 
+/* ── ADMIN PROFILE DETAIL ── */
+.admin-profile { padding:0; display:flex; flex-direction:column; height:100%; }
+.admin-profile-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; flex-shrink:0; }
+.admin-back-btn { background:none; border:1px solid var(--border2); border-radius:8px; padding:6px 12px; font-family:'Inter',sans-serif; font-size:0.78rem; color:var(--text2); cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.15s; }
+.admin-back-btn:hover { border-color:var(--accent); color:var(--text); }
+.admin-profile-name { font-size:0.95rem; font-weight:700; color:var(--text); }
+.admin-profile-uid { font-size:0.6rem; color:var(--text3); font-family:monospace; }
+.admin-profile-sections { flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:16px; }
+.admin-profile-sections::-webkit-scrollbar { width:4px; }
+.admin-profile-sections::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:2px; }
+.admin-section { border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.admin-section-title { font-size:0.72rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text3); padding:10px 16px; background:var(--surface2); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:6px; }
+.admin-section-body { padding:12px 16px; }
+.admin-score-row { display:flex; align-items:center; padding:6px 0; border-bottom:1px solid var(--border); font-size:0.8rem; }
+.admin-score-row:last-child { border-bottom:none; }
+.admin-score-chapter { flex:1; color:var(--text); font-weight:500; }
+.admin-score-val { color:var(--accent2); font-weight:600; min-width:60px; text-align:right; }
+.admin-score-date { color:var(--text3); font-size:0.65rem; min-width:80px; text-align:right; margin-left:8px; }
+.admin-profile-actions { padding:16px 20px; border-top:1px solid var(--border); display:flex; gap:8px; flex-shrink:0; }
+.admin-profile-del { padding:8px 18px; background:rgba(224,80,80,0.08); color:#e05050; border:1px solid rgba(224,80,80,0.35); border-radius:8px; font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.admin-profile-del:hover { background:rgba(224,80,80,0.15); border-color:#e05050; }
+.admin-table tr { cursor:pointer; }
+.admin-table tr:hover td { background:var(--accent-glow); }
+
 
 </style>
 </head>
@@ -774,8 +798,8 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 
             <div class="section-label" style="margin-top:4px;">Zone libre</div>
             <div class="free-section">
-              <div class="editor-wrap" style="flex:1;min-height:0;display:flex;flex-direction:column;">
-                <div class="editor-zone" id="freeEditor" contenteditable="true" spellcheck="true" style="flex:1;min-height:0;overflow-y:auto;" data-placeholder="Écrivez librement ici…"></div>
+              <div class="editor-wrap" style="flex:1;min-height:20;display:flex;flex-direction:column;">
+                <div class="editor-zone" id="freeEditor" contenteditable="true" spellcheck="true" style="flex:1;min-height:40;overflow-y:auto;" data-placeholder="Écrivez librement ici…"></div>
                 <div class="editor-footer">
                   <span class="char-count" id="freeCounter">0 caractères</span>
                 </div>
@@ -2225,13 +2249,14 @@ function adminRenderTable(users) {
       || (u.email ? u.email.split('@')[0] : null)
       || u.uid.slice(0, 16) + '…';
     const isMe = u.uid === currentUser?.uid;
-    return `<tr>
+    return `<tr onclick="adminOpenProfile('${u.uid}')">
       <td>
         <div class="admin-user-name">${name}${isMe ? ' <span style="font-size:0.6rem;color:var(--accent2)">(moi)</span>' : ''}</div>
         <div style="font-size:0.58rem;color:var(--text3);margin-top:2px;font-family:monospace">${u.uid}</div>
       </td>
-      <td style="text-align:right;width:1%">
-        ${isMe ? '' : `<button class="admin-delete-btn" data-del-uid="${u.uid}" onclick="adminDeleteUser('${u.uid}')" title="Supprimer les données">🗑 Supprimer</button>`}
+      <td style="text-align:right;width:1%;white-space:nowrap">
+        ${isMe ? '' : `<button class="admin-delete-btn" data-del-uid="${u.uid}" onclick="event.stopPropagation(); adminDeleteUser('${u.uid}')" title="Supprimer les données">🗑 Supprimer</button>`}
+        <span style="font-size:0.72rem;color:var(--text3);margin-left:8px">→</span>
       </td>
     </tr>`;
   }).join('');
@@ -2553,6 +2578,153 @@ async function adminDeleteMessage(msgId) {
     showToast('🗑 Message supprimé');
   } catch(e) {
     showToast('⚠️ Erreur : ' + e.message);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── ADMIN: Profil détaillé ────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function adminOpenProfile(uid) {
+  if (!fbDb || !isAdmin()) return;
+
+  const user = adminAllUsers.find(u => u.uid === uid);
+  const name = user?.displayName || user?.email?.split('@')[0] || uid.slice(0, 16) + '…';
+  const body = document.getElementById('adminBody');
+
+  // Masquer toolbars et tabs
+  document.getElementById('adminToolbarUsers').style.display = 'none';
+  document.getElementById('adminToolbarMessages').style.display = 'none';
+  document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
+
+  body.innerHTML = `<div class="admin-profile">
+    <div class="admin-profile-header">
+      <button class="admin-back-btn" onclick="adminBackToList()">← Retour</button>
+      <div>
+        <div class="admin-profile-name">${escapeHtml(name)}</div>
+        <div class="admin-profile-uid">${uid}</div>
+      </div>
+    </div>
+    <div class="admin-profile-sections" id="adminProfileSections">
+      <div class="admin-loading">Chargement du profil…</div>
+    </div>
+    <div class="admin-profile-actions">
+      ${uid !== currentUser?.uid ? `<button class="admin-profile-del" onclick="adminDeleteUser('${uid}'); adminBackToList()">🗑 Supprimer le compte</button>` : ''}
+    </div>
+  </div>`;
+
+  // Charger scores et messages en parallèle
+  const [scores, messages] = await Promise.all([
+    adminLoadUserScores(uid),
+    adminLoadUserMessages(uid)
+  ]);
+
+  const sections = document.getElementById('adminProfileSections');
+  if (!sections) return;
+
+  let html = '';
+
+  // ── Section scores ──
+  html += `<div class="admin-section">
+    <div class="admin-section-title">📊 Résultats de quiz</div>
+    <div class="admin-section-body" style="padding:0;">`;
+
+  if (scores.length === 0) {
+    html += '<div style="color:var(--text3);font-size:0.8rem;padding:16px;">Aucun résultat enregistré</div>';
+  } else {
+    const ICONS = { editeur:'📝', histoire:'🏛️', physique:'⚗️', figures:'🎭' };
+    const sorted = [...scores].sort((a, b) => {
+      const ta = a.timestamp?.toMillis?.() || a.timestamp || 0;
+      const tb = b.timestamp?.toMillis?.() || b.timestamp || 0;
+      return tb - ta;
+    });
+    const rows = sorted.map(d => {
+      const ts = d.timestamp?.toMillis?.() || d.timestamp || 0;
+      const date = ts ? new Date(ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+      const pct = d.pct ?? (d.total ? Math.round(d.score / d.total * 100) : 0);
+      const color = pct >= 80 ? '#3aaa60' : pct >= 60 ? '#f0a500' : '#e05050';
+      return `<tr>
+        <td>${date}</td>
+        <td>${ICONS[d.mat]||''} ${d.mat || ''}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(d.chapterTitle || d.chapter || d.id || 'Quiz')}</td>
+        <td>${d.score ?? '—'}/${d.total ?? '?'}</td>
+        <td style="color:${color};font-weight:700">${pct}%</td>
+      </tr>`;
+    }).join('');
+    html += `<table class="scores-table">
+      <thead><tr><th>Date</th><th>Matière</th><th>Chapitre</th><th>Score</th><th>%</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+  html += '</div></div>';
+
+  // ── Section messages ──
+  html += `<div class="admin-section">
+    <div class="admin-section-title">💬 Messages (${messages.length})</div>
+    <div class="admin-section-body">`;
+
+  if (messages.length === 0) {
+    html += '<div style="color:var(--text3);font-size:0.8rem;padding:8px 0;">Aucun message</div>';
+  } else {
+    messages.forEach(msg => {
+      const time = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString('fr-FR') : '';
+      const repliesHtml = msg.replies && msg.replies.length > 0
+        ? msg.replies.map(r => `<div style="font-size:0.75rem;color:var(--accent2);margin-top:4px;"><strong>Vous:</strong> ${escapeHtml(r.text)}</div>`).join('')
+        : '';
+      html += `<div style="padding:8px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:0.8rem;color:var(--text);line-height:1.5;">${escapeHtml(msg.text)}</div>
+        ${repliesHtml}
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+          <span style="font-size:0.65rem;color:var(--text3);">${time}</span>
+          <button class="admin-msg-btn reply" onclick="adminReplyMessage('${msg.id}')">↩ Répondre</button>
+          <button class="admin-msg-btn" onclick="adminDeleteMessage('${msg.id}'); adminOpenProfile('${uid}')" style="color:#e05050">🗑</button>
+        </div>
+      </div>`;
+    });
+  }
+  html += '</div></div>';
+
+  sections.innerHTML = html;
+}
+
+function adminBackToList() {
+  // Restaurer tabs et toolbars
+  document.querySelectorAll('.admin-tab').forEach(t => t.style.display = '');
+  document.getElementById('adminTabUsers').classList.add('active');
+  document.getElementById('adminTabMessages').classList.remove('active');
+  document.getElementById('adminToolbarUsers').style.display = 'flex';
+  document.getElementById('adminToolbarMessages').style.display = 'none';
+  adminRenderTable(adminFiltered);
+}
+
+async function adminLoadUserScores(uid) {
+  try {
+    const snap = await fbDb.collection('users').doc(uid).collection('scores').get();
+    const scores = [];
+    snap.forEach(doc => scores.push({ id: doc.id, ...doc.data() }));
+    return scores;
+  } catch(e) {
+    console.error('Erreur chargement scores:', e);
+    return [];
+  }
+}
+
+async function adminLoadUserMessages(uid) {
+  try {
+    const snap = await fbDb.collection('messages')
+      .where('uid', '==', uid)
+      .get();
+    const msgs = [];
+    snap.forEach(doc => msgs.push({ id: doc.id, ...doc.data() }));
+    msgs.sort((a, b) => {
+      const ta = a.timestamp?.toMillis?.() || 0;
+      const tb = b.timestamp?.toMillis?.() || 0;
+      return tb - ta;
+    });
+    return msgs;
+  } catch(e) {
+    console.error('Erreur chargement messages user:', e);
+    return [];
   }
 }
 
