@@ -467,60 +467,11 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .admin-table tr:last-child td { border-bottom:none; }
 .admin-table tr:hover td { background:var(--surface2); }
 .admin-user-name { font-weight:600; color:var(--text); font-size:0.82rem; }
-.admin-level-cell { display:flex; align-items:center; gap:6px; }
-.admin-level-badge { width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.68rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.admin-xp-input { width:70px; padding:4px 7px; background:var(--editor-bg); border:1px solid var(--border2); border-radius:6px; font-family:'Inter',sans-serif; font-size:0.8rem; color:var(--text); text-align:center; outline:none; transition:border-color 0.15s; }
-.admin-xp-input:focus { border-color:var(--accent); }
-.admin-save-btn { padding:4px 12px; background:var(--accent); color:#fff; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:0.72rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
-.admin-save-btn:hover { background:var(--accent2); }
-.admin-save-btn:disabled { opacity:0.45; cursor:default; }
-.admin-subject-row { display:flex; flex-direction:column; gap:4px; min-width:160px; }
-.admin-subj-line { display:flex; align-items:center; gap:5px; font-size:0.72rem; }
-.admin-subj-icon { width:16px; text-align:center; flex-shrink:0; }
 .admin-empty { padding:40px; text-align:center; color:var(--text3); font-size:0.82rem; }
 .admin-loading { padding:30px; text-align:center; color:var(--text3); font-size:0.82rem; }
 .admin-footer { padding:10px 22px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; font-size:0.68rem; color:var(--text3); }
 .admin-status { flex:1; }
 
-/* ── XP / NIVEAU ── */
-.xp-wrap { display:flex; align-items:center; gap:8px; padding:5px 12px 5px 10px; background:var(--surface2); border:1px solid var(--border2); border-radius:10px; flex-shrink:0; user-select:none; cursor:default; min-width:130px; transition:border-color 0.2s; }
-.xp-wrap:hover { border-color:var(--accent2); }
-.xp-level-badge { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.72rem; font-weight:700; flex-shrink:0; box-shadow:0 0 10px rgba(124,109,250,0.4); }
-.xp-info { display:flex; flex-direction:column; gap:3px; flex:1; min-width:0; }
-.xp-label { font-size:0.5rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.xp-bar-track { height:4px; background:var(--border2); border-radius:2px; overflow:hidden; }
-.xp-bar-fill { height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2)); border-radius:2px; transition:width 0.7s cubic-bezier(0.34,1.56,0.64,1); }
-/* XP gain badge in results */
-.quiz-xp-gain { display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:var(--accent2); background:var(--accent-glow); border:1px solid rgba(124,109,250,0.3); border-radius:20px; padding:6px 16px; }
-/* Auth menu XP */
-.auth-menu-xp { padding:8px 12px 10px; border-bottom:1px solid var(--border); margin-bottom:4px; }
-.auth-menu-xp-row { display:flex; align-items:center; gap:7px; margin-bottom:5px; }
-.auth-menu-xp-badge { width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.65rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.auth-menu-xp-name { font-size:0.76rem; font-weight:600; color:var(--text); }
-.auth-menu-xp-track { height:4px; background:var(--border2); border-radius:2px; overflow:hidden; }
-.auth-menu-xp-fill { height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2)); border-radius:2px; transition:width 0.5s ease; }
-.auth-menu-xp-sub { font-size:0.6rem; color:var(--text3); margin-top:3px; }
-/* Level-up overlay */
-.levelup-toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.75); opacity:0; background:var(--surface); border:2px solid var(--accent); border-radius:20px; padding:28px 40px; display:flex; flex-direction:column; align-items:center; gap:8px; z-index:1100; pointer-events:none; box-shadow:0 20px 80px rgba(124,109,250,0.45); transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1); text-align:center; }
-.levelup-toast.show { transform:translate(-50%,-50%) scale(1); opacity:1; }
-.levelup-toast-emoji { font-size:2.8rem; line-height:1; }
-.levelup-toast-title { font-size:1.1rem; font-weight:700; color:var(--accent2); }
-.levelup-toast-sub { font-size:0.78rem; color:var(--text2); }
-/* XP Stats dropdown panel */
-.xp-wrap-outer { position:relative; flex-shrink:0; }
-.xp-wrap { cursor:pointer; }
-.xp-stats-panel { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--border2); border-radius:14px; box-shadow:0 8px 32px var(--shadow); width:276px; padding:14px 16px; z-index:300; display:none; flex-direction:column; gap:8px; }
-.xp-stats-panel.open { display:flex; }
-.xp-stats-sep { height:1px; background:var(--border); margin:2px 0; }
-.xp-stats-section { font-size:0.52rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); }
-.xp-stat-row { display:flex; align-items:center; gap:9px; }
-.xp-stat-badge { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:700; color:#fff; flex-shrink:0; }
-.xp-stat-body { flex:1; min-width:0; }
-.xp-stat-name { font-size:0.72rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:5px; }
-.xp-stat-sub { font-size:0.58rem; color:var(--text3); }
-.xp-stat-bar { height:4px; background:var(--border2); border-radius:2px; margin-top:3px; overflow:hidden; }
-.xp-stat-bar-fill { height:100%; border-radius:2px; transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1); }
-@media (max-width: 899px) { .xp-wrap-outer { display:none !important; } }
 
 </style>
 </head>
@@ -592,19 +543,6 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
     <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
   </div>
 
-  <!-- XP BAR -->
-  <div class="xp-wrap-outer" id="xpWrapOuter">
-    <div class="xp-wrap" id="xpWrap" title="Cliquer pour les niveaux par matière" onclick="toggleXpPanel(event)">
-      <div class="xp-level-badge" id="xpLevelBadge">1</div>
-      <div class="xp-info">
-        <span class="xp-label" id="xpLabel">Niv. 1 — Novice</span>
-        <div class="xp-bar-track"><div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div></div>
-      </div>
-      <span style="font-size:0.6rem;color:var(--text3);margin-left:2px;">▾</span>
-    </div>
-    <div class="xp-stats-panel" id="xpStatsPanel"></div>
-  </div>
-
   <button class="btn-random" id="btnRandom" onclick="loadRandom()">
     <span class="dice">🎲</span> Texte aléatoire
   </button>
@@ -617,17 +555,6 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
       <div class="auth-menu-user">
         <span class="auth-menu-name" id="authMenuName"></span>
         <span class="auth-menu-email" id="authMenuEmail"></span>
-      </div>
-      <div class="auth-menu-xp" id="authMenuXp">
-        <div class="auth-menu-xp-row">
-          <div class="auth-menu-xp-badge" id="authMenuXpBadge">1</div>
-          <div style="flex:1;min-width:0">
-            <span class="auth-menu-xp-name" id="authMenuXpName">Niveau 1 — Novice</span>
-            <div class="auth-menu-xp-track"><div class="auth-menu-xp-fill" id="authMenuXpFill" style="width:0%"></div></div>
-            <div class="auth-menu-xp-sub" id="authMenuXpSub">0 / 100 XP global</div>
-          </div>
-        </div>
-        <div id="authMenuXpSubjects" style="display:flex;flex-direction:column;gap:7px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);"></div>
       </div>
       <button class="auth-menu-item" onclick="showMyScores()">📊 Mes résultats</button>
       <button class="auth-menu-item" id="adminMenuBtn" style="display:none" onclick="openAdminPanel()">🛡️ Panel Admin</button>
@@ -941,13 +868,6 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 </div><!-- /app -->
 
 <div class="toast" id="toast"></div>
-
-<!-- LEVEL-UP -->
-<div class="levelup-toast" id="levelupToast">
-  <div class="levelup-toast-emoji">⭐</div>
-  <div class="levelup-toast-title" id="levelupTitle">Niveau 2 !</div>
-  <div class="levelup-toast-sub" id="levelupSub">Apprenti</div>
-</div>
 
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -1303,7 +1223,6 @@ window.addEventListener('hashchange', () => {
  
 function closeAllDropdowns() {
   document.getElementById('navDropdown').classList.remove('open');
-  document.getElementById('xpStatsPanel')?.classList.remove('open');
 }
  
 document.addEventListener('click', closeAllDropdowns);
@@ -1483,7 +1402,6 @@ function showQuizResult() {
   const pct = Math.round(correct / total * 100);
   const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : pct >= 40 ? '📚' : '💪';
   const msg = pct >= 80 ? 'Excellent !' : pct >= 60 ? 'Bien joué !' : pct >= 40 ? 'Continue à réviser !' : 'Il faut réviser !';
-  const xp = calcQuizXp(correct, total);
   document.getElementById('quiz-content').style.display = 'none';
   const result = document.getElementById('quiz-result');
   result.style.display = 'block';
@@ -1492,11 +1410,9 @@ function showQuizResult() {
       <div class="quiz-result-emoji">${emoji}</div>
       <div class="quiz-result-score">${correct} / ${total}</div>
       <div class="quiz-result-label">${msg} (${pct}%)</div>
-      <div class="quiz-xp-gain">✨ +${xp.total} XP${xp.bonus > 0 ? ` <span style="font-size:0.68rem;opacity:0.75">(${xp.base} base + ${xp.bonus} bonus)</span>` : ''}</div>
       <div id="quiz-save-status" style="font-size:0.72rem;color:var(--text3);min-height:1.2em"></div>
       <button class="quiz-btn quiz-btn-primary" onclick="loadChapter(${quizCurrentChapter})">🔄 Recommencer ce chapitre</button>
     </div>`;
-  gainXp(xp.total, currentMatiere);
   // Sauvegarde dans Firebase si connecté
   if (currentUser) {
     saveScore(currentMatiere, ch.titre, correct, total).then(res => {
@@ -1663,7 +1579,6 @@ function showFigResult() {
   const good = Object.entries(figAnswered).filter(([k, v]) => !k.includes('_') && v === true).length;
   const pct = Math.round(good / total * 100);
   const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '📚';
-  const xp = calcQuizXp(good, total);
   document.getElementById('fig-qcm').style.display = 'none';
   document.getElementById('fig-result').style.display = 'block';
   document.getElementById('fig-result').innerHTML = `
@@ -1671,11 +1586,9 @@ function showFigResult() {
       <div class="quiz-result-emoji">${emoji}</div>
       <div class="quiz-result-score">${good} / ${total}</div>
       <div class="quiz-result-label">${pct}% de bonnes réponses</div>
-      <div class="quiz-xp-gain">✨ +${xp.total} XP${xp.bonus > 0 ? ` <span style="font-size:0.68rem;opacity:0.75">(${xp.base} base + ${xp.bonus} bonus)</span>` : ''}</div>
       <div id="fig-save-status" style="font-size:0.72rem;color:var(--text3);min-height:1.2em"></div>
       <button class="quiz-btn quiz-btn-primary" onclick="figRestart()">🔀 Recommencer</button>
     </div>`;
-  gainXp(xp.total, 'figures');
   // Sauvegarde dans Firebase si connecté
   if (currentUser) {
     saveScore('figures', 'Figures de style', good, total).then(res => {
@@ -1742,18 +1655,14 @@ if (FIREBASE_READY) {
     currentUser = user;
     renderAuthUI(user);
     if (user) {
-      // Migration XP anonyme → UID (XP gagné avant connexion)
-      migrateLocalXp(user.uid);
       // Restauration instantanée depuis le cache local
       userBests = lsGetBests(user.uid);
       updateChapterBadges();
       // Sync Firestore en arrière-plan
       loadUserBests();
-      loadUserXp();
     } else {
       userBests = {};
       updateChapterBadges();
-      renderXpStats(); // XP local anonyme
     }
   });
 }
@@ -1799,13 +1708,12 @@ function switchAuthTab(tab) {
 }
 
 // ── Sauvegarde du profil public (nom) dans /profiles/{uid} ──────────────────
-// Remarque : on ne touche jamais aux champs xp_* ici — loadUserXp s'en charge.
 async function saveProfile(user) {
   if (!fbDb || !user) return;
   const name = user.displayName || user.email.split('@')[0];
   await fbDb.collection('profiles').doc(user.uid).set(
     { displayName: name, uid: user.uid },
-    { merge: true }   // les champs xp_* existants sont préservés
+    { merge: true }
   ).catch(e => console.warn('[saveProfile]', e));
 }
 
@@ -2061,14 +1969,6 @@ const ADMIN_UIDS = [
   'PwAW2cbWKaNdcJyjKr1cecatrfG3'  // ← remplacez par votre UID Firebase
 ];
 
-const ADMIN_SUBJECTS = ['global', 'histoire', 'physique', 'figures'];
-const ADMIN_SUBJECT_META = {
-  global:   { label: 'Global',           icon: '⭐', color: '#6055e8' },
-  histoire: { label: 'Histoire',          icon: '🏛️', color: '#6055e8' },
-  physique: { label: 'Physique-Chimie',   icon: '⚗️', color: '#2d8a50' },
-  figures:  { label: 'Figures de style',  icon: '🎭', color: '#e07020' },
-};
-
 let adminAllUsers  = [];  // cache de tous les users chargés
 let adminFiltered  = [];
 
@@ -2116,16 +2016,25 @@ async function adminLoadUsers() {
   body.innerHTML = '<div class="admin-loading">⏳ Chargement…</div>';
   status.textContent = '';
 
-  // S'assure que le profil de l'admin est à jour dans Firestore (sans GET)
-  saveProfile(currentUser); // non-bloquant intentionnellement
+  // S'assure que le profil de l'admin est à jour dans Firestore (non-bloquant)
+  saveProfile(currentUser).catch(() => {});
+
+  // Affiche un message d'aide après 5 s si encore en chargement
+  const hintTimer = setTimeout(() => {
+    const b = document.getElementById('adminBody');
+    if (b && b.innerHTML.includes('Chargement')) {
+      b.innerHTML = '<div class="admin-loading">⏳ Chargement… (peut prendre jusqu\'à 30 s)<br><span style="font-size:0.72rem;color:var(--text3)">Si ça bloque, vos règles Firestore ne permettent peut-être pas la lecture de <code>profiles/</code></span></div>';
+    }
+  }, 5000);
 
   try {
     const snap = await Promise.race([
       fbDb.collection('profiles').get(),
       new Promise((_, rej) => setTimeout(() =>
-        rej(Object.assign(new Error('Délai dépassé (10 s). Vérifiez votre connexion ou les règles Firestore.'), { code: 'timeout' })),
-      10000))
+        rej(Object.assign(new Error('Délai dépassé (30 s). Vérifiez votre connexion ou les règles Firestore.'), { code: 'timeout' })),
+      30000))
     ]);
+    clearTimeout(hintTimer);
     adminAllUsers = [];
     snap.forEach(doc => adminAllUsers.push({ uid: doc.id, ...doc.data() }));
 
@@ -2138,6 +2047,7 @@ async function adminLoadUsers() {
       </div>`;
       document.getElementById('adminUserCount').textContent = '0 utilisateur';
       status.textContent = `Actualisé à ${new Date().toLocaleTimeString('fr-FR')}`;
+      clearTimeout(hintTimer);
       return;
     }
 
@@ -2149,6 +2059,7 @@ async function adminLoadUsers() {
     status.textContent = `Actualisé à ${new Date().toLocaleTimeString('fr-FR')}`;
 
   } catch(e) {
+    clearTimeout(hintTimer);
     const isPermission = e.code === 'permission-denied' || (e.message || '').includes('permission');
     const isTimeout    = e.code === 'timeout';
     const rulesText =
@@ -2175,9 +2086,10 @@ service cloud.firestore {
       : isTimeout
         ? '⏱️ ' + e.message
         : '⚠️ Erreur : ' + e.message;
-    const extra = isPermission
+    const extra = (isPermission || isTimeout)
       ? `<p style="color:var(--text2);line-height:1.7;margin-bottom:12px;">
-          Allez dans <strong>Firebase Console → Firestore → Règles</strong> et remplacez par :
+          ${isTimeout ? 'Cela peut indiquer des règles Firestore trop restrictives.<br>' : ''}
+          Allez dans <strong>Firebase Console → Firestore → Règles</strong> et vérifiez que vous avez :
         </p>
         <pre id="adminRulesBlock" style="background:var(--editor-bg);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:0.68rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap;color:var(--text2);">${rulesText}</pre>
         <button class="admin-save-btn" style="margin-top:10px"
@@ -2212,30 +2124,12 @@ function adminRenderTable(users) {
   }
 
   const rows = users.map(u => {
-    const name  = u.displayName || u.uid.slice(0, 12) + '…';
-    const isMe  = u.uid === currentUser?.uid;
-    const subjCells = ADMIN_SUBJECTS.map(scope => {
-      const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
-      const xp    = u[fsKey] || 0;
-      const d     = getLevelData(xp);
-      const m     = ADMIN_SUBJECT_META[scope];
-      return `<div class="admin-subj-line">
-        <span class="admin-subj-icon">${m.icon}</span>
-        <input class="admin-xp-input" id="xinput_${u.uid}_${scope}" type="number" min="0" value="${xp}" title="${m.label}" style="width:65px">
-        <span style="font-size:0.62rem;color:var(--text3);white-space:nowrap">Niv.${d.level}</span>
-      </div>`;
-    }).join('');
-
+    const name = u.displayName || u.uid.slice(0, 12) + '…';
+    const isMe = u.uid === currentUser?.uid;
     return `<tr>
       <td>
         <div class="admin-user-name">${name}${isMe ? ' <span style="font-size:0.6rem;color:var(--accent2)">(moi)</span>' : ''}</div>
         <div style="font-size:0.58rem;color:var(--text3);margin-top:2px;font-family:monospace">${u.uid}</div>
-      </td>
-      <td>
-        <div class="admin-subject-row">${subjCells}</div>
-      </td>
-      <td>
-        <button class="admin-save-btn" onclick="adminSaveUser('${u.uid}')">💾 Sauver</button>
       </td>
     </tr>`;
   }).join('');
@@ -2243,258 +2137,15 @@ function adminRenderTable(users) {
   body.innerHTML = `<table class="admin-table">
     <thead><tr>
       <th>Utilisateur</th>
-      <th>XP par matière</th>
-      <th>Action</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
 }
 
-async function adminSaveUser(uid) {
-  if (!fbDb || !isAdmin()) return;
-  const btn = document.querySelector(`button[onclick="adminSaveUser('${uid}')"]`);
-  if (btn) { btn.disabled = true; btn.textContent = '…'; }
 
-  const upd = {};
-  for (const scope of ADMIN_SUBJECTS) {
-    const inputEl = document.getElementById(`xinput_${uid}_${scope}`);
-    if (!inputEl) continue;
-    const val = Math.max(0, parseInt(inputEl.value, 10) || 0);
-    const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
-    upd[fsKey] = val;
-  }
-
-  try {
-    await fbDb.collection('profiles').doc(uid).set(upd, { merge: true });
-    // Met à jour le cache local si c'est l'utilisateur courant
-    if (uid === currentUser?.uid) {
-      for (const scope of ADMIN_SUBJECTS) {
-        const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
-        if (upd[fsKey] !== undefined) lsSaveXp(scope, upd[fsKey]);
-      }
-      renderXpStats();
-    }
-    // Met à jour le cache adminAllUsers
-    const idx = adminAllUsers.findIndex(u => u.uid === uid);
-    if (idx >= 0) Object.assign(adminAllUsers[idx], upd);
-
-    document.getElementById('adminStatus').textContent = `✅ Sauvegardé à ${new Date().toLocaleTimeString('fr-FR')}`;
-    showToast('✅ XP mis à jour');
-  } catch(e) {
-    showToast('⚠️ Erreur sauvegarde');
-    document.getElementById('adminStatus').textContent = `⚠️ Erreur : ${e.message}`;
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '💾 Sauver'; }
-    // Rafraîchit les badges de niveau dans la table
-    for (const scope of ADMIN_SUBJECTS) {
-      const inputEl = document.getElementById(`xinput_${uid}_${scope}`);
-      if (!inputEl) continue;
-      const xp = parseInt(inputEl.value, 10) || 0;
-      const badge = inputEl.closest('.admin-subj-line')?.querySelector('span:last-child');
-      if (badge) badge.textContent = `Niv.${getLevelData(xp).level}`;
-    }
-  }
-}
-
-// ── XP & NIVEAU ──────────────────────────────────────────────────────────────
-const XP_TITLES = [
-  '', 'Novice', 'Apprenti', 'Étudiant', 'Assidu', 'Lettré',
-  'Cultivé', 'Érudit', 'Savant', 'Expert', 'Maître',
-  'Grand Maître', 'Professeur', 'Académicien', 'Docteur', 'Sage',
-  'Philosophe', 'Encyclopédiste', 'Génie', 'Légende', 'Omniscient'
-];
-
-const XP_SUBJECTS = {
-  histoire: { label: 'Histoire',         icon: '🏛️', color: '#6055e8' },
-  physique: { label: 'Physique-Chimie',   icon: '⚗️', color: '#2d8a50' },
-  figures:  { label: 'Figures de style',  icon: '🎭', color: '#e07020' },
-};
-
-// Niveau n : totalXp >= 100*n*(n-1)/2 ; XP pour passer n→n+1 : n*100
-function getLevelData(totalXp) {
-  const n = Math.max(1, Math.floor((1 + Math.sqrt(1 + 8 * totalXp / 100)) / 2));
-  const xpAtLevel = 100 * n * (n - 1) / 2;
-  const xpForNext = n * 100;
-  const xpInLevel = totalXp - xpAtLevel;
-  const progress  = Math.min(1, xpInLevel / xpForNext);
-  const title     = XP_TITLES[Math.min(n, XP_TITLES.length - 1)] || 'Omniscient';
-  return { level: n, xpInLevel, xpForNext, progress, title };
-}
-
-function _xpKey(scope) {
-  const uid = currentUser ? currentUser.uid : '__local__';
-  return `revision_xp_${scope}_${uid}`;
-}
-
-// Transfère l'XP anonyme (__local__) vers le compte connecté
-function migrateLocalXp(uid) {
-  const scopes = ['global', ...Object.keys(XP_SUBJECTS)];
-  for (const scope of scopes) {
-    const localKey = `revision_xp_${scope}___local__`;
-    const uidKey   = `revision_xp_${scope}_${uid}`;
-    const localVal = localStorage.getItem(localKey);
-    if (localVal !== null) {
-      const localXp = parseInt(localVal, 10) || 0;
-      const uidXp   = parseInt(localStorage.getItem(uidKey) || '0', 10);
-      if (localXp > uidXp) localStorage.setItem(uidKey, String(localXp));
-      localStorage.removeItem(localKey);
-    }
-  }
-}
-
-function lsGetXp(scope = 'global') {
-  // Migration depuis l'ancienne clé globale (sans scope)
-  if (scope === 'global') {
-    const oldKey = `revision_xp_${currentUser ? currentUser.uid : '__local__'}`;
-    const oldVal = localStorage.getItem(oldKey);
-    if (oldVal !== null && localStorage.getItem(_xpKey('global')) === null) {
-      localStorage.setItem(_xpKey('global'), oldVal);
-      localStorage.removeItem(oldKey);
-    }
-  }
-  try { return Math.max(0, parseInt(localStorage.getItem(_xpKey(scope)) || '0', 10)); } catch { return 0; }
-}
-function lsSaveXp(scope, xp) { localStorage.setItem(_xpKey(scope), String(xp)); }
-
-function _statRowHTML(icon, color, label, xp) {
-  const d = getLevelData(xp);
-  return `<div class="xp-stat-row">
-    <div class="xp-stat-badge" style="background:${color}">${d.level}</div>
-    <div class="xp-stat-body">
-      <div class="xp-stat-name">${icon} ${label} <span style="font-size:0.6rem;font-weight:400;color:var(--accent2)">${d.title}</span></div>
-      <div class="xp-stat-sub">${d.xpInLevel} / ${d.xpForNext} XP</div>
-      <div class="xp-stat-bar"><div class="xp-stat-bar-fill" style="width:${Math.round(d.progress*100)}%;background:${color}"></div></div>
-    </div>
-  </div>`;
-}
-
-function renderXpBar() {
-  const d = getLevelData(lsGetXp('global'));
-  const badge = document.getElementById('xpLevelBadge');
-  const label = document.getElementById('xpLabel');
-  const fill  = document.getElementById('xpBarFill');
-  if (!badge) return;
-  badge.textContent = d.level;
-  label.textContent = `Niv. ${d.level} — ${d.title}`;
-  fill.style.width  = `${Math.round(d.progress * 100)}%`;
-}
-
-function renderXpStats() {
-  renderXpBar();
-  // Panel dropdown (topbar)
-  const panel = document.getElementById('xpStatsPanel');
-  if (panel) {
-    panel.innerHTML =
-      `<span class="xp-stats-section">🌐 Niveau global</span>` +
-      _statRowHTML('⭐', 'var(--accent)', 'Global', lsGetXp('global')) +
-      `<div class="xp-stats-sep"></div><span class="xp-stats-section">Par matière</span>` +
-      Object.entries(XP_SUBJECTS).map(([k, s]) => _statRowHTML(s.icon, s.color, s.label, lsGetXp(k))).join('');
-  }
-  // Auth menu — global
-  const d = getLevelData(lsGetXp('global'));
-  const amBadge = document.getElementById('authMenuXpBadge');
-  if (amBadge) {
-    amBadge.textContent = d.level;
-    document.getElementById('authMenuXpName').textContent = `Niveau ${d.level} — ${d.title}`;
-    document.getElementById('authMenuXpFill').style.width = `${Math.round(d.progress * 100)}%`;
-    document.getElementById('authMenuXpSub').textContent  = `${d.xpInLevel} / ${d.xpForNext} XP global`;
-  }
-  // Auth menu — par matière
-  const subjEl = document.getElementById('authMenuXpSubjects');
-  if (subjEl) {
-    subjEl.innerHTML = Object.entries(XP_SUBJECTS).map(([k, s]) => {
-      const ds = getLevelData(lsGetXp(k));
-      return `<div style="display:flex;align-items:center;gap:8px;">
-        <div style="width:20px;height:20px;border-radius:50%;background:${s.color};color:#fff;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ds.level}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:0.7rem;font-weight:600;color:var(--text)">${s.icon} ${s.label}</div>
-          <div style="height:3px;background:var(--border2);border-radius:2px;margin-top:3px;overflow:hidden"><div style="height:100%;width:${Math.round(ds.progress*100)}%;background:${s.color};border-radius:2px;transition:width 0.5s ease"></div></div>
-          <div style="font-size:0.57rem;color:var(--text3);margin-top:2px">${ds.xpInLevel}/${ds.xpForNext} XP · ${ds.title}</div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-}
-
-function toggleXpPanel(e) {
-  e.stopPropagation();
-  const panel = document.getElementById('xpStatsPanel');
-  const isOpen = panel.classList.contains('open');
-  closeAllDropdowns();
-  if (!isOpen) { renderXpStats(); panel.classList.add('open'); }
-}
-
-function calcQuizXp(correct, total) {
-  const pct   = Math.round(correct / total * 100);
-  const base  = correct * 10;
-  const bonus = pct >= 100 ? 50 : pct >= 80 ? 30 : pct >= 60 ? 15 : 0;
-  return { base, bonus, total: base + bonus, pct };
-}
-
-function gainXp(amount, mat) {
-  if (amount <= 0) return;
-  // Global
-  const gBefore = lsGetXp('global');
-  const gAfter  = gBefore + amount;
-  lsSaveXp('global', gAfter);
-  const gLvUp = getLevelData(gAfter).level > getLevelData(gBefore).level;
-  // Matière
-  let sLevelUp = null;
-  if (mat && XP_SUBJECTS[mat]) {
-    const sBefore = lsGetXp(mat);
-    const sAfter  = sBefore + amount;
-    lsSaveXp(mat, sAfter);
-    if (getLevelData(sAfter).level > getLevelData(sBefore).level) {
-      sLevelUp = { level: getLevelData(sAfter).level, title: getLevelData(sAfter).title, label: XP_SUBJECTS[mat].label };
-    }
-  }
-  renderXpStats();
-  // Sync Firestore → profiles/{uid} (lisible par l'admin)
-  if (fbDb && currentUser) {
-    const upd = { xp: gAfter, displayName: currentUser.displayName || currentUser.email.split('@')[0], uid: currentUser.uid };
-    if (mat && XP_SUBJECTS[mat]) upd[`xp_${mat}`] = lsGetXp(mat);
-    fbDb.collection('profiles').doc(currentUser.uid).set(upd, { merge: true }).catch(e => console.warn('[gainXp]', e));
-  }
-  // Level-up notifications
-  if (gLvUp) showLevelUp(getLevelData(gAfter).level, getLevelData(gAfter).title, null);
-  else if (sLevelUp) showLevelUp(sLevelUp.level, sLevelUp.title, sLevelUp.label);
-}
-
-function showLevelUp(level, title, subject) {
-  document.getElementById('levelupTitle').textContent = subject ? `Niveau ${level} en ${subject} !` : `Niveau ${level} !`;
-  document.getElementById('levelupSub').textContent   = title;
-  const t = document.getElementById('levelupToast');
-  t.classList.add('show');
-  clearTimeout(t._to);
-  t._to = setTimeout(() => t.classList.remove('show'), 3200);
-}
-
-async function loadUserXp() {
-  renderXpStats();
-  if (!fbDb || !currentUser) return;
-  try {
-    const doc  = await fbDb.collection('profiles').doc(currentUser.uid).get();
-    const data = doc.data() || {};
-    let changed = false;
-    const scopes = ['global', ...Object.keys(XP_SUBJECTS)];
-    const fsUpd = { displayName: currentUser.displayName || currentUser.email.split('@')[0], uid: currentUser.uid };
-    let needWrite = !doc.exists;
-    for (const scope of scopes) {
-      const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
-      const fsXp  = data[fsKey] || 0;
-      const lsXp  = lsGetXp(scope);
-      if (fsXp > lsXp) { lsSaveXp(scope, fsXp); changed = true; }
-      else if (lsXp > fsXp) { fsUpd[fsKey] = lsXp; needWrite = true; }
-      else fsUpd[fsKey] = lsXp;
-    }
-    if (needWrite) fbDb.collection('profiles').doc(currentUser.uid).set(fsUpd, { merge: true }).catch(() => {});
-    if (changed) renderXpStats();
-  } catch(e) { console.warn('[loadUserXp]', e); }
-}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initSwatches();
-renderXpStats();
 loadTextes().then(() => {
   const mat = location.hash.slice(1) || 'editeur';
   applyMatiere(mat);
