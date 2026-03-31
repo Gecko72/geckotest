@@ -1798,15 +1798,14 @@ function switchAuthTab(tab) {
   document.getElementById('authFormRegister').style.display = isLogin ? 'none'  : 'block';
 }
 
-// ── Sauvegarde du profil public (nom + XP) dans /profiles/{uid} ─────────────
+// ── Sauvegarde du profil public (nom) dans /profiles/{uid} ──────────────────
+// Remarque : on ne touche jamais aux champs xp_* ici — loadUserXp s'en charge.
 async function saveProfile(user) {
   if (!fbDb || !user) return;
-  const existing = await fbDb.collection('profiles').doc(user.uid).get().catch(() => null);
   const name = user.displayName || user.email.split('@')[0];
-  const data = existing?.data() || {};
   await fbDb.collection('profiles').doc(user.uid).set(
-    { displayName: name, uid: user.uid, ...(!data.xp && { xp:0, xp_histoire:0, xp_physique:0, xp_figures:0 }) },
-    { merge: true }
+    { displayName: name, uid: user.uid },
+    { merge: true }   // les champs xp_* existants sont préservés
   ).catch(e => console.warn('[saveProfile]', e));
 }
 
@@ -2117,11 +2116,16 @@ async function adminLoadUsers() {
   body.innerHTML = '<div class="admin-loading">⏳ Chargement…</div>';
   status.textContent = '';
 
-  // S'assure que le profil de l'admin est à jour dans Firestore
-  await saveProfile(currentUser);
+  // S'assure que le profil de l'admin est à jour dans Firestore (sans GET)
+  saveProfile(currentUser); // non-bloquant intentionnellement
 
   try {
-    const snap = await fbDb.collection('profiles').get();
+    const snap = await Promise.race([
+      fbDb.collection('profiles').get(),
+      new Promise((_, rej) => setTimeout(() =>
+        rej(Object.assign(new Error('Délai dépassé (10 s). Vérifiez votre connexion ou les règles Firestore.'), { code: 'timeout' })),
+      10000))
+    ]);
     adminAllUsers = [];
     snap.forEach(doc => adminAllUsers.push({ uid: doc.id, ...doc.data() }));
 
@@ -2145,16 +2149,10 @@ async function adminLoadUsers() {
     status.textContent = `Actualisé à ${new Date().toLocaleTimeString('fr-FR')}`;
 
   } catch(e) {
-    const isPermission = e.code === 'permission-denied' || e.message?.includes('permission');
-    body.innerHTML = `<div class="admin-empty" style="text-align:left;padding:20px 24px;">
-      <p style="font-weight:600;color:#e05050;margin-bottom:10px;">
-        ${isPermission ? '🔐 Accès refusé par les règles Firestore' : `⚠️ Erreur : ${e.message}`}
-      </p>
-      ${isPermission ? `
-      <p style="color:var(--text2);line-height:1.7;margin-bottom:12px;">
-        Allez dans <strong>Firebase Console → Firestore → Règles</strong> et remplacez par :
-      </p>
-      <pre style="background:var(--editor-bg);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:0.68rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap;color:var(--text2);">rules_version = '2';
+    const isPermission = e.code === 'permission-denied' || (e.message || '').includes('permission');
+    const isTimeout    = e.code === 'timeout';
+    const rulesText =
+`rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAdmin() {
@@ -2171,11 +2169,27 @@ service cloud.firestore {
           && (request.auth.uid == userId || isAdmin());
     }
   }
-}</pre>
-      <button class="admin-save-btn" style="margin-top:10px" onclick="navigator.clipboard.writeText(document.querySelector('.admin-modal pre').textContent).then(()=>showToast('✅ Règles copiées !'))">📋 Copier les règles</button>
-      ` : ''}
+}`;
+    const title = isPermission
+      ? '🔐 Accès refusé par les règles Firestore'
+      : isTimeout
+        ? '⏱️ ' + e.message
+        : '⚠️ Erreur : ' + e.message;
+    const extra = isPermission
+      ? `<p style="color:var(--text2);line-height:1.7;margin-bottom:12px;">
+          Allez dans <strong>Firebase Console → Firestore → Règles</strong> et remplacez par :
+        </p>
+        <pre id="adminRulesBlock" style="background:var(--editor-bg);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:0.68rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap;color:var(--text2);">${rulesText}</pre>
+        <button class="admin-save-btn" style="margin-top:10px"
+          onclick="navigator.clipboard.writeText(document.getElementById('adminRulesBlock').textContent).then(()=>showToast('✅ Règles copiées !'))">
+          📋 Copier les règles
+        </button>`
+      : '';
+    body.innerHTML = `<div class="admin-empty" style="text-align:left;padding:20px 24px;">
+      <p style="font-weight:600;color:#e05050;margin-bottom:10px;">${title}</p>
+      ${extra}
     </div>`;
-    status.textContent = `Erreur : ${e.code || e.message}`;
+    status.textContent = 'Erreur : ' + (e.code || e.message);
   }
 }
 
