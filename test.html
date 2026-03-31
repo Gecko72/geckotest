@@ -444,6 +444,84 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .scores-action-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.75rem; font-weight:500; cursor:pointer; transition:all 0.15s; border:1px solid var(--border2); background:var(--surface2); color:var(--text2); }
 .scores-action-btn:hover { border-color:var(--accent); color:var(--text); }
 
+/* ── ADMIN PANEL ── */
+.admin-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:700; align-items:center; justify-content:center; padding:20px; }
+.admin-overlay.open { display:flex; }
+.admin-modal { background:var(--surface); border:1px solid var(--border2); border-radius:18px; width:100%; max-width:720px; max-height:88vh; display:flex; flex-direction:column; box-shadow:0 28px 80px rgba(0,0,0,0.4); }
+.admin-hdr { padding:16px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.admin-hdr-title { font-size:0.92rem; font-weight:700; color:var(--text); flex:1; }
+.admin-badge { font-size:0.6rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; background:rgba(224,80,80,0.12); color:#e05050; border:1px solid rgba(224,80,80,0.3); border-radius:20px; padding:2px 10px; }
+.admin-close { background:none; border:none; cursor:pointer; font-size:1.2rem; color:var(--text3); line-height:1; padding:2px 6px; border-radius:6px; }
+.admin-close:hover { color:var(--text); background:var(--surface2); }
+.admin-toolbar { padding:10px 22px; border-bottom:1px solid var(--border); display:flex; gap:8px; align-items:center; flex-shrink:0; }
+.admin-search { flex:1; padding:7px 12px; background:var(--editor-bg); border:1px solid var(--border2); border-radius:8px; font-family:'Inter',sans-serif; font-size:0.82rem; color:var(--text); outline:none; transition:border-color 0.15s; }
+.admin-search:focus { border-color:var(--accent); }
+.admin-refresh-btn { display:flex; align-items:center; gap:5px; padding:7px 14px; border-radius:8px; border:1px solid var(--border2); background:var(--surface2); color:var(--text2); font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.admin-refresh-btn:hover { border-color:var(--accent); color:var(--text); }
+.admin-body { flex:1; overflow-y:auto; padding:0; }
+.admin-body::-webkit-scrollbar { width:4px; }
+.admin-body::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:2px; }
+.admin-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+.admin-table th { position:sticky; top:0; background:var(--surface2); font-weight:600; color:var(--text3); padding:9px 14px; text-align:left; border-bottom:1px solid var(--border); font-size:0.63rem; letter-spacing:0.08em; text-transform:uppercase; z-index:1; }
+.admin-table td { padding:10px 14px; color:var(--text2); border-bottom:1px solid var(--border); vertical-align:middle; }
+.admin-table tr:last-child td { border-bottom:none; }
+.admin-table tr:hover td { background:var(--surface2); }
+.admin-user-name { font-weight:600; color:var(--text); font-size:0.82rem; }
+.admin-level-cell { display:flex; align-items:center; gap:6px; }
+.admin-level-badge { width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.68rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.admin-xp-input { width:70px; padding:4px 7px; background:var(--editor-bg); border:1px solid var(--border2); border-radius:6px; font-family:'Inter',sans-serif; font-size:0.8rem; color:var(--text); text-align:center; outline:none; transition:border-color 0.15s; }
+.admin-xp-input:focus { border-color:var(--accent); }
+.admin-save-btn { padding:4px 12px; background:var(--accent); color:#fff; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:0.72rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.admin-save-btn:hover { background:var(--accent2); }
+.admin-save-btn:disabled { opacity:0.45; cursor:default; }
+.admin-subject-row { display:flex; flex-direction:column; gap:4px; min-width:160px; }
+.admin-subj-line { display:flex; align-items:center; gap:5px; font-size:0.72rem; }
+.admin-subj-icon { width:16px; text-align:center; flex-shrink:0; }
+.admin-empty { padding:40px; text-align:center; color:var(--text3); font-size:0.82rem; }
+.admin-loading { padding:30px; text-align:center; color:var(--text3); font-size:0.82rem; }
+.admin-footer { padding:10px 22px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; font-size:0.68rem; color:var(--text3); }
+.admin-status { flex:1; }
+
+/* ── XP / NIVEAU ── */
+.xp-wrap { display:flex; align-items:center; gap:8px; padding:5px 12px 5px 10px; background:var(--surface2); border:1px solid var(--border2); border-radius:10px; flex-shrink:0; user-select:none; cursor:default; min-width:130px; transition:border-color 0.2s; }
+.xp-wrap:hover { border-color:var(--accent2); }
+.xp-level-badge { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.72rem; font-weight:700; flex-shrink:0; box-shadow:0 0 10px rgba(124,109,250,0.4); }
+.xp-info { display:flex; flex-direction:column; gap:3px; flex:1; min-width:0; }
+.xp-label { font-size:0.5rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.xp-bar-track { height:4px; background:var(--border2); border-radius:2px; overflow:hidden; }
+.xp-bar-fill { height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2)); border-radius:2px; transition:width 0.7s cubic-bezier(0.34,1.56,0.64,1); }
+/* XP gain badge in results */
+.quiz-xp-gain { display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:var(--accent2); background:var(--accent-glow); border:1px solid rgba(124,109,250,0.3); border-radius:20px; padding:6px 16px; }
+/* Auth menu XP */
+.auth-menu-xp { padding:8px 12px 10px; border-bottom:1px solid var(--border); margin-bottom:4px; }
+.auth-menu-xp-row { display:flex; align-items:center; gap:7px; margin-bottom:5px; }
+.auth-menu-xp-badge { width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.65rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.auth-menu-xp-name { font-size:0.76rem; font-weight:600; color:var(--text); }
+.auth-menu-xp-track { height:4px; background:var(--border2); border-radius:2px; overflow:hidden; }
+.auth-menu-xp-fill { height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2)); border-radius:2px; transition:width 0.5s ease; }
+.auth-menu-xp-sub { font-size:0.6rem; color:var(--text3); margin-top:3px; }
+/* Level-up overlay */
+.levelup-toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.75); opacity:0; background:var(--surface); border:2px solid var(--accent); border-radius:20px; padding:28px 40px; display:flex; flex-direction:column; align-items:center; gap:8px; z-index:1100; pointer-events:none; box-shadow:0 20px 80px rgba(124,109,250,0.45); transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1); text-align:center; }
+.levelup-toast.show { transform:translate(-50%,-50%) scale(1); opacity:1; }
+.levelup-toast-emoji { font-size:2.8rem; line-height:1; }
+.levelup-toast-title { font-size:1.1rem; font-weight:700; color:var(--accent2); }
+.levelup-toast-sub { font-size:0.78rem; color:var(--text2); }
+/* XP Stats dropdown panel */
+.xp-wrap-outer { position:relative; flex-shrink:0; }
+.xp-wrap { cursor:pointer; }
+.xp-stats-panel { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--border2); border-radius:14px; box-shadow:0 8px 32px var(--shadow); width:276px; padding:14px 16px; z-index:300; display:none; flex-direction:column; gap:8px; }
+.xp-stats-panel.open { display:flex; }
+.xp-stats-sep { height:1px; background:var(--border); margin:2px 0; }
+.xp-stats-section { font-size:0.52rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); }
+.xp-stat-row { display:flex; align-items:center; gap:9px; }
+.xp-stat-badge { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:700; color:#fff; flex-shrink:0; }
+.xp-stat-body { flex:1; min-width:0; }
+.xp-stat-name { font-size:0.72rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:5px; }
+.xp-stat-sub { font-size:0.58rem; color:var(--text3); }
+.xp-stat-bar { height:4px; background:var(--border2); border-radius:2px; margin-top:3px; overflow:hidden; }
+.xp-stat-bar-fill { height:100%; border-radius:2px; transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+@media (max-width: 899px) { .xp-wrap-outer { display:none !important; } }
+
 </style>
 </head>
 <body>
@@ -514,6 +592,19 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
     <button class="timer-reset" onclick="resetTimer()" title="Relancer le timer">↺</button>
   </div>
 
+  <!-- XP BAR -->
+  <div class="xp-wrap-outer" id="xpWrapOuter">
+    <div class="xp-wrap" id="xpWrap" title="Cliquer pour les niveaux par matière" onclick="toggleXpPanel(event)">
+      <div class="xp-level-badge" id="xpLevelBadge">1</div>
+      <div class="xp-info">
+        <span class="xp-label" id="xpLabel">Niv. 1 — Novice</span>
+        <div class="xp-bar-track"><div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div></div>
+      </div>
+      <span style="font-size:0.6rem;color:var(--text3);margin-left:2px;">▾</span>
+    </div>
+    <div class="xp-stats-panel" id="xpStatsPanel"></div>
+  </div>
+
   <button class="btn-random" id="btnRandom" onclick="loadRandom()">
     <span class="dice">🎲</span> Texte aléatoire
   </button>
@@ -527,7 +618,19 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
         <span class="auth-menu-name" id="authMenuName"></span>
         <span class="auth-menu-email" id="authMenuEmail"></span>
       </div>
+      <div class="auth-menu-xp" id="authMenuXp">
+        <div class="auth-menu-xp-row">
+          <div class="auth-menu-xp-badge" id="authMenuXpBadge">1</div>
+          <div style="flex:1;min-width:0">
+            <span class="auth-menu-xp-name" id="authMenuXpName">Niveau 1 — Novice</span>
+            <div class="auth-menu-xp-track"><div class="auth-menu-xp-fill" id="authMenuXpFill" style="width:0%"></div></div>
+            <div class="auth-menu-xp-sub" id="authMenuXpSub">0 / 100 XP global</div>
+          </div>
+        </div>
+        <div id="authMenuXpSubjects" style="display:flex;flex-direction:column;gap:7px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);"></div>
+      </div>
       <button class="auth-menu-item" onclick="showMyScores()">📊 Mes résultats</button>
+      <button class="auth-menu-item" id="adminMenuBtn" style="display:none" onclick="openAdminPanel()">🛡️ Panel Admin</button>
       <button class="auth-menu-item danger" onclick="authSignOut()">↩ Se déconnecter</button>
     </div>
   </div>
@@ -568,6 +671,28 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
     <div class="scores-modal-actions">
       <span style="flex:1"></span>
       <button class="scores-action-btn" style="color:#e05050;border-color:rgba(224,80,80,0.3);background:rgba(224,80,80,0.06)" onclick="clearMyScores()">🗑 Tout effacer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADMIN -->
+<div class="admin-overlay" id="adminOverlay" onclick="closeAdminPanel(event)">
+  <div class="admin-modal" onclick="event.stopPropagation()">
+    <div class="admin-hdr">
+      <span class="admin-hdr-title">🛡️ Panel Admin</span>
+      <span class="admin-badge">ADMIN</span>
+      <button class="admin-close" onclick="document.getElementById('adminOverlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="admin-toolbar">
+      <input class="admin-search" id="adminSearch" type="text" placeholder="🔍 Rechercher un utilisateur…" oninput="adminFilterUsers()">
+      <button class="admin-refresh-btn" onclick="adminLoadUsers()">↺ Actualiser</button>
+    </div>
+    <div class="admin-body" id="adminBody">
+      <div class="admin-loading">Chargement…</div>
+    </div>
+    <div class="admin-footer">
+      <span class="admin-status" id="adminStatus"></span>
+      <span id="adminUserCount"></span>
     </div>
   </div>
 </div>
@@ -816,6 +941,13 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 </div><!-- /app -->
 
 <div class="toast" id="toast"></div>
+
+<!-- LEVEL-UP -->
+<div class="levelup-toast" id="levelupToast">
+  <div class="levelup-toast-emoji">⭐</div>
+  <div class="levelup-toast-title" id="levelupTitle">Niveau 2 !</div>
+  <div class="levelup-toast-sub" id="levelupSub">Apprenti</div>
+</div>
 
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -1171,6 +1303,7 @@ window.addEventListener('hashchange', () => {
  
 function closeAllDropdowns() {
   document.getElementById('navDropdown').classList.remove('open');
+  document.getElementById('xpStatsPanel')?.classList.remove('open');
 }
  
 document.addEventListener('click', closeAllDropdowns);
@@ -1239,8 +1372,20 @@ function loadChapter(idx) {
   document.querySelectorAll('.chapter-item').forEach(el => el.classList.remove('active'));
   document.getElementById('ch-item-' + idx)?.classList.add('active');
   const ch = chapters[idx];
-  // Mélange aléatoire des questions (Fisher-Yates)
-  ch._shuffled = [...ch.questions].sort(() => Math.random() - 0.5);
+  // Mélange aléatoire des questions et des réponses (Fisher-Yates)
+  const shuffledQs = [...ch.questions];
+  for (let i = shuffledQs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledQs[i], shuffledQs[j]] = [shuffledQs[j], shuffledQs[i]];
+  }
+  ch._shuffled = shuffledQs.map(q => {
+    const indices = q.options.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return { ...q, options: indices.map(i => q.options[i]), answer: indices.indexOf(q.answer) };
+  });
   document.getElementById('quiz-chapter-icon').textContent = ch.icone || '📖';
   document.getElementById('quiz-chapter-name').textContent = ch.titre;
   document.getElementById('quiz-chapter-desc').textContent = ch.description || '';
@@ -1338,6 +1483,7 @@ function showQuizResult() {
   const pct = Math.round(correct / total * 100);
   const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : pct >= 40 ? '📚' : '💪';
   const msg = pct >= 80 ? 'Excellent !' : pct >= 60 ? 'Bien joué !' : pct >= 40 ? 'Continue à réviser !' : 'Il faut réviser !';
+  const xp = calcQuizXp(correct, total);
   document.getElementById('quiz-content').style.display = 'none';
   const result = document.getElementById('quiz-result');
   result.style.display = 'block';
@@ -1346,9 +1492,11 @@ function showQuizResult() {
       <div class="quiz-result-emoji">${emoji}</div>
       <div class="quiz-result-score">${correct} / ${total}</div>
       <div class="quiz-result-label">${msg} (${pct}%)</div>
+      <div class="quiz-xp-gain">✨ +${xp.total} XP${xp.bonus > 0 ? ` <span style="font-size:0.68rem;opacity:0.75">(${xp.base} base + ${xp.bonus} bonus)</span>` : ''}</div>
       <div id="quiz-save-status" style="font-size:0.72rem;color:var(--text3);min-height:1.2em"></div>
       <button class="quiz-btn quiz-btn-primary" onclick="loadChapter(${quizCurrentChapter})">🔄 Recommencer ce chapitre</button>
     </div>`;
+  gainXp(xp.total, currentMatiere);
   // Sauvegarde dans Firebase si connecté
   if (currentUser) {
     saveScore(currentMatiere, ch.titre, correct, total).then(res => {
@@ -1515,6 +1663,7 @@ function showFigResult() {
   const good = Object.entries(figAnswered).filter(([k, v]) => !k.includes('_') && v === true).length;
   const pct = Math.round(good / total * 100);
   const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '📚';
+  const xp = calcQuizXp(good, total);
   document.getElementById('fig-qcm').style.display = 'none';
   document.getElementById('fig-result').style.display = 'block';
   document.getElementById('fig-result').innerHTML = `
@@ -1522,9 +1671,11 @@ function showFigResult() {
       <div class="quiz-result-emoji">${emoji}</div>
       <div class="quiz-result-score">${good} / ${total}</div>
       <div class="quiz-result-label">${pct}% de bonnes réponses</div>
+      <div class="quiz-xp-gain">✨ +${xp.total} XP${xp.bonus > 0 ? ` <span style="font-size:0.68rem;opacity:0.75">(${xp.base} base + ${xp.bonus} bonus)</span>` : ''}</div>
       <div id="fig-save-status" style="font-size:0.72rem;color:var(--text3);min-height:1.2em"></div>
       <button class="quiz-btn quiz-btn-primary" onclick="figRestart()">🔀 Recommencer</button>
     </div>`;
+  gainXp(xp.total, 'figures');
   // Sauvegarde dans Firebase si connecté
   if (currentUser) {
     saveScore('figures', 'Figures de style', good, total).then(res => {
@@ -1584,9 +1735,11 @@ if (FIREBASE_READY) {
       updateChapterBadges();
       // Sync Firestore en arrière-plan
       loadUserBests();
+      loadUserXp();
     } else {
       userBests = {};
       updateChapterBadges();
+      renderXpStats(); // XP local anonyme
     }
   });
 }
@@ -1597,23 +1750,6 @@ function nameToEmail(name) {
 }
 
 // ── UI AUTH ───────────────────────────────────────────────────────────────────
-function renderAuthUI(user) {
-  const signinBtn = document.getElementById('authSigninBtn');
-  const avatarBtn = document.getElementById('authAvatarBtn');
-  if (user) {
-    signinBtn.style.display = 'none';
-    avatarBtn.style.display = 'flex';
-    const name = user.displayName || user.email.split('@')[0];
-    document.getElementById('authMenuName').textContent  = name;
-    document.getElementById('authMenuEmail').textContent = '';
-    avatarBtn.textContent = name[0].toUpperCase();
-  } else {
-    signinBtn.style.display = 'flex';
-    avatarBtn.style.display = 'none';
-    document.getElementById('authMenu').classList.remove('open');
-  }
-}
-
 function toggleAuthMenu(e) {
   e.stopPropagation();
   document.getElementById('authMenu').classList.toggle('open');
@@ -1892,8 +2028,368 @@ async function clearMyScores() {
   showMyScores();
 }
 
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
+// Liste des UIDs autorisés à accéder au panel admin
+const ADMIN_UIDS = [
+  'PwAW2cbWKaNdcJyjKr1cecatrfG3'  // ← remplacez par votre UID Firebase
+];
+
+const ADMIN_SUBJECTS = ['global', 'histoire', 'physique', 'figures'];
+const ADMIN_SUBJECT_META = {
+  global:   { label: 'Global',           icon: '⭐', color: '#6055e8' },
+  histoire: { label: 'Histoire',          icon: '🏛️', color: '#6055e8' },
+  physique: { label: 'Physique-Chimie',   icon: '⚗️', color: '#2d8a50' },
+  figures:  { label: 'Figures de style',  icon: '🎭', color: '#e07020' },
+};
+
+let adminAllUsers  = [];  // cache de tous les users chargés
+let adminFiltered  = [];
+
+function isAdmin() {
+  return currentUser && ADMIN_UIDS.includes(currentUser.uid);
+}
+
+function renderAuthUI(user) {
+  const signinBtn = document.getElementById('authSigninBtn');
+  const avatarBtn = document.getElementById('authAvatarBtn');
+  if (user) {
+    signinBtn.style.display = 'none';
+    avatarBtn.style.display = 'flex';
+    const name = user.displayName || user.email.split('@')[0];
+    document.getElementById('authMenuName').textContent  = name;
+    document.getElementById('authMenuEmail').textContent = '';
+    avatarBtn.textContent = name[0].toUpperCase();
+    // Bouton admin
+    const adminBtn = document.getElementById('adminMenuBtn');
+    if (adminBtn) adminBtn.style.display = isAdmin() ? 'flex' : 'none';
+  } else {
+    signinBtn.style.display = 'flex';
+    avatarBtn.style.display = 'none';
+    document.getElementById('authMenu').classList.remove('open');
+    const adminBtn = document.getElementById('adminMenuBtn');
+    if (adminBtn) adminBtn.style.display = 'none';
+  }
+}
+
+function openAdminPanel() {
+  if (!isAdmin()) { showToast('⛔ Accès refusé'); return; }
+  document.getElementById('authMenu').classList.remove('open');
+  document.getElementById('adminOverlay').classList.add('open');
+  adminLoadUsers();
+}
+
+function closeAdminPanel(e) {
+  if (e.target === e.currentTarget) document.getElementById('adminOverlay').classList.remove('open');
+}
+
+async function adminLoadUsers() {
+  if (!fbDb || !isAdmin()) return;
+  const body = document.getElementById('adminBody');
+  const status = document.getElementById('adminStatus');
+  body.innerHTML = '<div class="admin-loading">⏳ Chargement des utilisateurs…</div>';
+  status.textContent = '';
+  try {
+    const snap = await fbDb.collection('users').get();
+    adminAllUsers = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      adminAllUsers.push({ uid: doc.id, ...d });
+    });
+    // Récupère les noms depuis les profils Auth si possible (Firestore uniquement)
+    document.getElementById('adminUserCount').textContent = `${adminAllUsers.length} utilisateur${adminAllUsers.length > 1 ? 's' : ''}`;
+    document.getElementById('adminSearch').value = '';
+    adminFiltered = [...adminAllUsers];
+    adminRenderTable(adminFiltered);
+    status.textContent = `Actualisé à ${new Date().toLocaleTimeString('fr-FR')}`;
+  } catch(e) {
+    body.innerHTML = `<div class="admin-empty">⚠️ Erreur : ${e.message}</div>`;
+  }
+}
+
+function adminFilterUsers() {
+  const q = document.getElementById('adminSearch').value.trim().toLowerCase();
+  adminFiltered = q
+    ? adminAllUsers.filter(u => {
+        const name = (u.displayName || u.uid || '').toLowerCase();
+        return name.includes(q) || u.uid.toLowerCase().includes(q);
+      })
+    : [...adminAllUsers];
+  adminRenderTable(adminFiltered);
+}
+
+function adminRenderTable(users) {
+  const body = document.getElementById('adminBody');
+  if (!users.length) {
+    body.innerHTML = '<div class="admin-empty">Aucun utilisateur trouvé.</div>';
+    return;
+  }
+
+  const rows = users.map(u => {
+    const name  = u.displayName || u.uid.slice(0, 12) + '…';
+    const isMe  = u.uid === currentUser?.uid;
+    const subjCells = ADMIN_SUBJECTS.map(scope => {
+      const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
+      const xp    = u[fsKey] || 0;
+      const d     = getLevelData(xp);
+      const m     = ADMIN_SUBJECT_META[scope];
+      return `<div class="admin-subj-line">
+        <span class="admin-subj-icon">${m.icon}</span>
+        <input class="admin-xp-input" id="xinput_${u.uid}_${scope}" type="number" min="0" value="${xp}" title="${m.label}" style="width:65px">
+        <span style="font-size:0.62rem;color:var(--text3);white-space:nowrap">Niv.${d.level}</span>
+      </div>`;
+    }).join('');
+
+    return `<tr>
+      <td>
+        <div class="admin-user-name">${name}${isMe ? ' <span style="font-size:0.6rem;color:var(--accent2)">(moi)</span>' : ''}</div>
+        <div style="font-size:0.58rem;color:var(--text3);margin-top:2px;font-family:monospace">${u.uid}</div>
+      </td>
+      <td>
+        <div class="admin-subject-row">${subjCells}</div>
+      </td>
+      <td>
+        <button class="admin-save-btn" onclick="adminSaveUser('${u.uid}')">💾 Sauver</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  body.innerHTML = `<table class="admin-table">
+    <thead><tr>
+      <th>Utilisateur</th>
+      <th>XP par matière</th>
+      <th>Action</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+async function adminSaveUser(uid) {
+  if (!fbDb || !isAdmin()) return;
+  const btn = document.querySelector(`button[onclick="adminSaveUser('${uid}')"]`);
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+  const upd = {};
+  for (const scope of ADMIN_SUBJECTS) {
+    const inputEl = document.getElementById(`xinput_${uid}_${scope}`);
+    if (!inputEl) continue;
+    const val = Math.max(0, parseInt(inputEl.value, 10) || 0);
+    const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
+    upd[fsKey] = val;
+  }
+
+  try {
+    await fbDb.collection('users').doc(uid).set(upd, { merge: true });
+    // Met à jour le cache local si c'est l'utilisateur courant
+    if (uid === currentUser?.uid) {
+      for (const scope of ADMIN_SUBJECTS) {
+        const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
+        if (upd[fsKey] !== undefined) lsSaveXp(scope, upd[fsKey]);
+      }
+      renderXpStats();
+    }
+    // Met à jour le cache adminAllUsers
+    const idx = adminAllUsers.findIndex(u => u.uid === uid);
+    if (idx >= 0) Object.assign(adminAllUsers[idx], upd);
+
+    document.getElementById('adminStatus').textContent = `✅ Sauvegardé à ${new Date().toLocaleTimeString('fr-FR')}`;
+    showToast('✅ XP mis à jour');
+  } catch(e) {
+    showToast('⚠️ Erreur sauvegarde');
+    document.getElementById('adminStatus').textContent = `⚠️ Erreur : ${e.message}`;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Sauver'; }
+    // Rafraîchit les badges de niveau dans la table
+    for (const scope of ADMIN_SUBJECTS) {
+      const inputEl = document.getElementById(`xinput_${uid}_${scope}`);
+      if (!inputEl) continue;
+      const xp = parseInt(inputEl.value, 10) || 0;
+      const badge = inputEl.closest('.admin-subj-line')?.querySelector('span:last-child');
+      if (badge) badge.textContent = `Niv.${getLevelData(xp).level}`;
+    }
+  }
+}
+
+// ── XP & NIVEAU ──────────────────────────────────────────────────────────────
+const XP_TITLES = [
+  '', 'Novice', 'Apprenti', 'Étudiant', 'Assidu', 'Lettré',
+  'Cultivé', 'Érudit', 'Savant', 'Expert', 'Maître',
+  'Grand Maître', 'Professeur', 'Académicien', 'Docteur', 'Sage',
+  'Philosophe', 'Encyclopédiste', 'Génie', 'Légende', 'Omniscient'
+];
+
+const XP_SUBJECTS = {
+  histoire: { label: 'Histoire',         icon: '🏛️', color: '#6055e8' },
+  physique: { label: 'Physique-Chimie',   icon: '⚗️', color: '#2d8a50' },
+  figures:  { label: 'Figures de style',  icon: '🎭', color: '#e07020' },
+};
+
+// Niveau n : totalXp >= 100*n*(n-1)/2 ; XP pour passer n→n+1 : n*100
+function getLevelData(totalXp) {
+  const n = Math.max(1, Math.floor((1 + Math.sqrt(1 + 8 * totalXp / 100)) / 2));
+  const xpAtLevel = 100 * n * (n - 1) / 2;
+  const xpForNext = n * 100;
+  const xpInLevel = totalXp - xpAtLevel;
+  const progress  = Math.min(1, xpInLevel / xpForNext);
+  const title     = XP_TITLES[Math.min(n, XP_TITLES.length - 1)] || 'Omniscient';
+  return { level: n, xpInLevel, xpForNext, progress, title };
+}
+
+function _xpKey(scope) {
+  const uid = currentUser ? currentUser.uid : '__local__';
+  return `revision_xp_${scope}_${uid}`;
+}
+function lsGetXp(scope = 'global') {
+  // Migration depuis l'ancienne clé globale (sans scope)
+  if (scope === 'global') {
+    const oldKey = `revision_xp_${currentUser ? currentUser.uid : '__local__'}`;
+    const oldVal = localStorage.getItem(oldKey);
+    if (oldVal !== null && localStorage.getItem(_xpKey('global')) === null) {
+      localStorage.setItem(_xpKey('global'), oldVal);
+      localStorage.removeItem(oldKey);
+    }
+  }
+  try { return Math.max(0, parseInt(localStorage.getItem(_xpKey(scope)) || '0', 10)); } catch { return 0; }
+}
+function lsSaveXp(scope, xp) { localStorage.setItem(_xpKey(scope), String(xp)); }
+
+function _statRowHTML(icon, color, label, xp) {
+  const d = getLevelData(xp);
+  return `<div class="xp-stat-row">
+    <div class="xp-stat-badge" style="background:${color}">${d.level}</div>
+    <div class="xp-stat-body">
+      <div class="xp-stat-name">${icon} ${label} <span style="font-size:0.6rem;font-weight:400;color:var(--accent2)">${d.title}</span></div>
+      <div class="xp-stat-sub">${d.xpInLevel} / ${d.xpForNext} XP</div>
+      <div class="xp-stat-bar"><div class="xp-stat-bar-fill" style="width:${Math.round(d.progress*100)}%;background:${color}"></div></div>
+    </div>
+  </div>`;
+}
+
+function renderXpBar() {
+  const d = getLevelData(lsGetXp('global'));
+  const badge = document.getElementById('xpLevelBadge');
+  const label = document.getElementById('xpLabel');
+  const fill  = document.getElementById('xpBarFill');
+  if (!badge) return;
+  badge.textContent = d.level;
+  label.textContent = `Niv. ${d.level} — ${d.title}`;
+  fill.style.width  = `${Math.round(d.progress * 100)}%`;
+}
+
+function renderXpStats() {
+  renderXpBar();
+  // Panel dropdown (topbar)
+  const panel = document.getElementById('xpStatsPanel');
+  if (panel) {
+    panel.innerHTML =
+      `<span class="xp-stats-section">🌐 Niveau global</span>` +
+      _statRowHTML('⭐', 'var(--accent)', 'Global', lsGetXp('global')) +
+      `<div class="xp-stats-sep"></div><span class="xp-stats-section">Par matière</span>` +
+      Object.entries(XP_SUBJECTS).map(([k, s]) => _statRowHTML(s.icon, s.color, s.label, lsGetXp(k))).join('');
+  }
+  // Auth menu — global
+  const d = getLevelData(lsGetXp('global'));
+  const amBadge = document.getElementById('authMenuXpBadge');
+  if (amBadge) {
+    amBadge.textContent = d.level;
+    document.getElementById('authMenuXpName').textContent = `Niveau ${d.level} — ${d.title}`;
+    document.getElementById('authMenuXpFill').style.width = `${Math.round(d.progress * 100)}%`;
+    document.getElementById('authMenuXpSub').textContent  = `${d.xpInLevel} / ${d.xpForNext} XP global`;
+  }
+  // Auth menu — par matière
+  const subjEl = document.getElementById('authMenuXpSubjects');
+  if (subjEl) {
+    subjEl.innerHTML = Object.entries(XP_SUBJECTS).map(([k, s]) => {
+      const ds = getLevelData(lsGetXp(k));
+      return `<div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:20px;height:20px;border-radius:50%;background:${s.color};color:#fff;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ds.level}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:0.7rem;font-weight:600;color:var(--text)">${s.icon} ${s.label}</div>
+          <div style="height:3px;background:var(--border2);border-radius:2px;margin-top:3px;overflow:hidden"><div style="height:100%;width:${Math.round(ds.progress*100)}%;background:${s.color};border-radius:2px;transition:width 0.5s ease"></div></div>
+          <div style="font-size:0.57rem;color:var(--text3);margin-top:2px">${ds.xpInLevel}/${ds.xpForNext} XP · ${ds.title}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function toggleXpPanel(e) {
+  e.stopPropagation();
+  const panel = document.getElementById('xpStatsPanel');
+  const isOpen = panel.classList.contains('open');
+  closeAllDropdowns();
+  if (!isOpen) { renderXpStats(); panel.classList.add('open'); }
+}
+
+function calcQuizXp(correct, total) {
+  const pct   = Math.round(correct / total * 100);
+  const base  = correct * 10;
+  const bonus = pct >= 100 ? 50 : pct >= 80 ? 30 : pct >= 60 ? 15 : 0;
+  return { base, bonus, total: base + bonus, pct };
+}
+
+function gainXp(amount, mat) {
+  if (amount <= 0) return;
+  // Global
+  const gBefore = lsGetXp('global');
+  const gAfter  = gBefore + amount;
+  lsSaveXp('global', gAfter);
+  const gLvUp = getLevelData(gAfter).level > getLevelData(gBefore).level;
+  // Matière
+  let sLevelUp = null;
+  if (mat && XP_SUBJECTS[mat]) {
+    const sBefore = lsGetXp(mat);
+    const sAfter  = sBefore + amount;
+    lsSaveXp(mat, sAfter);
+    if (getLevelData(sAfter).level > getLevelData(sBefore).level) {
+      sLevelUp = { level: getLevelData(sAfter).level, title: getLevelData(sAfter).title, label: XP_SUBJECTS[mat].label };
+    }
+  }
+  renderXpStats();
+  // Sync Firestore
+  if (fbDb && currentUser) {
+    const upd = { xp: gAfter };
+    if (mat && XP_SUBJECTS[mat]) upd[`xp_${mat}`] = lsGetXp(mat);
+    fbDb.collection('users').doc(currentUser.uid).set(upd, { merge: true }).catch(e => console.warn('[gainXp]', e));
+  }
+  // Level-up notifications
+  if (gLvUp) showLevelUp(getLevelData(gAfter).level, getLevelData(gAfter).title, null);
+  else if (sLevelUp) showLevelUp(sLevelUp.level, sLevelUp.title, sLevelUp.label);
+}
+
+function showLevelUp(level, title, subject) {
+  document.getElementById('levelupTitle').textContent = subject ? `Niveau ${level} en ${subject} !` : `Niveau ${level} !`;
+  document.getElementById('levelupSub').textContent   = title;
+  const t = document.getElementById('levelupToast');
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+async function loadUserXp() {
+  renderXpStats();
+  if (!fbDb || !currentUser) return;
+  try {
+    const doc  = await fbDb.collection('users').doc(currentUser.uid).get();
+    const data = doc.data() || {};
+    let changed = false;
+    const scopes = ['global', ...Object.keys(XP_SUBJECTS)];
+    for (const scope of scopes) {
+      const fsKey = scope === 'global' ? 'xp' : `xp_${scope}`;
+      const fsXp  = data[fsKey] || 0;
+      const lsXp  = lsGetXp(scope);
+      if (fsXp > lsXp) { lsSaveXp(scope, fsXp); changed = true; }
+      else if (lsXp > fsXp) {
+        const upd = {}; upd[fsKey] = lsXp;
+        fbDb.collection('users').doc(currentUser.uid).set(upd, { merge: true }).catch(() => {});
+      }
+    }
+    if (changed) renderXpStats();
+  } catch(e) { console.warn('[loadUserXp]', e); }
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initSwatches();
+renderXpStats();
 loadTextes().then(() => {
   const mat = location.hash.slice(1) || 'editeur';
   applyMatiere(mat);
