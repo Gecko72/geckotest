@@ -2114,20 +2114,68 @@ async function adminLoadUsers() {
   if (!fbDb || !isAdmin()) return;
   const body   = document.getElementById('adminBody');
   const status = document.getElementById('adminStatus');
-  body.innerHTML = '<div class="admin-loading">⏳ Chargement des utilisateurs…</div>';
+  body.innerHTML = '<div class="admin-loading">⏳ Chargement…</div>';
   status.textContent = '';
+
+  // S'assure que le profil de l'admin est à jour dans Firestore
+  await saveProfile(currentUser);
+
   try {
     const snap = await fbDb.collection('profiles').get();
     adminAllUsers = [];
     snap.forEach(doc => adminAllUsers.push({ uid: doc.id, ...doc.data() }));
+
+    if (!adminAllUsers.length) {
+      body.innerHTML = `<div class="admin-empty" style="text-align:left;padding:20px 24px;">
+        <p style="font-weight:600;color:var(--text);margin-bottom:8px;">Aucun profil trouvé dans Firestore.</p>
+        <p style="line-height:1.7;margin-bottom:12px;">Les profils sont créés automatiquement à la <strong>connexion</strong>.<br>
+        Demandez aux utilisateurs de se déconnecter et se reconnecter, ou cliquez ↺ après leur connexion.</p>
+        <p style="font-size:0.72rem;color:var(--text3);">Collection cible : <code>profiles/</code></p>
+      </div>`;
+      document.getElementById('adminUserCount').textContent = '0 utilisateur';
+      status.textContent = `Actualisé à ${new Date().toLocaleTimeString('fr-FR')}`;
+      return;
+    }
+
     document.getElementById('adminUserCount').textContent =
       `${adminAllUsers.length} utilisateur${adminAllUsers.length > 1 ? 's' : ''}`;
     document.getElementById('adminSearch').value = '';
     adminFiltered = [...adminAllUsers];
     adminRenderTable(adminFiltered);
     status.textContent = `Actualisé à ${new Date().toLocaleTimeString('fr-FR')}`;
+
   } catch(e) {
-    body.innerHTML = `<div class="admin-empty">⚠️ Erreur de lecture : ${e.message}<br><small>Vérifiez les règles Firestore dans le commentaire du code.</small></div>`;
+    const isPermission = e.code === 'permission-denied' || e.message?.includes('permission');
+    body.innerHTML = `<div class="admin-empty" style="text-align:left;padding:20px 24px;">
+      <p style="font-weight:600;color:#e05050;margin-bottom:10px;">
+        ${isPermission ? '🔐 Accès refusé par les règles Firestore' : `⚠️ Erreur : ${e.message}`}
+      </p>
+      ${isPermission ? `
+      <p style="color:var(--text2);line-height:1.7;margin-bottom:12px;">
+        Allez dans <strong>Firebase Console → Firestore → Règles</strong> et remplacez par :
+      </p>
+      <pre style="background:var(--editor-bg);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:0.68rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap;color:var(--text2);">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.uid in ['${currentUser.uid}'];
+    }
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null
+          && (request.auth.uid == userId || isAdmin());
+    }
+    match /profiles/{userId} {
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null
+          && (request.auth.uid == userId || isAdmin());
+    }
+  }
+}</pre>
+      <button class="admin-save-btn" style="margin-top:10px" onclick="navigator.clipboard.writeText(document.querySelector('.admin-modal pre').textContent).then(()=>showToast('✅ Règles copiées !'))">📋 Copier les règles</button>
+      ` : ''}
+    </div>`;
+    status.textContent = `Erreur : ${e.code || e.message}`;
   }
 }
 
