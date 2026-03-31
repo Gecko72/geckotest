@@ -2356,16 +2356,23 @@ function loadChatMessages() {
   
   chatUnsubscribe = fbDb.collection('messages')
     .where('uid', '==', currentUser.uid)
-    .orderBy('timestamp', 'asc')
     .onSnapshot(snapshot => {
       if (snapshot.empty) {
         container.innerHTML = '<div class="chat-empty">Décrivez votre problème ou suggestion.<br>L\'administrateur vous répondra ici.</div>';
         return;
       }
       
+      // Collecter et trier les messages côté client
+      const messages = [];
+      snapshot.forEach(doc => messages.push(doc.data()));
+      messages.sort((a, b) => {
+        const ta = a.timestamp?.toMillis?.() || 0;
+        const tb = b.timestamp?.toMillis?.() || 0;
+        return ta - tb;
+      });
+      
       let html = '';
-      snapshot.forEach(doc => {
-        const msg = doc.data();
+      messages.forEach(msg => {
         const time = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
         
         // Message de l'utilisateur
@@ -2377,7 +2384,7 @@ function loadChatMessages() {
         // Réponses de l'admin
         if (msg.replies && msg.replies.length > 0) {
           msg.replies.forEach(reply => {
-            const replyTime = reply.timestamp ? new Date(reply.timestamp.toDate()).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+            const replyTime = reply.timestamp ? new Date(reply.timestamp).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
             html += `<div class="chat-msg other">
               <strong style="font-size:0.7rem;color:var(--accent)">Admin</strong><br>
               ${escapeHtml(reply.text)}
@@ -2391,7 +2398,7 @@ function loadChatMessages() {
       container.scrollTop = container.scrollHeight;
     }, err => {
       console.error('Erreur chargement messages:', err);
-      container.innerHTML = '<div class="chat-empty">Erreur de chargement</div>';
+      container.innerHTML = `<div class="chat-empty">Erreur : ${err.message}</div>`;
     });
 }
 
