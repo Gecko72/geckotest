@@ -1712,7 +1712,7 @@ async function saveProfile(user) {
   if (!fbDb || !user) return;
   const name = user.displayName || user.email.split('@')[0];
   await fbDb.collection('profiles').doc(user.uid).set(
-    { displayName: name, uid: user.uid },
+    { displayName: name, uid: user.uid, email: user.email },
     { merge: true }
   ).catch(e => console.warn('[saveProfile]', e));
 }
@@ -1726,6 +1726,8 @@ async function authDoLogin() {
   if (!name || !pass) { errEl.textContent = 'Remplissez tous les champs.'; errEl.classList.add('show'); return; }
   try {
     const cred = await fbAuth.signInWithEmailAndPassword(nameToEmail(name), pass);
+    // updateProfile pour s'assurer que displayName est bien défini
+    if (!cred.user.displayName) await cred.user.updateProfile({ displayName: name }).catch(() => {});
     await saveProfile(cred.user);
     document.getElementById('authOverlay').classList.remove('open');
     showToast(`👋 Bonjour ${name} !`);
@@ -2124,7 +2126,9 @@ function adminRenderTable(users) {
   }
 
   const rows = users.map(u => {
-    const name = u.displayName || u.uid.slice(0, 12) + '…';
+    const name = u.displayName
+      || (u.email ? u.email.split('@')[0] : null)
+      || u.uid.slice(0, 16) + '…';
     const isMe = u.uid === currentUser?.uid;
     return `<tr>
       <td>
