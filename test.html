@@ -471,6 +471,56 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .admin-loading { padding:30px; text-align:center; color:var(--text3); font-size:0.82rem; }
 .admin-footer { padding:10px 22px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; font-size:0.68rem; color:var(--text3); }
 .admin-status { flex:1; }
+.admin-delete-btn { padding:4px 10px; background:transparent; color:#e05050; border:1px solid rgba(224,80,80,0.35); border-radius:6px; font-family:'Inter',sans-serif; font-size:0.72rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.admin-delete-btn:hover { background:rgba(224,80,80,0.1); border-color:#e05050; }
+.admin-delete-btn:disabled { opacity:0.4; cursor:default; }
+
+/* ── CHAT / SIGNALEMENT ── */
+.chat-fab { position:fixed; bottom:24px; right:24px; width:56px; height:56px; border-radius:50%; background:var(--accent); color:#fff; border:none; cursor:pointer; font-size:1.4rem; box-shadow:0 4px 20px rgba(124,109,250,0.4); z-index:600; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+.chat-fab:hover { transform:scale(1.08); box-shadow:0 6px 28px rgba(124,109,250,0.5); }
+.chat-fab.has-badge::after { content:''; position:absolute; top:8px; right:8px; width:12px; height:12px; background:#e05050; border-radius:50%; border:2px solid var(--bg); }
+.chat-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:650; align-items:flex-end; justify-content:flex-end; padding:20px; }
+.chat-overlay.open { display:flex; }
+.chat-panel { background:var(--surface); border:1px solid var(--border2); border-radius:16px; width:100%; max-width:380px; height:480px; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.35); animation:chatSlideIn 0.25s ease; }
+@keyframes chatSlideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.chat-hdr { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.chat-hdr-title { font-size:0.88rem; font-weight:600; color:var(--text); flex:1; }
+.chat-close { background:none; border:none; cursor:pointer; font-size:1.1rem; color:var(--text3); padding:4px 8px; border-radius:6px; }
+.chat-close:hover { background:var(--surface2); color:var(--text); }
+.chat-messages { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; }
+.chat-messages::-webkit-scrollbar { width:4px; }
+.chat-messages::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:2px; }
+.chat-msg { max-width:85%; padding:10px 14px; border-radius:14px; font-size:0.8rem; line-height:1.5; }
+.chat-msg.mine { align-self:flex-end; background:var(--accent); color:#fff; border-bottom-right-radius:4px; }
+.chat-msg.other { align-self:flex-start; background:var(--surface2); color:var(--text); border:1px solid var(--border); border-bottom-left-radius:4px; }
+.chat-msg-time { font-size:0.6rem; opacity:0.7; margin-top:4px; }
+.chat-empty { flex:1; display:flex; align-items:center; justify-content:center; color:var(--text3); font-size:0.82rem; text-align:center; padding:20px; }
+.chat-input-wrap { padding:12px; border-top:1px solid var(--border); display:flex; gap:8px; flex-shrink:0; }
+.chat-input { flex:1; padding:10px 14px; background:var(--editor-bg); border:1px solid var(--border2); border-radius:20px; font-family:'Inter',sans-serif; font-size:0.82rem; color:var(--text); outline:none; resize:none; max-height:80px; }
+.chat-input:focus { border-color:var(--accent); }
+.chat-send { width:40px; height:40px; border-radius:50%; background:var(--accent); color:#fff; border:none; cursor:pointer; font-size:1rem; transition:all 0.15s; flex-shrink:0; }
+.chat-send:hover { background:var(--accent2); }
+.chat-send:disabled { opacity:0.5; cursor:default; }
+.chat-login-prompt { padding:30px 20px; text-align:center; color:var(--text3); font-size:0.82rem; }
+.chat-login-prompt button { margin-top:12px; padding:8px 18px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.8rem; cursor:pointer; }
+
+/* Admin messages tab */
+.admin-tabs { display:flex; gap:4px; padding:0 22px; border-bottom:1px solid var(--border); flex-shrink:0; }
+.admin-tab { padding:10px 16px; background:none; border:none; border-bottom:2px solid transparent; font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; color:var(--text3); cursor:pointer; transition:all 0.15s; }
+.admin-tab:hover { color:var(--text); }
+.admin-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.admin-tab .tab-badge { display:inline-block; min-width:18px; padding:1px 6px; margin-left:6px; background:rgba(224,80,80,0.15); color:#e05050; border-radius:10px; font-size:0.65rem; font-weight:600; }
+.admin-msg-item { padding:14px 18px; border-bottom:1px solid var(--border); }
+.admin-msg-item:last-child { border-bottom:none; }
+.admin-msg-header { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.admin-msg-user { font-weight:600; font-size:0.82rem; color:var(--text); }
+.admin-msg-date { font-size:0.65rem; color:var(--text3); margin-left:auto; }
+.admin-msg-text { font-size:0.8rem; color:var(--text2); line-height:1.5; background:var(--surface2); padding:10px 12px; border-radius:8px; }
+.admin-msg-actions { margin-top:8px; display:flex; gap:6px; }
+.admin-msg-btn { padding:4px 10px; font-size:0.7rem; border-radius:6px; border:1px solid var(--border2); background:var(--surface); color:var(--text2); cursor:pointer; font-family:'Inter',sans-serif; }
+.admin-msg-btn:hover { border-color:var(--accent); color:var(--text); }
+.admin-msg-btn.reply { background:var(--accent); color:#fff; border-color:var(--accent); }
+.admin-msg-unread { border-left:3px solid var(--accent); }
 
 
 </style>
@@ -602,6 +652,28 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
   </div>
 </div>
 
+<!-- BOUTON CHAT FLOTTANT -->
+<button class="chat-fab" id="chatFab" onclick="openChat()" title="Signaler un problème">💬</button>
+
+<!-- MODAL CHAT -->
+<div class="chat-overlay" id="chatOverlay" onclick="closeChat(event)">
+  <div class="chat-panel" onclick="event.stopPropagation()">
+    <div class="chat-hdr">
+      <span class="chat-hdr-title">💬 Signaler un problème</span>
+      <button class="chat-close" onclick="document.getElementById('chatOverlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-empty">Décrivez votre problème ou suggestion.<br>L'administrateur vous répondra ici.</div>
+    </div>
+    <div id="chatInputArea">
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chatInput" placeholder="Votre message…" rows="1" onkeydown="chatKeyDown(event)"></textarea>
+        <button class="chat-send" id="chatSendBtn" onclick="sendChatMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL ADMIN -->
 <div class="admin-overlay" id="adminOverlay" onclick="closeAdminPanel(event)">
   <div class="admin-modal" onclick="event.stopPropagation()">
@@ -610,9 +682,16 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
       <span class="admin-badge">ADMIN</span>
       <button class="admin-close" onclick="document.getElementById('adminOverlay').classList.remove('open')">✕</button>
     </div>
-    <div class="admin-toolbar">
+    <div class="admin-tabs">
+      <button class="admin-tab active" id="adminTabUsers" onclick="switchAdminTab('users')">👥 Utilisateurs</button>
+      <button class="admin-tab" id="adminTabMessages" onclick="switchAdminTab('messages')">💬 Messages <span class="tab-badge" id="adminMsgBadge" style="display:none">0</span></button>
+    </div>
+    <div class="admin-toolbar" id="adminToolbarUsers">
       <input class="admin-search" id="adminSearch" type="text" placeholder="🔍 Rechercher un utilisateur…" oninput="adminFilterUsers()">
       <button class="admin-refresh-btn" onclick="adminLoadUsers()">↺ Actualiser</button>
+    </div>
+    <div class="admin-toolbar" id="adminToolbarMessages" style="display:none">
+      <button class="admin-refresh-btn" onclick="adminLoadMessages()" style="margin-left:auto">↺ Actualiser</button>
     </div>
     <div class="admin-body" id="adminBody">
       <div class="admin-loading">Chargement…</div>
@@ -1656,6 +1735,7 @@ if (FIREBASE_READY) {
     renderAuthUI(user);
     if (user) {
       // Restauration instantanée depuis le cache local
+      saveProfile(user).catch(() => {}); // crée/met à jour le profil Firestore à chaque session
       userBests = lsGetBests(user.uid);
       updateChapterBadges();
       // Sync Firestore en arrière-plan
@@ -1711,10 +1791,16 @@ function switchAuthTab(tab) {
 async function saveProfile(user) {
   if (!fbDb || !user) return;
   const name = user.displayName || user.email.split('@')[0];
-  await fbDb.collection('profiles').doc(user.uid).set(
-    { displayName: name, uid: user.uid, email: user.email },
-    { merge: true }
-  ).catch(e => console.warn('[saveProfile]', e));
+  console.log('[saveProfile] Sauvegarde profil:', user.uid, name);
+  try {
+    await fbDb.collection('profiles').doc(user.uid).set(
+      { displayName: name, uid: user.uid, email: user.email },
+      { merge: true }
+    );
+    console.log('[saveProfile] Profil sauvegardé avec succès');
+  } catch(e) {
+    console.error('[saveProfile] Erreur:', e.code, e.message);
+  }
 }
 
 async function authDoLogin() {
@@ -2030,6 +2116,7 @@ async function adminLoadUsers() {
   }, 5000);
 
   try {
+    console.log('[Admin] Chargement des profils…');
     const snap = await Promise.race([
       fbDb.collection('profiles').get(),
       new Promise((_, rej) => setTimeout(() =>
@@ -2037,14 +2124,22 @@ async function adminLoadUsers() {
       30000))
     ]);
     clearTimeout(hintTimer);
+    console.log('[Admin] Snapshot reçu, docs:', snap.size);
     adminAllUsers = [];
-    snap.forEach(doc => adminAllUsers.push({ uid: doc.id, ...doc.data() }));
+    snap.forEach(doc => {
+      console.log('[Admin] Doc:', doc.id, doc.data());
+      adminAllUsers.push({ uid: doc.id, ...doc.data() });
+    });
 
     if (!adminAllUsers.length) {
       body.innerHTML = `<div class="admin-empty" style="text-align:left;padding:20px 24px;">
         <p style="font-weight:600;color:var(--text);margin-bottom:8px;">Aucun profil trouvé dans Firestore.</p>
-        <p style="line-height:1.7;margin-bottom:12px;">Les profils sont créés automatiquement à la <strong>connexion</strong>.<br>
-        Demandez aux utilisateurs de se déconnecter et se reconnecter, ou cliquez ↺ après leur connexion.</p>
+        <p style="line-height:1.7;margin-bottom:12px;">
+          <strong>Causes possibles :</strong><br>
+          1. Aucun utilisateur ne s'est encore (re)connecté depuis la mise en place du système.<br>
+          2. Les règles Firestore bloquent l'écriture sur <code>profiles/</code>.<br>
+          3. <kbd>F12</kbd> → Console pour voir les erreurs éventuelles.
+        </p>
         <p style="font-size:0.72rem;color:var(--text3);">Collection cible : <code>profiles/</code></p>
       </div>`;
       document.getElementById('adminUserCount').textContent = '0 utilisateur';
@@ -2062,6 +2157,7 @@ async function adminLoadUsers() {
 
   } catch(e) {
     clearTimeout(hintTimer);
+    console.error('[Admin] Erreur chargement:', e.code, e.message, e);
     const isPermission = e.code === 'permission-denied' || (e.message || '').includes('permission');
     const isTimeout    = e.code === 'timeout';
     const rulesText =
@@ -2135,18 +2231,324 @@ function adminRenderTable(users) {
         <div class="admin-user-name">${name}${isMe ? ' <span style="font-size:0.6rem;color:var(--accent2)">(moi)</span>' : ''}</div>
         <div style="font-size:0.58rem;color:var(--text3);margin-top:2px;font-family:monospace">${u.uid}</div>
       </td>
+      <td style="text-align:right;width:1%">
+        ${isMe ? '' : `<button class="admin-delete-btn" data-del-uid="${u.uid}" onclick="adminDeleteUser('${u.uid}')" title="Supprimer les données">🗑 Supprimer</button>`}
+      </td>
     </tr>`;
   }).join('');
 
   body.innerHTML = `<table class="admin-table">
     <thead><tr>
       <th>Utilisateur</th>
+      <th></th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
 }
 
+async function adminDeleteUser(uid) {
+  if (!fbDb || !isAdmin()) return;
+  const name = adminAllUsers.find(u => u.uid === uid)?.displayName || uid.slice(0, 12) + '…';
+  if (!confirm(`Supprimer toutes les données de « ${name} » ?\n\n⚠️ Scores et profil Firestore supprimés.\nLe compte Firebase Auth subsiste (l'utilisateur peut se reconnecter).`)) return;
 
+  const btn = document.querySelector(`[data-del-uid="${uid}"]`);
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+  try {
+    const batch = fbDb.batch();
+    // Supprimer les scores
+    const scoreSnap = await fbDb.collection('users').doc(uid).collection('scores').get().catch(() => null);
+    if (scoreSnap) scoreSnap.forEach(doc => batch.delete(doc.ref));
+    // Supprimer profil et doc users
+    batch.delete(fbDb.collection('profiles').doc(uid));
+    batch.delete(fbDb.collection('users').doc(uid));
+    await batch.commit();
+
+    // Mise à jour du cache
+    adminAllUsers = adminAllUsers.filter(u => u.uid !== uid);
+    adminFiltered = adminFiltered.filter(u => u.uid !== uid);
+    adminRenderTable(adminFiltered);
+    document.getElementById('adminUserCount').textContent =
+      `${adminAllUsers.length} utilisateur${adminAllUsers.length !== 1 ? 's' : ''}`;
+    document.getElementById('adminStatus').textContent = `✅ Données supprimées`;
+    showToast('🗑 Données supprimées');
+  } catch(e) {
+    showToast('⚠️ Erreur : ' + e.message);
+    document.getElementById('adminStatus').textContent = `⚠️ ${e.message}`;
+    if (btn) { btn.disabled = false; btn.textContent = '🗑 Supprimer'; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── CHAT / SIGNALEMENT ───────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+let chatUnsubscribe = null;
+
+function openChat() {
+  const overlay = document.getElementById('chatOverlay');
+  overlay.classList.add('open');
+  
+  if (!currentUser) {
+    document.getElementById('chatMessages').innerHTML = `
+      <div class="chat-login-prompt">
+        <p>Connectez-vous pour envoyer un message</p>
+        <button onclick="document.getElementById('chatOverlay').classList.remove('open'); authSignIn()">🔑 Se connecter</button>
+      </div>`;
+    document.getElementById('chatInputArea').style.display = 'none';
+    return;
+  }
+  
+  document.getElementById('chatInputArea').style.display = 'block';
+  loadChatMessages();
+}
+
+function closeChat(e) {
+  if (e.target === e.currentTarget) {
+    document.getElementById('chatOverlay').classList.remove('open');
+  }
+}
+
+function chatKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMessage();
+  }
+}
+
+async function sendChatMessage() {
+  if (!currentUser || !fbDb) return;
+  
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  const btn = document.getElementById('chatSendBtn');
+  btn.disabled = true;
+  
+  try {
+    await fbDb.collection('messages').add({
+      uid: currentUser.uid,
+      userName: currentUser.displayName || currentUser.email?.split('@')[0] || 'Anonyme',
+      text: text,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      read: false,
+      replies: []
+    });
+    input.value = '';
+    showToast('✅ Message envoyé');
+  } catch(e) {
+    console.error('Erreur envoi message:', e);
+    showToast('⚠️ Erreur : ' + e.message);
+  }
+  
+  btn.disabled = false;
+}
+
+function loadChatMessages() {
+  if (!currentUser || !fbDb) return;
+  
+  const container = document.getElementById('chatMessages');
+  container.innerHTML = '<div class="chat-empty">Chargement…</div>';
+  
+  // Écouter les messages de l'utilisateur en temps réel
+  if (chatUnsubscribe) chatUnsubscribe();
+  
+  chatUnsubscribe = fbDb.collection('messages')
+    .where('uid', '==', currentUser.uid)
+    .orderBy('timestamp', 'asc')
+    .onSnapshot(snapshot => {
+      if (snapshot.empty) {
+        container.innerHTML = '<div class="chat-empty">Décrivez votre problème ou suggestion.<br>L\'administrateur vous répondra ici.</div>';
+        return;
+      }
+      
+      let html = '';
+      snapshot.forEach(doc => {
+        const msg = doc.data();
+        const time = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+        
+        // Message de l'utilisateur
+        html += `<div class="chat-msg mine">
+          ${escapeHtml(msg.text)}
+          <div class="chat-msg-time">${time}</div>
+        </div>`;
+        
+        // Réponses de l'admin
+        if (msg.replies && msg.replies.length > 0) {
+          msg.replies.forEach(reply => {
+            const replyTime = reply.timestamp ? new Date(reply.timestamp.toDate()).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+            html += `<div class="chat-msg other">
+              <strong style="font-size:0.7rem;color:var(--accent)">Admin</strong><br>
+              ${escapeHtml(reply.text)}
+              <div class="chat-msg-time">${replyTime}</div>
+            </div>`;
+          });
+        }
+      });
+      
+      container.innerHTML = html;
+      container.scrollTop = container.scrollHeight;
+    }, err => {
+      console.error('Erreur chargement messages:', err);
+      container.innerHTML = '<div class="chat-empty">Erreur de chargement</div>';
+    });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML.replace(/\n/g, '<br>');
+}
+
+// ── ADMIN: Messages ──
+let adminAllMessages = [];
+
+function switchAdminTab(tab) {
+  document.getElementById('adminTabUsers').classList.toggle('active', tab === 'users');
+  document.getElementById('adminTabMessages').classList.toggle('active', tab === 'messages');
+  document.getElementById('adminToolbarUsers').style.display = tab === 'users' ? 'flex' : 'none';
+  document.getElementById('adminToolbarMessages').style.display = tab === 'messages' ? 'flex' : 'none';
+  
+  if (tab === 'users') {
+    adminRenderTable(adminFiltered);
+  } else {
+    adminLoadMessages();
+  }
+}
+
+async function adminLoadMessages() {
+  if (!fbDb || !isAdmin()) return;
+  
+  const body = document.getElementById('adminBody');
+  body.innerHTML = '<div class="admin-loading">Chargement des messages…</div>';
+  
+  try {
+    const snap = await fbDb.collection('messages')
+      .orderBy('timestamp', 'desc')
+      .limit(50)
+      .get();
+    
+    if (snap.empty) {
+      body.innerHTML = '<div class="admin-empty">Aucun message reçu</div>';
+      document.getElementById('adminMsgBadge').style.display = 'none';
+      return;
+    }
+    
+    adminAllMessages = [];
+    let unreadCount = 0;
+    
+    snap.forEach(doc => {
+      const msg = { id: doc.id, ...doc.data() };
+      adminAllMessages.push(msg);
+      if (!msg.read) unreadCount++;
+    });
+    
+    // Badge
+    const badge = document.getElementById('adminMsgBadge');
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+    
+    adminRenderMessages();
+    
+  } catch(e) {
+    console.error('Erreur chargement messages admin:', e);
+    body.innerHTML = `<div class="admin-empty">Erreur : ${e.message}</div>`;
+  }
+}
+
+function adminRenderMessages() {
+  const body = document.getElementById('adminBody');
+  
+  if (!adminAllMessages.length) {
+    body.innerHTML = '<div class="admin-empty">Aucun message</div>';
+    return;
+  }
+  
+  const html = adminAllMessages.map(msg => {
+    const time = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString('fr-FR') : 'Date inconnue';
+    const unreadClass = msg.read ? '' : 'admin-msg-unread';
+    const repliesHtml = msg.replies && msg.replies.length > 0 
+      ? `<div style="margin-top:8px;padding-left:12px;border-left:2px solid var(--accent);">
+          ${msg.replies.map(r => `<div style="font-size:0.75rem;color:var(--text2);margin-bottom:4px;"><strong>Vous:</strong> ${escapeHtml(r.text)}</div>`).join('')}
+        </div>`
+      : '';
+    
+    return `<div class="admin-msg-item ${unreadClass}" data-msg-id="${msg.id}">
+      <div class="admin-msg-header">
+        <span class="admin-msg-user">${escapeHtml(msg.userName || 'Anonyme')}</span>
+        <span style="font-size:0.6rem;color:var(--text3);font-family:monospace">${msg.uid?.slice(0,8) || ''}…</span>
+        <span class="admin-msg-date">${time}</span>
+      </div>
+      <div class="admin-msg-text">${escapeHtml(msg.text)}</div>
+      ${repliesHtml}
+      <div class="admin-msg-actions">
+        <button class="admin-msg-btn reply" onclick="adminReplyMessage('${msg.id}')">↩ Répondre</button>
+        ${!msg.read ? `<button class="admin-msg-btn" onclick="adminMarkRead('${msg.id}')">✓ Lu</button>` : ''}
+        <button class="admin-msg-btn" onclick="adminDeleteMessage('${msg.id}')" style="color:#e05050">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+  
+  body.innerHTML = html;
+}
+
+async function adminMarkRead(msgId) {
+  if (!fbDb) return;
+  try {
+    await fbDb.collection('messages').doc(msgId).update({ read: true });
+    const msg = adminAllMessages.find(m => m.id === msgId);
+    if (msg) msg.read = true;
+    adminRenderMessages();
+    
+    // Update badge
+    const unread = adminAllMessages.filter(m => !m.read).length;
+    const badge = document.getElementById('adminMsgBadge');
+    if (unread > 0) {
+      badge.textContent = unread;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch(e) {
+    showToast('⚠️ Erreur : ' + e.message);
+  }
+}
+
+async function adminReplyMessage(msgId) {
+  const reply = prompt('Votre réponse :');
+  if (!reply || !reply.trim()) return;
+  
+  try {
+    await fbDb.collection('messages').doc(msgId).update({
+      read: true,
+      replies: firebase.firestore.FieldValue.arrayUnion({
+        text: reply.trim(),
+        timestamp: new Date()
+      })
+    });
+    showToast('✅ Réponse envoyée');
+    adminLoadMessages();
+  } catch(e) {
+    showToast('⚠️ Erreur : ' + e.message);
+  }
+}
+
+async function adminDeleteMessage(msgId) {
+  if (!confirm('Supprimer ce message ?')) return;
+  try {
+    await fbDb.collection('messages').doc(msgId).delete();
+    adminAllMessages = adminAllMessages.filter(m => m.id !== msgId);
+    adminRenderMessages();
+    showToast('🗑 Message supprimé');
+  } catch(e) {
+    showToast('⚠️ Erreur : ' + e.message);
+  }
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initSwatches();
