@@ -90,7 +90,53 @@
             ],
             "answer": 1,
             "explication": "La somme vectorielle de toutes les forces exercées sur un système est égale à la masse du système multipliée par la variation de sa vitesse divisée par l'intervalle de temps considéré."
+          },
+          {
+            "question": "Quelle est la première loi de Newton ?",
+            "options": [
+              "un objet au repos reste au repos ou, s'il est en mouvement, conserve son vecteur vitesse constant, sauf s'il est soumis à une résultante des forces extérieures non nulle",
+              "La force (F) exercée sur un objet est égale à la masse (m) de cet objet multipliée par son accélération (a)",
+              "Pour chaque action, il existe une réaction égale et opposée",
+              "Ca n'existe pas car Newton n'a pas le droit de creer de lois"
+            ],
+            "answer": 0,
+            "explication": "Un objet au repos reste au repos ou, s'il est en mouvement, conserve son vecteur vitesse constant, sauf s'il est soumis à une résultante des forces extérieures non nulle."
+          },
+          {
+            "question":"Δt =",
+            "options": [
+              "t2 - t1",
+              "t1 - t2",
+              "t1 + t2",
+              "t1 * t2"
+            ],
+            "answer": 0,
+            "explication": "Δt représente l'intervalle de temps entre deux instants, donc Δt = t2 - t1."
+
+          },
+          {
+            "question": "$$\\Delta \\vec{v} =$$",
+            "options": [
+              "$$\\vec{v}_2 - \\vec{v}_1$$",
+              "$$\\vec{v}_1 - \\vec{v}_2$$",
+              "$$\\vec{v}_1 + \\vec{v}_2$$",
+              "$$\\vec{v}_1 * \\vec{v}_2$$"
+            ],
+            "answer": 0,
+            "explication": "Δv représente la variation de la vitesse entre deux instants, donc Δv = v2 - v1."
+          },
+          {
+            "question": "Une même resultante $\\vec{F}_{tot}$:",
+            "options": [
+              "provoque une variation de la vitesse plus importante pour un objet de masse plus grande",
+              "provoque une variation de la vitesse plus importante pour un objet de masse plus petite",
+              "n'a aucun effet sur la vitesse d'un objet",
+              "provoque une variation de la vitesse indépendante de la masse de l'objet"
+            ],
+            "answer": 1,
+            "explication": "Une même résultante de force provoque une variation de la vitesse plus importante pour un objet de masse plus petite, car selon la deuxième loi de Newton, F = m * a, donc a = F / m. Ainsi, pour une force donnée, l'accélération est inversement proportionnelle à la masse."
           }
+
       ]
     },
     {
