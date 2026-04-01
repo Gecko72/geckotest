@@ -86,7 +86,7 @@
               "$$\\vec{F}_{tot} = \\frac{Δ\\vec{v}}{Δt}$$",
               "$$\\vec{F}_{tot} = m \\cdot \\frac{Δ\\vec{v}}{Δt}$$",
               "$$\\vec{F}_{tot} = \\frac{Δt}{Δ\\vec{v}}$$",
-              "$$\\vec{F}_{tot} = m \\cdot \\frac{Δ\\vec{v}}{Δt}$$"
+              "$$\\vec{F}_{tot} = m \\cdot \\frac{Δt}{Δ\\vec{v}}$$"
             ],
             "answer": 1,
             "explication": "Un objet de charge qA situé au point A exerce sur un système de charge qB situé en B une force électrostatique"
