@@ -50,7 +50,7 @@
           "explication": "L'Italie centrale il se soulève et progressivement attaché au piémont (mars 1860) .En contrepartie de son engagement, la France reçoit le Comté de Nice et la Savoie qui sont rattachées après un plébiscite."
         },
         {
-          "question": "En quelle année a lieu la bataille de Solférino ?",
+          "question": "En quelle année a lieu la bataille de Solférino dans laquelle les troupes piémontoises et françaises battent les troupes autrichiennes ?",
           "options": [
             "1862",
             "1859",
@@ -114,27 +114,126 @@
             ],
             "answer": 0,
             "explication": "En 1870 l'armée française de quitter Rome pour combattre les prussiens après la défaite de Napoléon III à Sedan et la fin du 2nd empire, les troupes italiennes de Victor-Emmanuel III entre à Rom, faisant de la ville la capitale du Royaume d'Italie."
+          },
+          {
+            "question": "Comment se fini l'unification de l'Italie en 1848?",
+            "options": [
+              "Par un echec",
+              "Par une réussite partielle",
+              "Par une réussite complète",
+              "Par rien du tout"
+            ],
+            "answer": 0,
+            "explication": "En 1848, l'unification de l'Italie se termine par un échec, car les révolutions échouent et les États italiens restent divisés."
           }
       ]
     },
     {
       "titre": "Unification Allemande",
       "icone": "🍺",
-      "description": "J'ai pas encore fait",
+      "description": "Depuis 1848, États Allemands sont réunis au sein de la Confédération germanique. Malgré l’échec de la révolution de 1848, les aspirations à l'unité nationale perdurent. La question centrale est de savoir comment va devenir l’Allemagne avec deux concepts.",
       "questions": [
         {
-          "question": "...",
+          "question": ".Quelles sont les 2 visions de l'Allemagne ?",
           "options": [
-            "...", 
-            "...",
-            "...",
-            "..."
+            "La petite Allemagne et la grande Allemagne", 
+            "L'Allemagne prussienne et l'Allemagne autrichienne",
+            "L'Allemagne nazie et l'Allemagne communiste",
+            "L'Allemagne industrielle et l'Allemagne agricole"
           ],
-          "answer": 2,
-          "explication": "..."
-        }
-      ]
+          "answer": 0,
+          "explication": " Avant 1948 l’Allemagne est divisée en plusieurs états sous la confédération germanique. Il existe 2 visions de l’Allemagne."
+        },
+        {
+          "question": "En quelle année Guillaume Ier devient-il roi de Prusse ?",
+          "options": [
+            "1861",
+            "1859",
+            "1863",
+            "1864"
+          ],
+          "answer": 0,
+          "explication": "Guillaume Ier devient roi de Prusse en 1861. Il veut créer une grande Allemagne."
+        },
+        {
+          "question": "Qui est nommé chancelier de Prusse en 1862 ?",
+          "options": [
+            "Otto von Bismarck",
+            "Adolf Tierce",
+            "Friedrich Ebert",
+            "Angela Merkel"
+          ],
+          "answer": 0,
+          "explication": "En 1862, Otto von Bismarck est nommé chancelier de Prusse. Il est un fervent partisan de la grande Allemagne et de l'unification par la guerre."
+        },
+          {
+            "question": "En quelle année a lieu la guerre contre le Danemark ?",
+            "options": [
+              "1864",
+              "1862",
+              "1866",
+              "1870"
+            ],
+            "answer": 0,
+            "explication": "En 1864, la Prusse et l'Autriche font la guerre au Danemark pour le contrôle du Schleswig-Holstein. La Prusse obtient le contrôle du Schleswig, tandis que l'Autriche obtient le contrôle du Holstein."
+          },
+          {
+            "question": "En quelle année a lieu la guerre contre l'Autriche ?",
+            "options": [
+              "1866",
+              "1864",
+              "1868",
+              "1870"
+            ],
+            "answer": 0,
+            "explication": "En 1866, la Prusse fait la guerre à l'Autriche pour le contrôle de l'Allemagne. La Prusse remporte une victoire décisive à la bataille de Sadowa et annexe les États allemands du nord, formant ainsi la Confédération de l'Allemagne du Nord."
+          },
+          {
+            "question": "En quelle année a lieu la guerre contre la France ?",
+            "options": [
+              "1870",
+              "1866",
+              "1868",
+              "1872"
+            ],
+            "answer": 0,
+            "explication": "Le 19 juillet 1870, la Prusse fait la guerre à la France dans ce qui est connu sous le nom de Guerre franco-prussienne. La Prusse remporte une victoire écrasante à la bataille de Sedan et annexe les territoires français d'Alsace et de Lorraine."
+          },
+          {
+            "question": "Quelle est la raison de la guerre contre la France ?",
+            "options": [
+              "Une crise autour de la succession au trône d'Espagne et un malentendu diplomatique utilisé par Bismarck.",
+              "La prise de contrôle de l'Alsace et de la Lorraine par la Prusse.",
+              "Absolument aucune raison, c'était juste pour le fun.",
+              "Napoléon III voulait envahir l'Allemagne pour agrandir son empire."
+            ],
+            "answer": 0,
+            "explication": "La guerre contre la France a été déclenchée par une crise autour de la succession au trône d'Espagne et un malentendu diplomatique utilisé par Bismarck pour provoquer la France."
+          },
+          {
+            "question": "En quelle année Guillaume Ier est-il proclamé empereur d'Allemagne ?",
+            "options": [
+              "1871",
+              "1866",
+              "1868",
+              "1870"
+            ],
+            "answer": 0,
+            "explication": "Le 18 janvier 1871, Guillaume Ier est proclamé empereur d'Allemagne dans la Galerie des Glaces du Château de Versailles. Cela marque l'unification de l'Allemagne et la création du Second Reich allemand."
+          },
+          {
+            "question": "Quelle territoire la Prusse annexe-t-elle après la guerre contre la France ?",
+            "options": [
+              "Alsace et Lorraine",
+              "Saxe et Bavière",
+              "Hanovre et Hesse",
+              "Brunswick et Mecklembourg"
+            ],
+            "answer": 0,
+            "explication": "La France perd l'alsace et la Lorraine, et doit payer une lourde indemnité de guerre (5 milliards de francs-or) dans le traité de Francfort signé en 1871."
+          }
 
+      ]
     }
   ]
 }
