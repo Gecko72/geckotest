@@ -443,6 +443,19 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
 .scores-action-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.75rem; font-weight:500; cursor:pointer; transition:all 0.15s; border:1px solid var(--border2); background:var(--surface2); color:var(--text2); }
 .scores-action-btn:hover { border-color:var(--accent); color:var(--text); }
 
+/* ── BADGES ── */
+.badges-section { margin-bottom:16px; }
+.badges-header { font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.badges-count { font-size:0.65rem; color:var(--accent2); background:var(--accent-glow); border:1px solid rgba(124,109,250,0.25); border-radius:20px; padding:1px 8px; }
+.badges-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(90px, 1fr)); gap:8px; }
+.badge-item { display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 6px; border-radius:10px; border:1px solid var(--border2); background:var(--surface); transition:all 0.15s; position:relative; text-align:center; cursor:default; }
+.badge-item.unlocked { border-color:rgba(124,109,250,0.35); background:var(--accent-glow); }
+.badge-item.locked { opacity:0.4; filter:grayscale(0.8); }
+.badge-icon { font-size:1.5rem; line-height:1; }
+.badge-name { font-size:0.6rem; font-weight:600; color:var(--text3); line-height:1.2; }
+.badge-item.unlocked .badge-name { color:var(--accent2); }
+.auth-menu-badges { margin-top:5px; font-size:0.95rem; display:flex; gap:2px; flex-wrap:wrap; }
+
 /* ── ADMIN PANEL ── */
 .admin-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:700; align-items:center; justify-content:center; padding:20px; }
 .admin-overlay.open { display:flex; }
@@ -614,6 +627,7 @@ body { background:var(--bg); font-family:'Inter',sans-serif; color:var(--text); 
       <div class="auth-menu-user">
         <span class="auth-menu-name" id="authMenuName"></span>
         <span class="auth-menu-email" id="authMenuEmail"></span>
+        <div class="auth-menu-badges" id="authMenuBadges"></div>
       </div>
       <button class="auth-menu-item" onclick="showMyScores()">📊 Mes résultats</button>
       <button class="auth-menu-item" id="adminMenuBtn" style="display:none" onclick="openAdminPanel()">🛡️ Panel Admin</button>
@@ -1761,6 +1775,7 @@ if (FIREBASE_READY) {
       saveProfile(user).catch(() => {}); // crée/met à jour le profil Firestore à chaque session
       userBests = lsGetBests(user.uid);
       updateChapterBadges();
+      updateAuthMenuBadges();
       // Sync Firestore en arrière-plan
       loadUserBests();
     } else {
@@ -1896,6 +1911,13 @@ function authSignOut() {
 // ── LOCALSTORAGE ────────────────────────────────────────────────────────────
 function lsKey(uid)       { return `revision_scores_${uid}`; }
 function lsBestsKey(uid)  { return `revision_bests_${uid}`; }
+function lsBadgesKey(uid) { return `revision_badges_${uid}`; }
+function lsGetBadges(uid) {
+  try { return JSON.parse(localStorage.getItem(lsBadgesKey(uid)) || '[]'); } catch { return []; }
+}
+function lsSaveBadges(uid, badgeIds) {
+  localStorage.setItem(lsBadgesKey(uid), JSON.stringify(badgeIds));
+}
 function lsGetScores(uid) {
   try { return JSON.parse(localStorage.getItem(lsKey(uid)) || '[]'); } catch { return []; }
 }
@@ -1926,6 +1948,8 @@ async function saveScore(mat, chapterTitle, score, total) {
 
   // 1. Sauvegarde locale (toujours fiable)
   lsSaveEntry(currentUser.uid, entry);
+  persistBadges(currentUser.uid, lsGetScores(currentUser.uid));
+  updateAuthMenuBadges();
   if (isRecord) {
     userBests[key] = { score, total, pct };
     lsSaveBests(currentUser.uid, userBests); // Met à jour le cache bests
@@ -1975,6 +1999,7 @@ async function loadUserBests() {
   userBests = bests;
   lsSaveBests(currentUser.uid, bests); // Cache pour le prochain chargement
   updateChapterBadges();
+  updateAuthMenuBadges();
 }
 
 // ── BADGES MEILLEUR SCORE SUR LES CHAPITRES ──────────────────────────────────
@@ -1999,8 +2024,9 @@ function updateChapterBadges() {
 
 // ── MODAL MES RÉSULTATS ───────────────────────────────────────────────────────
 function _renderScoreRows(scores, body) {
+  const badgesHTML = renderBadgesHTML(scores, currentUser?.uid);
   const sorted = [...scores].sort((a, b) => b.timestamp - a.timestamp).slice(0, 60);
-  if (!sorted.length) { body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
+  if (!sorted.length) { body.innerHTML = badgesHTML + '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
   const ICONS = { editeur:'📝', histoire:'🏛️', physique:'⚗️', figures:'🎭' };
   const rows = sorted.map(d => {
     const date  = d.timestamp ? new Date(d.timestamp).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
@@ -2013,7 +2039,7 @@ function _renderScoreRows(scores, body) {
       <td style="color:${color};font-weight:700">${d.pct}%</td>
     </tr>`;
   }).join('');
-  body.innerHTML = `<table class="scores-table">
+  body.innerHTML = badgesHTML + `<table class="scores-table">
     <thead><tr><th>Date</th><th>Matière</th><th>Chapitre</th><th>Score</th><th>%</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
@@ -2058,6 +2084,8 @@ function closeScoresModal(e) {
 async function clearMyScores() {
   if (!currentUser) return;
   if (!confirm('Effacer tous vos scores ? Action irréversible.')) return;
+  // 0. Sauvegarder les badges avant effacement
+  persistBadges(currentUser.uid, lsGetScores(currentUser.uid));
   // 1. Efface le localStorage (scores + cache bests)
   lsClearScores(currentUser.uid);
   // 2. Efface Firestore
@@ -2072,6 +2100,75 @@ async function clearMyScores() {
   userBests = {}; updateChapterBadges();
   showToast('🗑 Scores effacés');
   showMyScores();
+}
+
+// ── BADGES ────────────────────────────────────────────────────────────────────
+const BADGES = [
+  { id:'first',     icon:'🌱', name:'Débutant',        desc:'Terminer un premier quiz',      check: s => s.length >= 1 },
+  { id:'five',      icon:'📚', name:'Érudit',           desc:'Terminer 5 quiz',               check: s => s.length >= 5 },
+  { id:'ten',       icon:'🎓', name:'Studieux',         desc:'Terminer 10 quiz',              check: s => s.length >= 10 },
+  { id:'twentyfive',icon:'⭐', name:'Assidu',           desc:'Terminer 25 quiz',              check: s => s.length >= 25 },
+  { id:'perfect',   icon:'💯', name:'Perfectionniste',  desc:'Obtenir 100% à un quiz',        check: s => s.some(x => _pct(x) === 100) },
+  { id:'fire',      icon:'🔥', name:'En feu',           desc:'3 scores parfaits',             check: s => s.filter(x => _pct(x) === 100).length >= 3 },
+  { id:'historian', icon:'🏛️', name:'Historien',        desc:'Meilleur ≥80% en Histoire',     check: s => _matMastery(s,'histoire') },
+  { id:'scientist', icon:'⚗️', name:'Scientifique',     desc:'Meilleur ≥80% en Physique',     check: s => _matMastery(s,'physique') },
+  { id:'artist',    icon:'🎭', name:'Artiste',          desc:'Meilleur ≥80% en Figures',      check: s => _matMastery(s,'figures') },
+  { id:'champion',  icon:'🏆', name:'Champion',         desc:'≥80% dans 3+ matières',         check: s => {
+    const mats = [...new Set(s.map(x => x.mat))];
+    return mats.filter(m => _matMastery(s, m)).length >= 3;
+  }}
+];
+
+function _pct(s) { return s.pct ?? (s.total ? Math.round(s.score / s.total * 100) : 0); }
+
+function _matMastery(scores, mat) {
+  const bests = {};
+  scores.filter(s => s.mat === mat).forEach(s => {
+    const p = _pct(s), k = s.chapterTitle || s.chapter || 'default';
+    if (!bests[k] || p > bests[k]) bests[k] = p;
+  });
+  return Object.keys(bests).length > 0 && Object.values(bests).every(p => p >= 80);
+}
+
+function computeBadges(scores, uid) {
+  const saved = uid ? lsGetBadges(uid) : [];
+  return BADGES.map(b => ({ ...b, unlocked: b.check(scores) || saved.includes(b.id) }));
+}
+
+function persistBadges(uid, scores) {
+  if (!uid) return;
+  const badges = computeBadges(scores, uid);
+  const ids = badges.filter(b => b.unlocked).map(b => b.id);
+  lsSaveBadges(uid, ids);
+}
+
+function renderBadgesGrid(scores, uid) {
+  const badges = computeBadges(scores, uid);
+  return `<div class="badges-grid">${badges.map(b => `
+    <div class="badge-item ${b.unlocked ? 'unlocked' : 'locked'}" title="${b.desc}">
+      <span class="badge-icon">${b.icon}</span>
+      <span class="badge-name">${b.name}</span>
+    </div>`).join('')}</div>`;
+}
+
+function renderBadgesHTML(scores, uid) {
+  const badges = computeBadges(scores, uid);
+  const unlocked = badges.filter(b => b.unlocked).length;
+  return `<div class="badges-section">
+    <div class="badges-header">🏅 Badges <span class="badges-count">${unlocked} / ${badges.length}</span></div>
+    ${renderBadgesGrid(scores, uid)}
+  </div>`;
+}
+
+function updateAuthMenuBadges() {
+  if (!currentUser) return;
+  const el = document.getElementById('authMenuBadges');
+  if (!el) return;
+  const scores = lsGetScores(currentUser.uid);
+  const badges = computeBadges(scores, currentUser.uid);
+  const unlocked = badges.filter(b => b.unlocked);
+  if (!unlocked.length) { el.innerHTML = ''; return; }
+  el.innerHTML = unlocked.map(b => `<span title="${b.name}">${b.icon}</span>`).join('');
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────────────────
@@ -2623,6 +2720,14 @@ async function adminOpenProfile(uid) {
   if (!sections) return;
 
   let html = '';
+
+  // ── Section badges ──
+  const adminBadges = computeBadges(scores, uid);
+  const adminUnlocked = adminBadges.filter(b => b.unlocked).length;
+  html += `<div class="admin-section">
+    <div class="admin-section-title">🏅 Badges (${adminUnlocked} / ${adminBadges.length})</div>
+    <div class="admin-section-body">${renderBadgesGrid(scores, uid)}</div>
+  </div>`;
 
   // ── Section scores ──
   html += `<div class="admin-section">
