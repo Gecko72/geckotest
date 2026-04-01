@@ -14,7 +14,7 @@
             "$$\\vec{F} = G \\cdot \\frac{m_1 \\cdot m_2}{AB^2}$$"
           ],
           "answer": 2,
-          "explication": "Un objet de masse m_a situé au point A exerce sur un système de masse m_b situé au point B une force gravitationnelle"
+          "explication": "Un objet de masse ma situé au point A exerce sur un système de masse mb situé au point B une force gravitationnelle"
         },
         {
           "question": "Proton et électron ont des charges opposées. Ainsi:",
@@ -63,11 +63,34 @@
           "options": [
             "$$\\vec{P} = \\frac{m}{\\vec{g}}$$",
             "$$\\vec{P} = m \\cdot \\vec{g}$$",
-            "$$\\vec{P} = m - \\vec{g}$$",
-            "$$\\vec{P} = m + \\vec{g}$$"
+            "$$\\vec{F} = m \\cdot G \\cdot \\frac{M}{AB^2}$$",
+            "$$\\vec{F} = m \\cdot G \\cdot \\frac{M}{AB^2} \\cdot \\frac{\\vec{AB}}{AB}$$"
           ],
-          "answer": 1,
-          "explication": "Un objet de charge qA situé au point A exerce sur un système de charge qB situé en B une force électrostatique"}
+          "answer": 3,
+          "explication": "Un objet de masse m situé en B subit une force gravitationnelle exercée par l'astre de masse M situé en A."
+        },
+          {
+            "question": "Un objet de charge qA situé au point A exerce sur un système de charge qB situé en B une force électrostatique.",
+            "options": [
+              "$$\\vec{F}_{A/B} = \\frac{1}{4\\pi \\varepsilon_0} \\cdot \\frac{q_A q_B}{AB^2}$$",
+              "$$\\vec{F} = -G \\cdot \\frac{m_1 \\cdot m_2}{AB^2}\\cdot \\frac{\\vec{AB}}{AB}$$",
+              "$$\\vec{F}_{A/B} = -\\frac{1}{4\\pi \\varepsilon_0} \\cdot \\frac{q_A q_B}{AB^2} \\cdot \\frac{\\vec{AB}}{AB}$$",
+              "$$\\vec{F}_{A/B} = \\frac{1}{4\\pi \\varepsilon_0} \\cdot \\frac{q_A q_B}{AB^2} \\cdot \\frac{\\vec{AB}}{AB}$$"
+            ],
+            "answer": 3,
+            "explication": "Un objet de charge qA situé au point A exerce sur un système de charge qB situé en B une force électrostatique"
+          },
+          {
+            "question": "On note $Δ\\vec{v}$ le vecteur de variation de la vitesse entre 2 instants, $t$ et $t+Δt$.Ainsi:",
+            "options": [
+              "$$\\vec{F}_{tot} = \\frac{Δ\\vec{v}}{Δt}$$",
+              "$$\\vec{F}_{tot} = m \\cdot \\frac{Δ\\vec{v}}{Δt}$$",
+              "$$\\vec{F}_{tot} = \\frac{Δt}{Δ\\vec{v}}$$",
+              "$$\\vec{F}_{tot} = m \\cdot \\frac{Δ\\vec{v}}{Δt}$$"
+            ],
+            "answer": 1,
+            "explication": "Un objet de charge qA situé au point A exerce sur un système de charge qB situé en B une force électrostatique"
+          }
       ]
     },
     {
