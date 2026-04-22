@@ -398,6 +398,15 @@ body > * { position:relative; z-index:1; }
   .quiz-chapter-icon { display:none; }
 }
 
+  @media (min-width: 1400px) {
+    #view-editeur .sidebar { width:240px; }
+    #view-editeur .star-sidebar { width:76px; }
+    #view-editeur .star-tab { width:50px; padding:10px 4px; }
+    #view-editeur .panels-area .scroll-area { padding-left:30px; padding-right:30px; }
+    #view-editeur .editor-block { max-height:62vh; }
+    #view-editeur .editor-zone { padding:26px 32px; }
+  }
+
 /* ── APP ── */
 .app { display:flex; flex:1; overflow:hidden; padding:18px; gap:18px; min-height:0; }
 .view.active { gap:18px; min-width:0; }
@@ -1146,7 +1155,7 @@ body > * { position:relative; z-index:1; }
 
           <div class="scroll-area" style="padding-bottom:0; padding-top:8px;">
 
-            <div class="section-label">Éditeur de texte</div>
+            <div class="section-label">texte</div>
             <div class="text-intro-block" id="textIntroBlock" style="display:none">
               <div class="text-intro-title" id="textIntroTitle"></div>
               <div class="text-intro-body" id="textIntroBody"></div>
@@ -1161,7 +1170,7 @@ body > * { position:relative; z-index:1; }
               </div>
             </div>
 
-            <div class="section-label" style="margin-top:4px;">Zone libre</div>
+            <div class="section-label" style="margin-top:4px;">Brouillions</div>
             <div class="free-section">
               <div class="editor-wrap" style="flex:1;min-height:20;display:flex;flex-direction:column;">
                 <div class="editor-zone" id="freeEditor" contenteditable="true" spellcheck="true" style="flex:1;min-height:40;overflow-y:auto;" data-placeholder="Écrivez librement ici…"></div>
@@ -2097,38 +2106,6 @@ function showFigResult() {
   }
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// ── FIREBASE — CONNEXION & RÉSULTATS ──────────────────────────────────────
-// ════════════════════════════════════════════════════════════════════════════
-//
-//  ▶  CONFIGURATION (Console Firebase → ⚙️ Paramètres → Vos apps → SDK config) :
-//     1. Créez un projet sur https://console.firebase.google.com
-//     2. Activez Authentication → Email/Mot de passe
-//     3. Créez une base Firestore (mode production)
-//     4. Appliquez ces règles Firestore (Firebase Console → Firestore → Règles) :
-//
-//        rules_version = '2';
-//        service cloud.firestore {
-//          match /databases/{database}/documents {
-//            function isAdmin() {
-//              return request.auth != null
-//                  && request.auth.uid in ['PwAW2cbWKaNdcJyjKr1cecatrfG3'];
-//            }
-//            // Scores et données privées
-//            match /users/{userId}/{document=**} {
-//              allow read, write: if request.auth != null
-//                  && (request.auth.uid == userId || isAdmin());
-//            }
-//            // Profils publics (XP + nom) — lisibles par tous les connectés
-//            match /profiles/{userId} {
-//              allow read:  if request.auth != null;
-//              allow write: if request.auth != null
-//                  && (request.auth.uid == userId || isAdmin());
-//            }
-//          }
-//        }
-//
-// ════════════════════════════════════════════════════════════════════════════
 
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyANF3Jr6d-E3Ni5nnD6MPTXHOcp8O8I2z0",
@@ -2471,22 +2448,6 @@ async function clearMyScores() {
   showMyScores();
 }
 
-// ── BADGES ────────────────────────────────────────────────────────────────────
-const BADGES = [
-  { id:'first',     icon:'🌱', name:'Débutant',        desc:'Terminer un premier quiz',      check: s => s.length >= 1 },
-  { id:'five',      icon:'📚', name:'Érudit',           desc:'Terminer 5 quiz',               check: s => s.length >= 5 },
-  { id:'ten',       icon:'🎓', name:'Studieux',         desc:'Terminer 10 quiz',              check: s => s.length >= 10 },
-  { id:'twentyfive',icon:'⭐', name:'Assidu',           desc:'Terminer 25 quiz',              check: s => s.length >= 25 },
-  { id:'perfect',   icon:'💯', name:'Perfectionniste',  desc:'Obtenir 100% à un quiz',        check: s => s.some(x => _pct(x) === 100) },
-  { id:'fire',      icon:'🔥', name:'En feu',           desc:'3 scores parfaits',             check: s => s.filter(x => _pct(x) === 100).length >= 3 },
-  { id:'historian', icon:'🏛️', name:'Historien',        desc:'Meilleur ≥80% en Histoire',     check: s => _matMastery(s,'histoire') },
-  { id:'scientist', icon:'⚗️', name:'Scientifique',     desc:'Meilleur ≥80% en Physique',     check: s => _matMastery(s,'physique') },
-  { id:'artist',    icon:'🎭', name:'Artiste',          desc:'Meilleur ≥80% en Figures',      check: s => _matMastery(s,'figures') },
-  { id:'champion',  icon:'🏆', name:'Champion',         desc:'≥80% dans 3+ matières',         check: s => {
-    const mats = [...new Set(s.map(x => x.mat))];
-    return mats.filter(m => _matMastery(s, m)).length >= 3;
-  }}
-];
 
 function _pct(s) { return s.pct ?? (s.total ? Math.round(s.score / s.total * 100) : 0); }
 
@@ -2499,35 +2460,6 @@ function _matMastery(scores, mat) {
   return Object.keys(bests).length > 0 && Object.values(bests).every(p => p >= 80);
 }
 
-function computeBadges(scores, uid) {
-  const saved = uid ? lsGetBadges(uid) : [];
-  return BADGES.map(b => ({ ...b, unlocked: b.check(scores) || saved.includes(b.id) }));
-}
-
-function persistBadges(uid, scores) {
-  if (!uid) return;
-  const badges = computeBadges(scores, uid);
-  const ids = badges.filter(b => b.unlocked).map(b => b.id);
-  lsSaveBadges(uid, ids);
-}
-
-function renderBadgesGrid(scores, uid) {
-  const badges = computeBadges(scores, uid);
-  return `<div class="badges-grid">${badges.map(b => `
-    <div class="badge-item ${b.unlocked ? 'unlocked' : 'locked'}" title="${b.desc}">
-      <span class="badge-icon">${b.icon}</span>
-      <span class="badge-name">${b.name}</span>
-    </div>`).join('')}</div>`;
-}
-
-function renderBadgesHTML(scores, uid) {
-  const badges = computeBadges(scores, uid);
-  const unlocked = badges.filter(b => b.unlocked).length;
-  return `<div class="badges-section">
-    <div class="badges-header">🏅 Badges <span class="badges-count">${unlocked} / ${badges.length}</span></div>
-    ${renderBadgesGrid(scores, uid)}
-  </div>`;
-}
 
 function updateAuthMenuBadges() {
   const el = document.getElementById('authMenuBadges');
@@ -2936,17 +2868,6 @@ async function adminLoadMessages() {
       if (!msg.read) unreadCount++;
     });
     
-    // Badge
-    const badge = document.getElementById('adminMsgBadge');
-    if (unreadCount > 0) {
-      badge.textContent = unreadCount;
-      badge.style.display = 'inline-block';
-    } else {
-      badge.style.display = 'none';
-    }
-    
-    adminRenderMessages();
-    
   } catch(e) {
     console.error('Erreur chargement messages admin:', e);
     body.innerHTML = `<div class="admin-empty">Erreur : ${e.message}</div>`;
@@ -2996,16 +2917,7 @@ async function adminMarkRead(msgId) {
     const msg = adminAllMessages.find(m => m.id === msgId);
     if (msg) msg.read = true;
     adminRenderMessages();
-    
-    // Update badge
-    const unread = adminAllMessages.filter(m => !m.read).length;
-    const badge = document.getElementById('adminMsgBadge');
-    if (unread > 0) {
-      badge.textContent = unread;
-      badge.style.display = 'inline-block';
-    } else {
-      badge.style.display = 'none';
-    }
+
   } catch(e) {
     showToast('⚠️ Erreur : ' + e.message);
   }
