@@ -17,13 +17,13 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 [data-theme="dark"] {
-  --bg: #0b1120; --surface: rgba(15, 23, 42, 0.76); --surface2: rgba(30, 41, 59, 0.72);
+  --bg: #040913; --surface: rgba(7, 13, 28, 0.84); --surface2: rgba(15, 25, 44, 0.8);
   --border: rgba(148, 163, 184, 0.18); --border2: rgba(125, 211, 252, 0.26);
-  --accent: #38bdf8; --accent2: #22d3ee; --accent-glow: rgba(56, 189, 248, 0.16);
+  --accent: #38bdf8; --accent2: #22d3ee; --accent-glow: rgba(56, 189, 248, 0.22);
   --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
-  --editor-bg: rgba(15, 23, 42, 0.86); --scrollbar: rgba(100, 116, 139, 0.42); --shadow: rgba(2, 6, 23, 0.42);
+  --editor-bg: rgba(7, 13, 28, 0.92); --scrollbar: rgba(100, 116, 139, 0.42); --shadow: rgba(1, 3, 10, 0.62);
   --star-off: #475569; --star-on: #38bdf8;
-  --surface-strong: rgba(15, 23, 42, 0.94); --hero-wash: rgba(34, 211, 238, 0.12);
+  --surface-strong: rgba(5, 10, 22, 0.96); --hero-wash: rgba(34, 211, 238, 0.2);
 }
 [data-theme="light"] {
   --bg: #f8fafc; --surface: rgba(255, 255, 255, 0.78); --surface2: rgba(241, 245, 249, 0.9);
@@ -32,7 +32,7 @@
   --text: #0f172a; --text2: #475569; --text3: #94a3b8;
   --editor-bg: rgba(255, 255, 255, 0.9); --scrollbar: rgba(148, 163, 184, 0.4); --shadow: rgba(15, 23, 42, 0.12);
   --star-off: #cbd5e1; --star-on: #0ea5e9;
-  --surface-strong: rgba(255, 255, 255, 0.98); --hero-wash: rgba(56, 189, 248, 0.08);
+  --surface-strong: rgba(255, 255, 255, 0.98); --hero-wash: rgba(56, 189, 248, 0.14);
 }
 
 body, .topbar, .sidebar, .toolbar, .editor-wrap, .sidebar-item, .tb-btn, .tb-select, .star-panel {
@@ -41,9 +41,10 @@ body, .topbar, .sidebar, .toolbar, .editor-wrap, .sidebar-item, .tb-btn, .tb-sel
 
 body {
   background:
-    radial-gradient(circle at top left, var(--hero-wash), transparent 28%),
-    radial-gradient(circle at 88% 10%, rgba(34, 211, 238, 0.1), transparent 24%),
-    linear-gradient(180deg, rgba(255,255,255,0.18), transparent 30%),
+    radial-gradient(circle at top left, var(--hero-wash), transparent 36%),
+    radial-gradient(circle at 88% 10%, rgba(34, 211, 238, 0.2), transparent 34%),
+    radial-gradient(circle at 50% 100%, rgba(56, 189, 248, 0.16), transparent 48%),
+    linear-gradient(180deg, rgba(255,255,255,0.14), transparent 34%),
     var(--bg);
   font-family:'Manrope',sans-serif;
   color:var(--text);
@@ -67,7 +68,7 @@ body::before {
   width:360px;
   height:360px;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(34, 211, 238, 0.18), transparent 66%);
+  background:radial-gradient(circle, rgba(34, 211, 238, 0.3), transparent 66%);
   filter:blur(10px);
 }
 body::after {
@@ -320,19 +321,29 @@ body > * { position:relative; z-index:1; }
 
   .topbar { margin:10px 10px 0; padding:10px; min-height:auto; flex-wrap:wrap; justify-content:flex-start; gap:10px; border-radius:20px; }
   .topbar-group { gap:10px; }
-  .topbar-group.primary, .topbar-group.center, .topbar-group.actions { width:100%; justify-content:flex-start; }
-  .topbar-group.center { order:3; }
-  .topbar-group.actions { flex-wrap:wrap; }
+  .topbar-group.primary { width:100%; order:1; justify-content:flex-start; flex:0 0 100%; }
+  .topbar-group.center,
+  .topbar-group.actions {
+    width:auto;
+    order:2;
+    justify-content:flex-start;
+    align-items:center;
+  }
+  .topbar-group.center { flex:1 1 auto; min-width:0; }
+  .topbar-group.actions { flex-wrap:nowrap; margin-left:auto; }
   .topbar-brand { width:100%; }
   .topbar-brand-copy { display:none; }
-  .nav-dropdown { width:100%; }
-  .nav-tab-dropdown { width:100%; justify-content:center; }
+  .nav-dropdown { width:auto; min-width:0; }
+  .nav-tab-dropdown { width:auto; min-width:44px; padding:10px 12px; justify-content:center; }
+  .dropdown-arrow { display:none; }
   .theme-switch { padding:6px 8px; }
+  .theme-switch { order:2; }
   .theme-toggle { width:50px; }
   .btn-mobile-textpicker { display:flex; }
   .btn-random { padding:10px 10px; font-size:0.85rem; }
+  .btn-random { order:1; }
   .logo { display:flex; }
-  .auth-wrap { margin-left:auto; }
+  .auth-wrap { margin-left:0; order:4; }
   .app { padding:10px; gap:10px; }
   #view-editeur { min-width:0; }
   #view-editeur .main { flex-direction:column; border-radius:24px; }
@@ -956,7 +967,6 @@ body > * { position:relative; z-index:1; }
         <div class="auth-menu-user">
           <span class="auth-menu-name" id="authMenuName"></span>
           <span class="auth-menu-email" id="authMenuEmail"></span>
-          <div class="auth-menu-badges" id="authMenuBadges"></div>
         </div>
         <button class="auth-menu-item" onclick="showMyScores()">📊 Mes résultats</button>
         <button class="auth-menu-item" id="adminMenuBtn" style="display:none" onclick="openAdminPanel()">🛡️ Panel Admin</button>
@@ -1224,18 +1234,15 @@ body > * { position:relative; z-index:1; }
           <span class="star-tab-label">Texte</span>
         </div>
         <div class="star-sidebar-sep"></div>
-        <div class="star-sidebar-label">Niveaux</div>
+        <div class="star-sidebar-label">Fiches</div>
         <div class="star-tab" onclick="switchTab('panel-1', this)">
-          <div class="stars"><span class="star">★</span></div>
-          <span class="star-tab-label">Niv. 1</span>
+          <span class="star-tab-label">Auteur, œuvre et hypothèse</span>
         </div>
         <div class="star-tab" onclick="switchTab('panel-2', this)">
-          <div class="stars"><span class="star">★</span><span class="star">★</span></div>
-          <span class="star-tab-label">Niv. 2</span>
+          <span class="star-tab-label">intérprétation</span>
         </div>
         <div class="star-tab" onclick="switchTab('panel-3', this)">
-          <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
-          <span class="star-tab-label">Niv. 3</span>
+          <span class="star-tab-label">procédés</span>
         </div>
       </div>
     </div><!-- /main -->
@@ -2380,25 +2387,14 @@ function updateChapterBadges() {
   quizData._chapters.forEach((ch, i) => {
     const el = document.getElementById(`ch-item-${i}`);
     if (!el) return;
-    const key  = `${currentMatiere}__${ch.titre}`;
-    const best = userBests[key];
-    let badge  = el.querySelector('.ch-best');
-    if (best) {
-      if (!badge) { badge = document.createElement('div'); badge.className = 'ch-best'; el.appendChild(badge); }
-      const color = best.pct >= 80 ? '#3aaa60' : best.pct >= 60 ? '#f0a500' : '#e05050';
-      badge.textContent      = `Meilleur : ${best.pct}%`;
-      badge.style.color       = color;
-      badge.style.borderColor = color + '44';
-      badge.style.background  = color + '15';
-    } else if (badge) { badge.remove(); }
+    el.querySelector('.ch-best')?.remove();
   });
 }
 
 // ── MODAL MES RÉSULTATS ───────────────────────────────────────────────────────
 function _renderScoreRows(scores, body) {
-  const badgesHTML = renderBadgesHTML(scores, currentUser?.uid);
   const sorted = [...scores].sort((a, b) => b.timestamp - a.timestamp).slice(0, 60);
-  if (!sorted.length) { body.innerHTML = badgesHTML + '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
+  if (!sorted.length) { body.innerHTML = '<p class="scores-empty">Aucun résultat enregistré pour le moment.</p>'; return; }
   const ICONS = { editeur:'📝', histoire:'🏛️', physique:'⚗️', figures:'🎭' };
   const rows = sorted.map(d => {
     const date  = d.timestamp ? new Date(d.timestamp).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
@@ -2411,7 +2407,7 @@ function _renderScoreRows(scores, body) {
       <td style="color:${color};font-weight:700">${d.pct}%</td>
     </tr>`;
   }).join('');
-  body.innerHTML = badgesHTML + `<table class="scores-table">
+  body.innerHTML = `<table class="scores-table">
     <thead><tr><th>Date</th><th>Matière</th><th>Chapitre</th><th>Score</th><th>%</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
@@ -2533,14 +2529,9 @@ function renderBadgesHTML(scores, uid) {
 }
 
 function updateAuthMenuBadges() {
-  if (!currentUser) return;
   const el = document.getElementById('authMenuBadges');
   if (!el) return;
-  const scores = lsGetScores(currentUser.uid);
-  const badges = computeBadges(scores, currentUser.uid);
-  const unlocked = badges.filter(b => b.unlocked);
-  if (!unlocked.length) { el.innerHTML = ''; return; }
-  el.innerHTML = unlocked.map(b => `<span title="${b.name}">${b.icon}</span>`).join('');
+  el.innerHTML = '';
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────────────────
@@ -3092,14 +3083,6 @@ async function adminOpenProfile(uid) {
   if (!sections) return;
 
   let html = '';
-
-  // ── Section badges ──
-  const adminBadges = computeBadges(scores, uid);
-  const adminUnlocked = adminBadges.filter(b => b.unlocked).length;
-  html += `<div class="admin-section">
-    <div class="admin-section-title">🏅 Badges (${adminUnlocked} / ${adminBadges.length})</div>
-    <div class="admin-section-body">${renderBadgesGrid(scores, uid)}</div>
-  </div>`;
 
   // ── Section scores ──
   html += `<div class="admin-section">
