@@ -1344,6 +1344,7 @@ body > * { position:relative; z-index:1; }
 
 <div class="toast" id="toast"></div>
 
+<!-- Floating procédé quick picker -->
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let texts = [];
@@ -1422,6 +1423,7 @@ function selectTextFromMobilePicker(i) {
  
 function loadText(i) {
   currentIndex = i;
+  // Restore saved HTML with marks, or load clean text
   document.getElementById('editor').innerHTML = texts[i].replace(/\n/g, '<br>');
   renderSidebar();
   renderMobileTextPicker();
@@ -1646,7 +1648,7 @@ function resetTimer() {
   showToast('⏱ Timer relancé');
 }
  
-// ── COUNTERS ──────────────────────────────────────────────────────────────────
+
 function updateCounter() {
   const n = document.getElementById('editor').innerText.replace(/\n/g,'').length;
   document.getElementById('counter').textContent = `${n} caractère${n>1?'s':''}`;
@@ -1657,8 +1659,7 @@ function updateFreeCounter() {
 }
 document.getElementById('editor').addEventListener('input', updateCounter);
 document.getElementById('freeEditor').addEventListener('input', updateFreeCounter);
- 
-// ── TOAST ─────────────────────────────────────────────────────────────────────
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.innerHTML = `<span></span>${msg}`;
